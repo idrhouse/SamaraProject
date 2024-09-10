@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model List<SamaraProject1.Models.Administrador>;
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2>Lista de Administradores</h2>
+        <a asp-controller="Administrador" asp-action="Nuevo" class=" btn btn-success mb-3">Nuevo</a>
+
+        <table class="table table-borderless">
+            <thead
+<           <tr>
+                <th>IdAdministrador</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Correo</th>
+                <th>Clave</th>
+            </tr>
+            <</thead>
+            <tbody>
+            @foreach (var administrador in Model)
+            {
+                <tr>
+                    <td>@administrador.IdAdministrador</td>
+                    <td>@administrador.NombreAdministrador</td>
+                    <td>@administrador.Apellido</td>
+                    <td>@administrador.Correo</td>
+                    <td>@administrador.Clave</td>
+
+                    <td>
+                     <a 
+                         asp-controller="Administrador" 
+                         asp-action="Editar"
+                          asp-route-id="@administrador.IdAdministrador"
+                          class=" btn btn-primary mb-3"
+                          >Editar</a>
+
+                            <a asp-controller="Administrador"
+                               asp-action="Eliminar"
+                               asp-route-id="@administrador.IdAdministrador"
+                               onclick="return confirmar()"
+                               class=" btn btn-danger mb-3">Eliminar</a>
+
+                    </td>
+                </tr>
+            }
+            
+            </tbody>
+        </table>
+        </div>
+
+                @section Scripts {
+
+                        <script>
+                            function confirmar() {
+                              return confirm("Esta seguro de eliminar el Administrador?")
+                            }
+                        </script>
+
+
+                    }
+
+
+
+
