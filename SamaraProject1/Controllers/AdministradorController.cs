@@ -3,7 +3,7 @@ using SamaraProject1.Models;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Recursos;
 namespace SamaraProject1.Controllers
-   
+
 {
     public class AdministradorController : Controller
     {

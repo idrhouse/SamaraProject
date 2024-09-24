@@ -16,9 +16,9 @@ public partial class SamaraMarketContext : DbContext
     }
 
     public virtual DbSet<Administrador> Administrador { get; set; }
+    public virtual DbSet<Emprendedor> Emprendedores { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=LAPTOP-ERP3EUJS\\SQLEXPRESS;Database=SamaraMarket;Trusted_Connection=True; TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +41,26 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.NombreAdministrador)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Emprendedor>(entity => { 
+        entity.HasKey(e => e.IdEmprendedor).HasName("PK__EMPRENDE__F9D7F7E5E4C9D6A3");
+
+        entity.ToTable("Emprendedor");
+        entity.Property(e => e.NombreEmprendedor)
+          .HasMaxLength(50)
+          .IsUnicode(false);
+         entity.Property(e => e.Apellidos) .HasMaxLength(50) .IsUnicode(false);
+         entity.Property(e => e.NombreNegocio) .HasMaxLength(50) .IsUnicode(false);
+         entity.Property(e =>e.DescripcionNegocio) .HasMaxLength(200) .IsUnicode(false);
+         entity.Property(e => e.Telefono) .HasMaxLength(50) .IsUnicode(false);
+         entity.Property(e => e.Correo) .HasMaxLength(50) .IsUnicode(false);
+         entity.Property(e => e.IdAdministrador).HasColumnName("IdAdministrador");
+         entity.HasOne(d => d.Administrador)
+            .WithMany(p => p.Emprendedores)
+             .HasForeignKey(d => d.IdAdministrador)
+             .HasConstraintName("FK_Emprendedor_Administrador");
+
         });
 
         OnModelCreatingPartial(modelBuilder);

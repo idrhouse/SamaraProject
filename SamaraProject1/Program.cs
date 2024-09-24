@@ -1,13 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using SamaraProject1.Models;
 using SamaraProject1.Servicios.Contrato;
 using SamaraProject1.Servicios.Implementacion;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+
 using SamaraProject1.Models;
-using SamaraProject1.Servicios.Contrato;
-using SamaraProject1.Servicios.Implementacion;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +17,7 @@ builder.Services.AddDbContext<SamaraMarketContext>(options =>
 });
 
 builder.Services.AddScoped<IAdministradorService, AdministradorService>();
+builder.Services.AddScoped<IEmprendedorService, EmprendedorService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
@@ -60,6 +59,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Inicio}/{action=IniciarSesion}/{id?}");
-
+    
 
 app.Run();

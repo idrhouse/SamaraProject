@@ -1,0 +1,40 @@
+﻿@model List<SamaraProject1.Models.Emprendedor>
+
+<div class="container">
+    <h2>Lista de Emprendedores</h2>
+
+    <p>
+        <a asp-action="Nuevo" class="btn btn-primary">Crear Nuevo Emprendedor</a>
+    </p>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Nombre del Negocio</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Administrador</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var emprendedor in Model)
+            {
+                <tr>
+                    <td>@emprendedor.NombreEmprendedor</td>
+                    <td>@emprendedor.Apellidos</td>
+                    <td>@emprendedor.NombreNegocio</td>
+                    <td>@emprendedor.Telefono</td>
+                    <td>@emprendedor.Correo</td>
+                    <td> @emprendedor.Administrador?.NombreAdministrador</td>
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@emprendedor.IdEmprendedor" class="btn btn-sm btn-primary">Editar</a>
+                        <a asp-action="Eliminar" asp-route-id="@emprendedor.IdEmprendedor" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

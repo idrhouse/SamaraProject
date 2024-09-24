@@ -14,4 +14,6 @@ public partial class Administrador
     public string? Correo { get; set; }
 
     public string? Clave { get; set; }
+    public virtual ICollection<Emprendedor> Emprendedores { get; set; } = new List<Emprendedor>();
 }
+

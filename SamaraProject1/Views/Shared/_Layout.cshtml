@@ -22,11 +22,27 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="emprendedorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Emprendedores
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="emprendedorDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Emprendedor" asp-action="Lista">Lista de Emprendedores</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Emprendedor" asp-action="Nuevo">Nuevo Emprendedor</a></li>
+                            </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="administradorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Administradores
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="administradorDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Administrador" asp-action="Lista">Lista de Administradores</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Administrador" asp-action="Nuevo">Nuevo Administrador</a></li>
+                            </ul>
+                        </li>
+                 
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="CerrarSesion">Cerrar Sesion</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="CerrarSesion">Cerrar Sesión</a>
                         </li>
                     </ul>
                 </div>
