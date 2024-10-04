@@ -1,0 +1,35 @@
+﻿
+@model SamaraProject1.Models.Producto;
+
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2>Eliminar Producto</h2>
+        <div class="alert alert-danger" role="alert">
+            ¿Está seguro de que desea eliminar este producto?
+        </div>
+        <form asp-controller="Producto" asp-action="Eliminar" method="post">
+            <input asp-for="IdProducto" type="hidden" />
+
+            <div class="mb-3">
+                <label>ID del Producto</label>
+                <input class="form-control" asp-for="IdProducto" type="text" readonly />
+            </div>
+            <div class="mb-3">
+                <label>Nombre del Producto</label>
+                <input class="form-control" asp-for="Nombre_Producto" type="text" readonly />
+            </div>
+            <div class="mb-3">
+                <label>Descripción</label>
+                <textarea class="form-control" asp-for="Descripcion" rows="3" readonly></textarea>
+            </div>
+            <div class="mb-3">
+                <label>Emprendedor</label>
+                <input class="form-control" asp-for="Emprendedor.NombreEmprendedor" type="text" readonly />
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-danger" type="submit">Eliminar</button>
+                <a asp-controller="Producto" asp-action="Lista" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

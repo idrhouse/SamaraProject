@@ -20,6 +20,8 @@
 
         // Relación con la clase Administrador (Foreign Key)
         public virtual Administrador? Administrador { get; set; }
+        public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
+        public virtual ICollection<Stands> Stands { get; set; } = new List<Stands>();
     }
 
 }

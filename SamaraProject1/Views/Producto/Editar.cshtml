@@ -1,0 +1,30 @@
+﻿
+@model SamaraProject1.Models.Producto;
+
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2>Editar Producto</h2>
+        <form asp-controller="Producto" asp-action="Editar" method="post">
+            <input asp-for="IdProducto" type="hidden" />
+
+            <div class="mb-3">
+                <label>Nombre del Producto</label>
+                <input class="form-control" asp-for="Nombre_Producto" type="text" />
+            </div>
+            <div class="mb-3">
+                <label>Descripción</label>
+                <textarea class="form-control" asp-for="Descripcion" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label>Emprendedor</label>
+                <select class="form-control" asp-for="IdEmprendedor" asp-items="@(new SelectList(ViewBag.Emprendedores, "IdEmprendedor", "NombreEmprendedor"))">
+                    <option value="">-- Seleccione un Emprendedor --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+                <a asp-controller="Producto" asp-action="Lista" class="btn btn-secondary">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>iv>
