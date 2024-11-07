@@ -3,12 +3,19 @@
 <div class="row">
     <div class="col-sm-8 offset-sm-2">
         <h2>Nuevo Emprendedor</h2>
-        <form asp-controller="Emprendedor" asp-action="Nuevo" method="post">
+        <form asp-controller="Emprendedor" asp-action="Nuevo" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Foto del Emprendedor</label>
+                <input type="file" name="imagen" class="form-control" accept="image/*" />
+                <small class="text-muted">Formatos permitidos: .jpg, .jpeg, .png</small>
+            </div>
+
             <div class="mb-3">
                 <label asp-for="NombreEmprendedor" class="form-label">Nombre Emprendedor</label>
                 <input asp-for="NombreEmprendedor" class="form-control" type="text" required />
                 <span asp-validation-for="NombreEmprendedor" class="text-danger"></span>
             </div>
+            <!-- Resto de los campos existentes -->
             <div class="mb-3">
                 <label asp-for="Apellidos" class="form-label">Apellidos</label>
                 <input asp-for="Apellidos" class="form-control" type="text" required />

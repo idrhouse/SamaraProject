@@ -10,6 +10,7 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Apellidos</th>
                 <th>Nombre del Negocio</th>
@@ -23,12 +24,22 @@
             @foreach (var emprendedor in Model)
             {
                 <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(emprendedor.ImagenUrl))
+                        {
+                            <img src="@emprendedor.ImagenUrl" alt="Foto de @emprendedor.NombreEmprendedor" class="img-thumbnail" style="max-width: 50px;" />
+                        }
+                        else
+                        {
+                            <img src="/imagenes/default-profile.png" alt="Imagen por defecto" class="img-thumbnail" style="max-width: 50px;" />
+                        }
+                    </td>
                     <td>@emprendedor.NombreEmprendedor</td>
                     <td>@emprendedor.Apellidos</td>
                     <td>@emprendedor.NombreNegocio</td>
                     <td>@emprendedor.Telefono</td>
                     <td>@emprendedor.Correo</td>
-                    <td> @emprendedor.Administrador?.NombreAdministrador</td>
+                    <td>@emprendedor.Administrador?.NombreAdministrador</td>
                     <td>
                         <a asp-action="Editar" asp-route-id="@emprendedor.IdEmprendedor" class="btn btn-sm btn-primary">Editar</a>
                         <a asp-action="Eliminar" asp-route-id="@emprendedor.IdEmprendedor" class="btn btn-sm btn-danger">Eliminar</a>

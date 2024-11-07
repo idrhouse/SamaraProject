@@ -1,5 +1,4 @@
-﻿
-@model SamaraProject1.Models.Producto;
+﻿@model SamaraProject1.Models.Producto
 
 <div class="row">
     <div class="col-sm-8 offset-sm-2">
@@ -10,6 +9,16 @@
         <form asp-controller="Producto" asp-action="Eliminar" method="post">
             <input asp-for="IdProducto" type="hidden" />
 
+            <div class="mb-3">
+                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                {
+                    <img src="@Model.ImagenUrl" alt="Imagen del producto" class="img-thumbnail" style="max-width: 200px;" />
+                }
+                else
+                {
+                    <p>No hay imagen para este producto</p>
+                }
+            </div>
             <div class="mb-3">
                 <label>ID del Producto</label>
                 <input class="form-control" asp-for="IdProducto" type="text" readonly />

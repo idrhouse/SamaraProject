@@ -1,0 +1,38 @@
+﻿@model SamaraProject1.Models.Stands
+
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2>Eliminar Stand</h2>
+        <h4>¿Está seguro de que desea eliminar el stand @Model.Numero_Stand?</h4>
+
+        <div class="mb-3">
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <img src="@Model.ImagenUrl" alt="Imagen del stand" class="img-thumbnail" style="max-width: 200px;" />
+            }
+            else
+            {
+                <p>No hay imagen para este stand</p>
+            }
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-3">Número de Stand:</dt>
+            <dd class="col-sm-9">@Model.Numero_Stand</dd>
+
+            <dt class="col-sm-3">Descripción:</dt>
+            <dd class="col-sm-9">@Model.Descripcion_Stand</dd>
+
+            <dt class="col-sm-3">Emprendedor:</dt>
+            <dd class="col-sm-9">@Model.Emprendedor?.NombreEmprendedor</dd>
+        </dl>
+
+        <form asp-controller="Stands" asp-action="Eliminar" method="post">
+            <input asp-for="IdStand" type="hidden" />
+            <div class="mb-3">
+                <button class="btn btn-danger" type="submit">Eliminar</button>
+                <a asp-controller="Stands" asp-action="Lista" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

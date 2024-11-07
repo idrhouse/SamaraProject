@@ -17,6 +17,8 @@
         public string? Correo { get; set; }  // correo nvarchar(255)
 
         public int IdAdministrador { get; set; }  // id_administrador (Foreign Key)
+      
+        public string? ImagenUrl { get; set; }
 
         // Relación con la clase Administrador (Foreign Key)
         public virtual Administrador? Administrador { get; set; }

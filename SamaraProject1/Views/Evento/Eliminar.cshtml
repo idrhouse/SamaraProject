@@ -1,0 +1,33 @@
+﻿@model SamaraProject1.Models.Evento
+
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2>Eliminar Evento</h2>
+        <h4>¿Está seguro de que desea eliminar el evento "@Model.Nombre"?</h4>
+        <div class="mb-3">
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <img src="@Model.ImagenUrl" alt="Imagen del evento" class="img-thumbnail" style="max-width: 200px;" />
+            }
+            else
+            {
+                <p>No hay imagen para este evento</p>
+            }
+        </div>
+        <dl class="row">
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@Model.Nombre</dd>
+            <dt class="col-sm-3">Descripción:</dt>
+            <dd class="col-sm-9">@Model.Descripcion</dd>
+            <dt class="col-sm-3">Fecha:</dt>
+            <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy HH:mm")</dd>
+        </dl>
+        <form asp-controller="Evento" asp-action="Eliminar" method="post">
+            <input asp-for="IdEvento" type="hidden" />
+            <div class="mb-3">
+                <button class="btn btn-danger" type="submit">Eliminar</button>
+                <a asp-controller="Evento" asp-action="Lista" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

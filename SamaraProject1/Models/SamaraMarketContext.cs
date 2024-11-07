@@ -19,6 +19,8 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Emprendedor> Emprendedores { get; set; }
     public virtual DbSet<Producto> Productos { get; set; }
     public virtual DbSet<Stands> Stands { get; set; }
+    public virtual DbSet<Evento> Eventos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=LAPTOP-ERP3EUJS\\SQLEXPRESS;Database=SamaraMarket;Trusted_Connection=True; TrustServerCertificate=True;");
 
@@ -68,6 +70,10 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.Correo)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.ImagenUrl)
+        .HasMaxLength(500)  
+        .IsUnicode(false) 
+        .IsRequired(false);
             entity.Property(e => e.IdAdministrador).HasColumnName("IdAdministrador");
 
             entity.HasOne(d => d.Administrador)
@@ -88,6 +94,9 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(500)
                 .IsUnicode(false);
+            entity.Property(e => e.ImagenUrl)
+                .HasMaxLength(500)
+                .IsUnicode(false);
             entity.Property(e => e.IdEmprendedor);
 
             entity.HasOne(p => p.Emprendedor)
@@ -106,6 +115,9 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.Descripcion_Stand)
                 .HasMaxLength(500)
                 .IsUnicode(false);
+            entity.Property(e => e.ImagenUrl)
+                .HasMaxLength(500)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Emprendedor)
                 .WithMany(p => p.Stands)
@@ -114,6 +126,24 @@ public partial class SamaraMarketContext : DbContext
                 .HasConstraintName("FK_Stands_Emprendedor");
         });
 
+        modelBuilder.Entity<Evento>(entity =>
+        {
+            entity.HasKey(e => e.IdEvento);
+
+            entity.ToTable("Evento");
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.Fecha)
+                .HasColumnType("datetime");
+            entity.Property(e => e.ImagenUrl)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+        });
 
 
         OnModelCreatingPartial(modelBuilder);
@@ -121,3 +151,4 @@ public partial class SamaraMarketContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+

@@ -6,8 +6,8 @@
         public string? Nombre_Producto { get; set; }
         public string? Descripcion { get; set; }
         public int IdEmprendedor { get; set; }
+        public string? ImagenUrl { get; set; }
 
         public virtual Emprendedor? Emprendedor { get; set; }
-
     }
 }

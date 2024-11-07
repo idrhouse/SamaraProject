@@ -1,37 +1,40 @@
-﻿
-@model List<SamaraProject1.Models.Producto>;
+﻿@model List<SamaraProject1.Models.Producto>
 
-<div class="row">
-    <div class="col-sm-12">
-        <h2>Lista de Productos</h2>
-        <div class="mb-3">
-            <a asp-controller="Producto" asp-action="Nuevo" class="btn btn-primary">Crear Nuevo Producto</a>
-        </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre del Producto</th>
-                    <th>Descripción</th>
-                    <th>Emprendedor</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var producto in Model)
-                {
-                    <tr>
-                        <td>@producto.IdProducto</td>
-                        <td>@producto.Nombre_Producto</td>
-                        <td>@producto.Descripcion</td>
-                        <td>@producto.Emprendedor?.NombreEmprendedor</td>
-                        <td>
-                            <a asp-controller="Producto" asp-action="Editar" asp-route-id="@producto.IdProducto" class="btn btn-warning btn-sm">Editar</a>
-                            <a asp-controller="Producto" asp-action="Eliminar" asp-route-id="@producto.IdProducto" class="btn btn-danger btn-sm">Eliminar</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<div class="container">
+    <h2>Lista de Productos</h2>
+    <div class="mb-3">
+        <a asp-controller="Producto" asp-action="Nuevo" class="btn btn-primary">Crear Nuevo Producto</a>
+    </div>
+    <div class="row">
+        @foreach (var producto in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="position-relative" style="height: 200px;">
+                        @if (!string.IsNullOrEmpty(producto.ImagenUrl))
+                        {
+                            <img src="@producto.ImagenUrl" class="card-img-top h-100 w-100" alt="Imagen de @producto.Nombre_Producto" style="object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="h-100 w-100 bg-secondary d-flex align-items-center justify-content-center text-white">
+                                Sin imagen
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@producto.Nombre_Producto</h5>
+                        <p class="card-text">@producto.Descripcion</p>
+                        <p class="card-text"><small class="text-muted">Emprendedor: @producto.Emprendedor?.NombreEmprendedor</small></p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="btn-group w-100">
+                            <a asp-controller="Producto" asp-action="Editar" asp-route-id="@producto.IdProducto" class="btn btn-warning">Editar</a>
+                            <a asp-controller="Producto" asp-action="Eliminar" asp-route-id="@producto.IdProducto" class="btn btn-danger">Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>

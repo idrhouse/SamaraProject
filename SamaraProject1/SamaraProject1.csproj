@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -21,6 +21,10 @@
 
   <ItemGroup>
     <Folder Include="Views\NewFolder\" />
+    <Folder Include="wwwroot\imagenes\emprendedores\" />
+    <Folder Include="wwwroot\imagenes\eventos\" />
+    <Folder Include="wwwroot\imagenes\Productos\" />
+    <Folder Include="wwwroot\imagenes\stands\" />
   </ItemGroup>
 
 </Project>

@@ -7,23 +7,41 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SamaraProject1.styles.css" asp-append-version="true" />
+    <style>
+        body {
+            background-color: #f8f9fa; /* Color de fondo suave */
+        }
+        .navbar {
+            background-color: #007bff; /* Color de la barra de navegación */
+        }
+        .navbar-brand, .nav-link {
+            color: white !important; /* Color del texto en la barra de navegación */
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #ffc107 !important; /* Color al pasar el mouse */
+        }
+        footer {
+            background-color: #343a40; /* Color de fondo del pie de página */
+            color: white; /* Color del texto en el pie de página */
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SamaraProject1</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="emprendedorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="emprendedorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Emprendedores
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="emprendedorDropdown">
@@ -32,7 +50,7 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="administradorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="administradorDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Administradores
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="administradorDropdown">
@@ -41,7 +59,7 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="productoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="productoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Productos
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="productoDropdown">
@@ -49,11 +67,29 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Producto" asp-action="Nuevo">Nuevo Producto</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Como Unirte</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="standsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Stands
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="standsDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Stands" asp-action="Lista">Lista de Stands</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Stands" asp-action="Nuevo">Nuevo Stand</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="eventoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Eventos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="eventoDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Evento" asp-action="Lista">Lista de Eventos</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Evento" asp-action="Nuevo">Nuevo Evento</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="CerrarSesion">Cerrar Sesión</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Como Unirte</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="CerrarSesion">Cerrar Sesión</a>
                         </li>
                     </ul>
                 </div>
@@ -67,8 +103,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - SamaraProject1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2024 - SamaraProject1 - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-white">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -3,13 +3,31 @@
 <div class="row">
     <div class="col-sm-8 offset-sm-2">
         <h2>Editar Emprendedor</h2>
-        <form asp-controller="Emprendedor" asp-action="Editar" method="post">
+        <form asp-controller="Emprendedor" asp-action="Editar" method="post" enctype="multipart/form-data">
             <input asp-for="IdEmprendedor" type="hidden" />
+            <input asp-for="ImagenUrl" type="hidden" />
+
+            <div class="mb-3">
+                <label class="form-label">Imagen Actual</label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                    {
+                        <img src="@Model.ImagenUrl" alt="Imagen actual" class="img-thumbnail mb-2" style="max-width: 200px;" />
+                    }
+                    else
+                    {
+                        <img src="/imagenes/default-profile.png" alt="Imagen por defecto" class="img-thumbnail mb-2" style="max-width: 200px;" />
+                    }
+                </div>
+                <input type="file" name="imagen" class="form-control" accept="image/*" />
+                <small class="text-muted">Deja este campo vacío si no deseas cambiar la imagen</small>
+            </div>
 
             <div class="mb-3">
                 <label asp-for="NombreEmprendedor" class="form-label">Nombre Emprendedor</label>
                 <input asp-for="NombreEmprendedor" class="form-control" type="text" />
             </div>
+            <!-- Resto de los campos existentes -->
             <div class="mb-3">
                 <label asp-for="Apellidos" class="form-label">Apellidos</label>
                 <input asp-for="Apellidos" class="form-control" type="text" />
