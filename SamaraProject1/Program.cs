@@ -52,7 +52,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=600");
+    }
+});
 
 app.UseRouting();
 
@@ -62,7 +68,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Inicio}/{action=IniciarSesion}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
     
 
 app.Run();

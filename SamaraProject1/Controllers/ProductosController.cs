@@ -1,136 +1,114 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
+using System.IO;
 
 namespace SamaraProject1.Controllers
 {
     public class ProductoController : Controller
     {
-        private readonly SamaraMarketContext _samaraMarketContext;
+        private readonly SamaraMarketContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductoController(SamaraMarketContext samaraMarketContext, IWebHostEnvironment webHostEnvironment)
+        public ProductoController(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _samaraMarketContext = samaraMarketContext;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet]
         public async Task<IActionResult> Lista()
         {
-            List<Producto> lista = await _samaraMarketContext.Productos
-                .Include(p => p.Emprendedor)
-                .ToListAsync();
-            return View(lista);
+            var productos = await _context.Productos.Include(p => p.Emprendedor).ToListAsync();
+            return View(productos);
         }
 
-        [HttpGet]
-        public IActionResult Nuevo()
+        public async Task<IActionResult> Crear()
         {
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
+            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Nuevo(Producto producto, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear(Producto producto, IFormFile? imagen)
         {
             if (ModelState.IsValid)
             {
                 if (imagen != null && imagen.Length > 0)
                 {
-                    string folder = "imagenes/productos";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
-
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    producto.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    producto.ImagenUrl = await GuardarImagen(imagen);
                 }
 
-                await _samaraMarketContext.Productos.AddAsync(producto);
-                await _samaraMarketContext.SaveChangesAsync();
+                _context.Add(producto);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = "Producto creado exitosamente.";
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
+            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             return View(producto);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
-            Producto producto = await _samaraMarketContext.Productos
-                .FirstOrDefaultAsync(p => p.IdProducto == id);
+            var producto = await _context.Productos.FindAsync(id);
             if (producto == null)
             {
                 return NotFound();
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
+            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             return View(producto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(Producto producto, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, Producto producto, IFormFile? imagen)
         {
+            if (id != producto.IdProducto)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                try
                 {
-                    if (!string.IsNullOrEmpty(producto.ImagenUrl))
+                    if (imagen != null && imagen.Length > 0)
                     {
-                        string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, producto.ImagenUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
+                        await EliminarImagenAnterior(producto.ImagenUrl);
+                        producto.ImagenUrl = await GuardarImagen(imagen);
                     }
 
-                    string folder = "imagenes/productos";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
-
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    producto.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    _context.Update(producto);
+                    await _context.SaveChangesAsync();
+                    TempData["Message"] = "Producto actualizado exitosamente.";
                 }
-
-                _samaraMarketContext.Productos.Update(producto);
-                await _samaraMarketContext.SaveChangesAsync();
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductoExists(producto.IdProducto))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
+            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             return View(producto);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Eliminar(int id)
         {
-            Producto producto = await _samaraMarketContext.Productos
+            var producto = await _context.Productos
                 .Include(p => p.Emprendedor)
-                .FirstOrDefaultAsync(p => p.IdProducto == id);
+                .FirstOrDefaultAsync(m => m.IdProducto == id);
             if (producto == null)
             {
                 return NotFound();
             }
+
             return View(producto);
         }
 
@@ -138,25 +116,49 @@ namespace SamaraProject1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarEliminar(int id)
         {
-            Producto producto = await _samaraMarketContext.Productos
-                .FirstOrDefaultAsync(p => p.IdProducto == id);
-            if (producto == null)
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto != null)
             {
-                return NotFound();
+                await EliminarImagenAnterior(producto.ImagenUrl);
+                _context.Productos.Remove(producto);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = "Producto eliminado exitosamente.";
             }
+            return RedirectToAction(nameof(Lista));
+        }
 
-            if (!string.IsNullOrEmpty(producto.ImagenUrl))
+        private bool ProductoExists(int id)
+        {
+            return _context.Productos.Any(e => e.IdProducto == id);
+        }
+
+        private async Task<string> GuardarImagen(IFormFile imagen)
+        {
+            string folder = "imagenes/productos";
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
+            if (!Directory.Exists(uploadsFolder))
             {
-                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, producto.ImagenUrl.TrimStart('/'));
+                Directory.CreateDirectory(uploadsFolder);
+            }
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imagen.CopyToAsync(fileStream);
+            }
+            return $"/{folder}/{uniqueFileName}";
+        }
+
+        private async Task EliminarImagenAnterior(string? imagenUrl)
+        {
+            if (!string.IsNullOrEmpty(imagenUrl))
+            {
+                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imagenUrl.TrimStart('/'));
                 if (System.IO.File.Exists(imagePath))
                 {
                     System.IO.File.Delete(imagePath);
                 }
             }
-
-            _samaraMarketContext.Productos.Remove(producto);
-            await _samaraMarketContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
         }
     }
 }

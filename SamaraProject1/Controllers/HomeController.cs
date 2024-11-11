@@ -13,15 +13,15 @@ namespace SamaraProject1.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-       
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
-        ClaimsPrincipal claimuser = HttpContext.User;
+            ClaimsPrincipal claimuser = HttpContext.User;
             string nombreUsuario = "";
             if (claimuser.Identity.IsAuthenticated)
             {
@@ -33,10 +33,13 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [AllowAnonymous]
+        public IActionResult ComoUnirte()
         {
             return View();
         }
+
+        // Other actions remain unchanged
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -44,10 +47,10 @@ namespace SamaraProject1.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public async Task< IActionResult> CerrarSesion()
+        public async Task<IActionResult> CerrarSesion()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-          return RedirectToAction("IniciarSesion", "Inicio");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

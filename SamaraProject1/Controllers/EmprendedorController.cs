@@ -1,148 +1,171 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SamaraProject1.Controllers
 {
     public class EmprendedorController : Controller
     {
-        private readonly SamaraMarketContext _samaraMarketContext;
+        private readonly SamaraMarketContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EmprendedorController(SamaraMarketContext samaraMarketContext, IWebHostEnvironment webHostEnvironment)
+        public EmprendedorController(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _samaraMarketContext = samaraMarketContext;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Lista(Emprendedor emprendedor)
+        // GET: Emprendedor
+        public async Task<IActionResult> Lista()
         {
-            List<Emprendedor> lista = await _samaraMarketContext.Emprendedores.Include(e => e.Administrador).ToListAsync();
-            return View(lista);
+            var emprendedores = await _context.Emprendedores.Include(e => e.Administrador).ToListAsync();
+            return View(emprendedores);
         }
 
-        [HttpGet]
-        public IActionResult Nuevo()
+        // GET: Emprendedor/Crear
+        public IActionResult Crear()
         {
-            ViewBag.Administradores = _samaraMarketContext.Administrador.ToList();
+            ViewBag.Administradores = _context.Administrador.ToList();
             return View();
         }
 
+        // POST: Emprendedor/Crear
         [HttpPost]
-        public async Task<IActionResult> Nuevo(Emprendedor emprendedor, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile imagen)
         {
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                if (imagen != null)
                 {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/emprendedores");
-                    Directory.CreateDirectory(uploadsFolder); // Crear directorio si no existe
-
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    emprendedor.ImagenUrl = "/imagenes/emprendedores/" + uniqueFileName;
+                    emprendedor.ImagenUrl = await GuardarImagen(imagen);
                 }
 
-                await _samaraMarketContext.Emprendedores.AddAsync(emprendedor);
-                await _samaraMarketContext.SaveChangesAsync();
+                _context.Add(emprendedor);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Administradores = _samaraMarketContext.Administrador.ToList();
+            ViewBag.Administradores = _context.Administrador.ToList();
             return View(emprendedor);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Editar(int id)
+        // GET: Emprendedor/Editar/5
+        public async Task<IActionResult> Editar(int? id)
         {
-            Emprendedor emprendedor = await _samaraMarketContext.Emprendedores.FirstAsync(a => a.IdEmprendedor == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var emprendedor = await _context.Emprendedores.FindAsync(id);
             if (emprendedor == null)
             {
                 return NotFound();
             }
-            ViewBag.Administradores = _samaraMarketContext.Administrador.ToList();
+            ViewBag.Administradores = _context.Administrador.ToList();
             return View(emprendedor);
         }
 
+        // POST: Emprendedor/Editar/5
         [HttpPost]
-        public async Task<IActionResult> Editar(Emprendedor emprendedor, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, Emprendedor emprendedor, IFormFile imagen)
         {
+            if (id != emprendedor.IdEmprendedor)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                try
                 {
-                    // Eliminar imagen anterior si existe
-                    if (!string.IsNullOrEmpty(emprendedor.ImagenUrl))
+                    if (imagen != null)
                     {
-                        var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, emprendedor.ImagenUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
+                        emprendedor.ImagenUrl = await GuardarImagen(imagen);
                     }
 
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/emprendedores");
-                    Directory.CreateDirectory(uploadsFolder);
-
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    emprendedor.ImagenUrl = "/imagenes/emprendedores/" + uniqueFileName;
+                    _context.Update(emprendedor);
+                    await _context.SaveChangesAsync();
                 }
-
-                _samaraMarketContext.Emprendedores.Update(emprendedor);
-                await _samaraMarketContext.SaveChangesAsync();
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EmprendedorExists(emprendedor.IdEmprendedor))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Administradores = _samaraMarketContext.Administrador.ToList();
+            ViewBag.Administradores = _context.Administrador.ToList();
             return View(emprendedor);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Eliminar(int id)
+        // GET: Emprendedor/Eliminar/5
+        public async Task<IActionResult> Eliminar(int? id)
         {
-            Emprendedor emprendedor = await _samaraMarketContext.Emprendedores.FirstAsync(a => a.IdEmprendedor == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var emprendedor = await _context.Emprendedores
+                .Include(e => e.Administrador)
+                .FirstOrDefaultAsync(m => m.IdEmprendedor == id);
             if (emprendedor == null)
             {
                 return NotFound();
             }
+
             return View(emprendedor);
         }
 
+        // POST: Emprendedor/Eliminar/5
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmarEliminar(int id)
+        public async Task<IActionResult> EliminarConfirmado(int id)
         {
-            Emprendedor emprendedor = await _samaraMarketContext.Emprendedores.FirstAsync(a => a.IdEmprendedor == id);
-            if (emprendedor == null)
+            var emprendedor = await _context.Emprendedores.FindAsync(id);
+            if (emprendedor != null)
             {
-                return NotFound();
+                _context.Emprendedores.Remove(emprendedor);
             }
 
-            // Eliminar imagen si existe
-            if (!string.IsNullOrEmpty(emprendedor.ImagenUrl))
-            {
-                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, emprendedor.ImagenUrl.TrimStart('/'));
-                if (System.IO.File.Exists(imagePath))
-                {
-                    System.IO.File.Delete(imagePath);
-                }
-            }
-
-            _samaraMarketContext.Emprendedores.Remove(emprendedor);
-            await _samaraMarketContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Lista));
+        }
+
+        private bool EmprendedorExists(int id)
+        {
+            return _context.Emprendedores.Any(e => e.IdEmprendedor == id);
+        }
+
+        private async Task<string> GuardarImagen(IFormFile imagen)
+        {
+            string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
+            string rutaCarpeta = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "emprendedores");
+
+            if (!Directory.Exists(rutaCarpeta))
+            {
+                Directory.CreateDirectory(rutaCarpeta);
+            }
+
+            string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
+
+            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+            {
+                await imagen.CopyToAsync(stream);
+            }
+
+            return "/imagenes/emprendedores/" + nombreUnico;
         }
     }
 }

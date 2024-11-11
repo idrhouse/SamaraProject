@@ -1,70 +1,77 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SamaraProject1.Controllers
 {
     public class EventoController : Controller
     {
-        private readonly SamaraMarketContext _samaraMarketContext;
+        private readonly SamaraMarketContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EventoController(SamaraMarketContext samaraMarketContext, IWebHostEnvironment webHostEnvironment)
+        public EventoController(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _samaraMarketContext = samaraMarketContext;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet]
+        // GET: Evento
         public async Task<IActionResult> Lista()
         {
-            List<Evento> lista = await _samaraMarketContext.Eventos.ToListAsync();
-            return View(lista);
+            var eventos = await _context.Eventos.ToListAsync();
+            return View(eventos);
         }
 
-        [HttpGet]
-        public IActionResult Nuevo()
+        // GET: Evento/Crear
+        public IActionResult Crear()
         {
             return View();
         }
 
+        // POST: Evento/Crear
         [HttpPost]
-        public async Task<IActionResult> Nuevo(Evento evento, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear([Bind("Nombre,Descripcion,Fecha")] Evento evento, IFormFile imagen)
         {
             if (ModelState.IsValid)
             {
                 if (imagen != null && imagen.Length > 0)
                 {
-                    string folder = "imagenes/eventos";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
+                    var fileName = Path.GetFileName(imagen.FileName);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
+                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos", uniqueFileName);
 
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await imagen.CopyToAsync(fileStream);
                     }
 
-                    evento.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    evento.ImagenUrl = "/imagenes/eventos/" + uniqueFileName;
                 }
 
-                await _samaraMarketContext.Eventos.AddAsync(evento);
-                await _samaraMarketContext.SaveChangesAsync();
+                _context.Add(evento);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = "Evento creado exitosamente.";
                 return RedirectToAction(nameof(Lista));
             }
             return View(evento);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Editar(int id)
+        // GET: Evento/Editar/5
+        public async Task<IActionResult> Editar(int? id)
         {
-            Evento evento = await _samaraMarketContext.Eventos.FirstOrDefaultAsync(e => e.IdEvento == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var evento = await _context.Eventos.FindAsync(id);
             if (evento == null)
             {
                 return NotFound();
@@ -72,81 +79,114 @@ namespace SamaraProject1.Controllers
             return View(evento);
         }
 
+        // POST: Evento/Editar/5
         [HttpPost]
-        public async Task<IActionResult> Editar(Evento evento, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, [Bind("IdEvento,Nombre,Descripcion,Fecha,ImagenUrl")] Evento evento, IFormFile imagen)
         {
+            if (id != evento.IdEvento)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                try
                 {
-                    if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                    if (imagen != null && imagen.Length > 0)
                     {
-                        string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
+                        var fileName = Path.GetFileName(imagen.FileName);
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
+                        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos", uniqueFileName);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            System.IO.File.Delete(oldImagePath);
+                            await imagen.CopyToAsync(fileStream);
                         }
+
+                        // Delete old image if exists
+                        if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                        {
+                            var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        evento.ImagenUrl = "/imagenes/eventos/" + uniqueFileName;
                     }
 
-                    string folder = "imagenes/eventos";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
-
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    evento.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    _context.Update(evento);
+                    await _context.SaveChangesAsync();
+                    TempData["Message"] = "Evento actualizado exitosamente.";
                 }
-
-                _samaraMarketContext.Eventos.Update(evento);
-                await _samaraMarketContext.SaveChangesAsync();
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EventoExists(evento.IdEvento))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Lista));
             }
             return View(evento);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Eliminar(int id)
+        // GET: Evento/Eliminar/5
+        public async Task<IActionResult> Eliminar(int? id)
         {
-            Evento evento = await _samaraMarketContext.Eventos.FirstOrDefaultAsync(e => e.IdEvento == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var evento = await _context.Eventos
+                .FirstOrDefaultAsync(m => m.IdEvento == id);
             if (evento == null)
             {
                 return NotFound();
             }
+
             return View(evento);
         }
 
+        // POST: Evento/Eliminar/5
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmarEliminar(int id)
+        public async Task<IActionResult> EliminarConfirmado(int id)
         {
-            Evento evento = await _samaraMarketContext.Eventos.FirstOrDefaultAsync(e => e.IdEvento == id);
+            var evento = await _context.Eventos.FindAsync(id);
             if (evento == null)
             {
                 return NotFound();
             }
 
+            // Delete image if exists
             if (!string.IsNullOrEmpty(evento.ImagenUrl))
             {
-                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
-                if (System.IO.File.Exists(imagePath))
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
                 {
-                    System.IO.File.Delete(imagePath);
+                    System.IO.File.Delete(filePath);
                 }
             }
 
-            _samaraMarketContext.Eventos.Remove(evento);
-            await _samaraMarketContext.SaveChangesAsync();
+            _context.Eventos.Remove(evento);
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Evento eliminado exitosamente.";
             return RedirectToAction(nameof(Lista));
+        }
+
+        private bool EventoExists(int id)
+        {
+            return _context.Eventos.Any(e => e.IdEvento == id);
         }
     }
 }

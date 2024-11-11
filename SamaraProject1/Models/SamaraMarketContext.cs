@@ -111,13 +111,24 @@ public partial class SamaraMarketContext : DbContext
 
             entity.ToTable("Stands");
 
-            entity.Property(e => e.Numero_Stand).IsRequired();
+            entity.Property(e => e.IdStand)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.Numero_Stand)
+                .IsRequired();
+
             entity.Property(e => e.Descripcion_Stand)
                 .HasMaxLength(500)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .IsRequired(false);
+
             entity.Property(e => e.ImagenUrl)
                 .HasMaxLength(500)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .IsRequired(false);
+
+            entity.Property(e => e.IdEmprendedor)
+                .IsRequired();
 
             entity.HasOne(d => d.Emprendedor)
                 .WithMany(p => p.Stands)

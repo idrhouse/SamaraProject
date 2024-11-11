@@ -1,162 +1,226 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SamaraProject1.Controllers
 {
     public class StandsController : Controller
     {
-        private readonly SamaraMarketContext _samaraMarketContext;
+        private readonly SamaraMarketContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public StandsController(SamaraMarketContext samaraMarketContext, IWebHostEnvironment webHostEnvironment)
+        public StandsController(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _samaraMarketContext = samaraMarketContext;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet]
+        // GET: Stands
         public async Task<IActionResult> Lista()
         {
-            List<Stands> lista = await _samaraMarketContext.Stands
-                .Include(s => s.Emprendedor)
-                .ToListAsync();
-            return View(lista);
+            var stands = await _context.Stands.Include(s => s.Emprendedor).ToListAsync();
+            return View(stands);
         }
 
-        [HttpGet]
-        public IActionResult Nuevo()
+        // GET: Stands/Detalles/5
+        public async Task<IActionResult> Detalles(int? id)
         {
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var stand = await _context.Stands
+                .Include(s => s.Emprendedor)
+                .FirstOrDefaultAsync(m => m.IdStand == id);
+            if (stand == null)
+            {
+                return NotFound();
+            }
+
+            return View(stand);
+        }
+
+        // GET: Stands/Crear
+        public IActionResult Crear()
+        {
+            ViewBag.Emprendedores = GetEmprendedoresSelectList();
             return View();
         }
 
+        // POST: Stands/Crear
         [HttpPost]
-        public async Task<IActionResult> Nuevo(Stands stands, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear([Bind("Numero_Stand,Descripcion_Stand,IdEmprendedor")] Stands stand, IFormFile imagen)
         {
             if (ModelState.IsValid)
             {
                 if (imagen != null && imagen.Length > 0)
                 {
-                    string folder = "imagenes/stands";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
+                    var fileName = Path.GetFileName(imagen.FileName);
+                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "stands", fileName);
 
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await imagen.CopyToAsync(fileStream);
                     }
 
-                    stands.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    stand.ImagenUrl = "/imagenes/stands/" + fileName;
                 }
 
-                await _samaraMarketContext.Stands.AddAsync(stands);
-                await _samaraMarketContext.SaveChangesAsync();
+                _context.Add(stand);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
-            return View(stands);
+
+            ViewBag.Emprendedores = GetEmprendedoresSelectList();
+            return View(stand);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Editar(int id)
+        // GET: Stands/Editar/5
+        public async Task<IActionResult> Editar(int? id)
         {
-            Stands stands = await _samaraMarketContext.Stands
-                .FirstOrDefaultAsync(s => s.IdStand == id);
-            if (stands == null)
+            if (id == null)
             {
                 return NotFound();
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
-            return View(stands);
+
+            var stand = await _context.Stands.FindAsync(id);
+            if (stand == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Emprendedores = GetEmprendedoresSelectList();
+            return View(stand);
         }
 
+        // POST: Stands/Editar/5
         [HttpPost]
-        public async Task<IActionResult> Editar(Stands stands, IFormFile? imagen)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, [Bind("IdStand,Numero_Stand,Descripcion_Stand,IdEmprendedor,ImagenUrl")] Stands stand, IFormFile imagen)
         {
+            if (id != stand.IdStand)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                try
                 {
-                    if (!string.IsNullOrEmpty(stands.ImagenUrl))
+                    if (imagen != null && imagen.Length > 0)
                     {
-                        string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, stands.ImagenUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
+                        var fileName = Path.GetFileName(imagen.FileName);
+                        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "stands", fileName);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            System.IO.File.Delete(oldImagePath);
+                            await imagen.CopyToAsync(fileStream);
                         }
+
+                        // Eliminar la imagen anterior si existe
+                        if (!string.IsNullOrEmpty(stand.ImagenUrl))
+                        {
+                            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, stand.ImagenUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        stand.ImagenUrl = "/imagenes/stands/" + fileName;
                     }
 
-                    string folder = "imagenes/stands";
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
-
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    stands.ImagenUrl = $"/{folder}/{uniqueFileName}";
+                    _context.Update(stand);
+                    await _context.SaveChangesAsync();
                 }
-
-                _samaraMarketContext.Stands.Update(stands);
-                await _samaraMarketContext.SaveChangesAsync();
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StandExists(stand.IdStand))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Lista));
             }
-            ViewBag.Emprendedores = _samaraMarketContext.Emprendedores.ToList();
-            return View(stands);
+
+            ViewBag.Emprendedores = GetEmprendedoresSelectList();
+            return View(stand);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Eliminar(int id)
+        // GET: Stands/Eliminar/5
+        public async Task<IActionResult> Eliminar(int? id)
         {
-            Stands stands = await _samaraMarketContext.Stands
-                .Include(s => s.Emprendedor)
-                .FirstOrDefaultAsync(s => s.IdStand == id);
-            if (stands == null)
+            if (id == null)
             {
                 return NotFound();
             }
-            return View(stands);
+
+            var stand = await _context.Stands
+                .Include(s => s.Emprendedor)
+                .FirstOrDefaultAsync(m => m.IdStand == id);
+            if (stand == null)
+            {
+                return NotFound();
+            }
+
+            return View(stand);
         }
 
+        // POST: Stands/Eliminar/5
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmarEliminar(int id)
+        public async Task<IActionResult> EliminarConfirmado(int id)
         {
-            Stands stands = await _samaraMarketContext.Stands
-                .FirstOrDefaultAsync(s => s.IdStand == id);
-            if (stands == null)
+            var stand = await _context.Stands.FindAsync(id);
+            if (stand != null)
             {
-                return NotFound();
-            }
-
-            if (!string.IsNullOrEmpty(stands.ImagenUrl))
-            {
-                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, stands.ImagenUrl.TrimStart('/'));
-                if (System.IO.File.Exists(imagePath))
+                // Eliminar la imagen si existe
+                if (!string.IsNullOrEmpty(stand.ImagenUrl))
                 {
-                    System.IO.File.Delete(imagePath);
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, stand.ImagenUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
                 }
+
+                _context.Stands.Remove(stand);
+                await _context.SaveChangesAsync();
             }
 
-            _samaraMarketContext.Stands.Remove(stands);
-            await _samaraMarketContext.SaveChangesAsync();
             return RedirectToAction(nameof(Lista));
+        }
+
+        private bool StandExists(int id)
+        {
+            return _context.Stands.Any(e => e.IdStand == id);
+        }
+
+        private List<SelectListItem> GetEmprendedoresSelectList()
+        {
+            return _context.Emprendedores
+                .Select(e => new SelectListItem
+                {
+                    Value = e.IdEmprendedor.ToString(),
+                    Text = e.NombreEmprendedor
+                })
+                .ToList();
         }
     }
 }

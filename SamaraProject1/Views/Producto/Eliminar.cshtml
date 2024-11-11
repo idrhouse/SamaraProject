@@ -1,44 +1,47 @@
 ﻿@model SamaraProject1.Models.Producto
 
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-        <h2>Eliminar Producto</h2>
-        <div class="alert alert-danger" role="alert">
-            ¿Está seguro de que desea eliminar este producto?
-        </div>
-        <form asp-controller="Producto" asp-action="Eliminar" method="post">
-            <input asp-for="IdProducto" type="hidden" />
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
 
-            <div class="mb-3">
-                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-                {
-                    <img src="@Model.ImagenUrl" alt="Imagen del producto" class="img-thumbnail" style="max-width: 200px;" />
-                }
-                else
-                {
-                    <p>No hay imagen para este producto</p>
-                }
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Confirmar Eliminación</h2>
+            <p class="mb-4 text-red-600">¿Está seguro de que desea eliminar este producto?</p>
+
+            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Nombre del Producto</p>
+                        <p class="text-lg font-semibold text-gray-800">@Model.Nombre_Producto</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Emprendedor</p>
+                        <p class="text-lg font-semibold text-gray-800">@Model.Emprendedor?.NombreEmprendedor</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm font-medium text-gray-500">Descripción</p>
+                    <p class="text-gray-800">@Model.Descripcion</p>
+                </div>
             </div>
-            <div class="mb-3">
-                <label>ID del Producto</label>
-                <input class="form-control" asp-for="IdProducto" type="text" readonly />
-            </div>
-            <div class="mb-3">
-                <label>Nombre del Producto</label>
-                <input class="form-control" asp-for="Nombre_Producto" type="text" readonly />
-            </div>
-            <div class="mb-3">
-                <label>Descripción</label>
-                <textarea class="form-control" asp-for="Descripcion" rows="3" readonly></textarea>
-            </div>
-            <div class="mb-3">
-                <label>Emprendedor</label>
-                <input class="form-control" asp-for="Emprendedor.NombreEmprendedor" type="text" readonly />
-            </div>
-            <div class="mb-3">
-                <button class="btn btn-danger" type="submit">Eliminar</button>
-                <a asp-controller="Producto" asp-action="Lista" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Producto</p>
+                    <img src="@Model.ImagenUrl" alt="Imagen del producto" class="w-full h-48 object-cover rounded-lg">
+                </div>
+            }
+
+            <form asp-action="Eliminar" method="post">
+                <input type="hidden" asp-for="IdProducto" />
+                <div class="flex justify-end space-x-2">
+                    <a asp-action="Index" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Cancelar</a>
+                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Confirmar Eliminación</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

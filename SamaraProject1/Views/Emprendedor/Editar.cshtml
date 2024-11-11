@@ -1,63 +1,99 @@
 ﻿@model SamaraProject1.Models.Emprendedor
 
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-        <h2>Editar Emprendedor</h2>
-        <form asp-controller="Emprendedor" asp-action="Editar" method="post" enctype="multipart/form-data">
-            <input asp-for="IdEmprendedor" type="hidden" />
-            <input asp-for="ImagenUrl" type="hidden" />
+@{
+    ViewData["Title"] = "Editar Emprendedor";
+    var administradores = ViewBag.Administradores as List<SamaraProject1.Models.Administrador> ?? new List<SamaraProject1.Models.Administrador>();
+}
 
-            <div class="mb-3">
-                <label class="form-label">Imagen Actual</label>
-                <div>
-                    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-                    {
-                        <img src="@Model.ImagenUrl" alt="Imagen actual" class="img-thumbnail mb-2" style="max-width: 200px;" />
-                    }
-                    else
-                    {
-                        <img src="/imagenes/default-profile.png" alt="Imagen por defecto" class="img-thumbnail mb-2" style="max-width: 200px;" />
-                    }
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Editar Emprendedor</h2>
+
+            <form asp-action="Editar" method="post" enctype="multipart/form-data" class="space-y-4">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
+                <input type="hidden" asp-for="IdEmprendedor" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="NombreEmprendedor" class="block text-sm font-medium text-gray-700">Nombre</label>
+                        <input asp-for="NombreEmprendedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <span asp-validation-for="NombreEmprendedor" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
+                        <input asp-for="Apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <span asp-validation-for="Apellidos" class="text-xs text-red-500"></span>
+                    </div>
                 </div>
-                <input type="file" name="imagen" class="form-control" accept="image/*" />
-                <small class="text-muted">Deja este campo vacío si no deseas cambiar la imagen</small>
-            </div>
 
-            <div class="mb-3">
-                <label asp-for="NombreEmprendedor" class="form-label">Nombre Emprendedor</label>
-                <input asp-for="NombreEmprendedor" class="form-control" type="text" />
-            </div>
-            <!-- Resto de los campos existentes -->
-            <div class="mb-3">
-                <label asp-for="Apellidos" class="form-label">Apellidos</label>
-                <input asp-for="Apellidos" class="form-control" type="text" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="NombreNegocio" class="form-label">Nombre del Negocio</label>
-                <input asp-for="NombreNegocio" class="form-control" type="text" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="DescripcionNegocio" class="form-label">Descripción del Negocio</label>
-                <textarea asp-for="DescripcionNegocio" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Telefono" class="form-label">Teléfono</label>
-                <input asp-for="Telefono" class="form-control" type="tel" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="Correo" class="form-label">Correo</label>
-                <input asp-for="Correo" class="form-control" type="email" />
-            </div>
-            <div class="mb-3">
-                <label asp-for="IdAdministrador" class="form-label">Administrador</label>
-                <select asp-for="IdAdministrador" class="form-select" asp-items="@(new SelectList(ViewBag.Administradores, "IdAdministrador", "NombreAdministrador"))">
-                    <option value="">-- Seleccione un Administrador --</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <button class="btn btn-primary" type="submit">Guardar Cambios</button>
-                <a asp-controller="Emprendedor" asp-action="Lista" class="btn btn-secondary">Volver</a>
-            </div>
-        </form>
+                <div>
+                    <label asp-for="NombreNegocio" class="block text-sm font-medium text-gray-700">Nombre del Negocio</label>
+                    <input asp-for="NombreNegocio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                    <span asp-validation-for="NombreNegocio" class="text-xs text-red-500"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DescripcionNegocio" class="block text-sm font-medium text-gray-700">Descripción del Negocio</label>
+                    <textarea asp-for="DescripcionNegocio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required></textarea>
+                    <span asp-validation-for="DescripcionNegocio" class="text-xs text-red-500"></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+                        <input asp-for="Telefono" type="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <span asp-validation-for="Telefono" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Correo" class="block text-sm font-medium text-gray-700">Correo</label>
+                        <input asp-for="Correo" type="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <span asp-validation-for="Correo" class="text-xs text-red-500"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="IdAdministrador" class="block text-sm font-medium text-gray-700">Administrador</label>
+                    <select asp-for="IdAdministrador"
+                            asp-items="@(new SelectList(administradores, "IdAdministrador", "NombreAdministrador"))"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            required>
+                        <option value="">-- Seleccione un Administrador --</option>
+                    </select>
+                    <span asp-validation-for="IdAdministrador" class="text-xs text-red-500"></span>
+                </div>
+
+                <div>
+                    <label for="imagen" class="block text-sm font-medium text-gray-700">Nueva Imagen del Emprendedor (opcional)</label>
+                    <input type="file" name="imagen" id="imagen" accept="image/*"
+                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                {
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Imagen Actual</label>
+                        <img src="@Model.ImagenUrl" alt="Imagen actual del emprendedor" class="mt-2 h-48 w-full object-cover rounded-lg">
+                    </div>
+                }
+
+                <div class="flex justify-end space-x-2 pt-4">
+                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                        Volver a la Lista
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

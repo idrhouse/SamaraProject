@@ -1,48 +1,51 @@
 ﻿@model SamaraProject1.Models.Emprendedor
 
-<div class="row">
-    <div class="col-sm-8 offset-sm-2">
-        <h2>Eliminar Emprendedor</h2>
-        <h3 class="text-danger">¿Está seguro que desea eliminar este emprendedor?</h3>
+@{
+    ViewData["Title"] = "Eliminar Emprendedor";
+}
 
-        <div class="mb-4">
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Confirmar Eliminación</h2>
+            <p class="mb-4 text-red-600">¿Está seguro de que desea eliminar este emprendedor?</p>
+
+            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Nombre</p>
+                        <p class="text-lg font-semibold text-gray-800">@Model.NombreEmprendedor @Model.Apellidos</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Negocio</p>
+                        <p class="text-lg font-semibold text-gray-800">@Model.NombreNegocio</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm font-medium text-gray-500">Descripción</p>
+                    <p class="text-gray-800">@Model.DescripcionNegocio</p>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm font-medium text-gray-500">Administrador</p>
+                    <p class="text-gray-800">@Model.Administrador?.NombreAdministrador</p>
+                </div>
+            </div>
+
             @if (!string.IsNullOrEmpty(Model.ImagenUrl))
             {
-                <img src="@Model.ImagenUrl" alt="Foto del emprendedor" class="img-thumbnail" style="max-width: 200px;" />
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Emprendedor</p>
+                    <img src="@Model.ImagenUrl" alt="Imagen del emprendedor" class="w-full h-48 object-cover rounded-lg">
+                </div>
             }
-            else
-            {
-                <img src="/imagenes/default-profile.png" alt="Imagen por defecto" class="img-thumbnail" style="max-width: 200px;" />
-            }
+
+            <form asp-action="Eliminar" method="post">
+                <input type="hidden" asp-for="IdEmprendedor" />
+                <div class="flex justify-end space-x-2">
+                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Cancelar</a>
+                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Confirmar Eliminación</button>
+                </div>
+            </form>
         </div>
-
-        <dl class="row">
-            <dt class="col-sm-3">Nombre:</dt>
-            <dd class="col-sm-9">@Model.NombreEmprendedor</dd>
-
-            <dt class="col-sm-3">Apellidos:</dt>
-            <dd class="col-sm-9">@Model.Apellidos</dd>
-
-            <dt class="col-sm-3">Nombre del Negocio:</dt>
-            <dd class="col-sm-9">@Model.NombreNegocio</dd>
-
-            <dt class="col-sm-3">Descripción del Negocio:</dt>
-            <dd class="col-sm-9">@Model.DescripcionNegocio</dd>
-
-            <dt class="col-sm-3">Teléfono:</dt>
-            <dd class="col-sm-9">@Model.Telefono</dd>
-
-            <dt class="col-sm-3">Correo:</dt>
-            <dd class="col-sm-9">@Model.Correo</dd>
-
-            <dt class="col-sm-3">Administrador:</dt>
-            <dd class="col-sm-9">@Model.Administrador?.NombreAdministrador</dd>
-        </dl>
-
-        <form asp-action="Eliminar" method="post">
-            <input type="hidden" asp-for="IdEmprendedor" />
-            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
-            <a asp-action="Lista" class="btn btn-secondary">Cancelar</a>
-        </form>
     </div>
 </div>
