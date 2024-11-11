@@ -1,10 +1,10 @@
 # Usar una imagen base de .NET
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
 # Usar la imagen del SDK de .NET para la construcción del proyecto
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["SamaraProject1/SamaraProject1.csproj", "SamaraProject1/"]
 RUN dotnet restore "SamaraProject1/SamaraProject1.csproj"
