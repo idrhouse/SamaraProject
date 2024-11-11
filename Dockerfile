@@ -6,10 +6,10 @@ EXPOSE 80
 # Usar la imagen del SDK de .NET para la construcción del proyecto
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["SamaraProject1.csproj", "./"]
-RUN dotnet restore "SamaraProject1.csproj"
+COPY ["SamaraProject1/SamaraProject1.csproj", "SamaraProject1/"]
+RUN dotnet restore "SamaraProject1/SamaraProject1.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/SamaraProject1"
 RUN dotnet build "SamaraProject1.csproj" -c Release -o /app/build
 
 FROM build AS publish
