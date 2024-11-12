@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
 using System.IO;
 
 namespace SamaraProject1.Controllers
 {
+    [Authorize]
     public class ProductoController : Controller
     {
         private readonly SamaraMarketContext _context;

@@ -8,7 +8,6 @@ using System.Security.Claims;
 
 namespace SamaraProject1.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

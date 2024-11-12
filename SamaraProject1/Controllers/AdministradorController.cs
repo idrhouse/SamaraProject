@@ -2,9 +2,11 @@
 using SamaraProject1.Models;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Recursos;
+using Microsoft.AspNetCore.Authorization;
 namespace SamaraProject1.Controllers
 
 {
+    [Authorize]
     public class AdministradorController : Controller
     {
         private readonly SamaraMarketContext _samaraMarketContext;

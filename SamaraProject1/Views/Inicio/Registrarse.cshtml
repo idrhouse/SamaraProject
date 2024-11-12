@@ -21,7 +21,8 @@
                     </div>
                     <div class="card-body">
                         <form asp-controller="Inicio" asp-action="Registrarse" method="post">
-                            <input class="form-control mb-3" type="text " placeholder="NombreCompleto" asp-for="NombreAdministrador" required />
+                            <input class="form-control mb-3" type="text " placeholder="Nombre" asp-for="NombreAdministrador" required />
+                            <input class="form-control mb-3" type="text " placeholder="Apellido" asp-for="Apellido" required />
                             <input class="form-control mb-3" type="text " placeholder="Correo" asp-for="Correo" required />
                             <input class="form-control mb-3" type="password" placeholder="Contraseña" asp-for="Clave" required />
                             <div class="d-grid gap-2 mb-3">
