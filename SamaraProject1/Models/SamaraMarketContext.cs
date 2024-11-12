@@ -22,7 +22,8 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Evento> Eventos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-ERP3EUJS\\SQLEXPRESS;Database=SamaraMarket;Trusted_Connection=True; TrustServerCertificate=True;");
+    => optionsBuilder.UseNpgsql("Host=dpg-csphg9qj1k6c73at9ktg-a;Database=samaraprojectdb;Username=emanuel;Password=9Y9WyiKjSqNeKkqp2n7scTfR4YuAIDPd");
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
