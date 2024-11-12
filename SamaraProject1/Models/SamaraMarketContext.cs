@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace SamaraProject1.Models;
 
@@ -21,11 +22,7 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Stands> Stands { get; set; }
     public virtual DbSet<Evento> Eventos { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder.UseNpgsql("Host=dpg-csphg9qj1k6c73at9ktg-a;Database=samaraprojectdb;Username=emanuel;Password=9Y9WyiKjSqNeKkqp2n7scTfR4YuAIDPd");
-
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Administrador>(entity =>
         {

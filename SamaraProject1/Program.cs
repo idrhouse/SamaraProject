@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 using SamaraProject1.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +16,9 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<SamaraMarketContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SamaraMarketContext"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SamaraMarketDatabase"));
 });
+
 
 builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<IEmprendedorService, EmprendedorService>();
