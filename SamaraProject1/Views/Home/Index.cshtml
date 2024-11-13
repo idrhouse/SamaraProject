@@ -1,4 +1,6 @@
-﻿<title>Inicio - Samara Project</title>
+﻿@{
+    ViewData["Title"] = "Inicio - Feria Sámara Market";
+}
 
 <div class="min-h-screen">
     <!-- Hero Section with Carousel -->
@@ -16,17 +18,17 @@
                         </p>
                         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div class="rounded-md shadow">
-                                <a href="@Url.Action("Lista", "Producto")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg">
+                                <a href="@Url.Action("ListaPublica", "Producto")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg">
                                     Productos
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0 sm:ml-3">
-                                <a href="@Url.Action("Lista", "Stands")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
+                                <a href="@Url.Action("ListaPublica", "Stands")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
                                     Stands
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0 sm:ml-3">
-                                <a href="@Url.Action("Lista", "Emprendedor")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
+                                <a href="@Url.Action("ListaPublica", "Emprendedor")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
                                     Emprendedores
                                 </a>
                             </div>
@@ -37,38 +39,39 @@
         </div>
         <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
             <!-- Carousel -->
-            <div class="relative h-56 sm:h-72 md:h-96 lg:h-full" x-data="{ activeSlide: 1, slides: 3 }">
-                <!-- Slide 1 -->
-                <div x-show="activeSlide === 1" class="absolute inset-0 w-full h-full transition-opacity duration-500">
-                    <img src="~/imagenes/carousel-1.jpg" alt="Feria Sámara Market" class="h-full w-full object-cover">
-                </div>
-                <!-- Slide 2 -->
-                <div x-show="activeSlide === 2" class="absolute inset-0 w-full h-full transition-opacity duration-500">
-                    <img src="~/imagenes/carousel-2.jpg" alt="Productos locales" class="h-full w-full object-cover">
-                </div>
-                <!-- Slide 3 -->
-                <div x-show="activeSlide === 3" class="absolute inset-0 w-full h-full transition-opacity duration-500">
-                    <img src="~/imagenes/carousel-3.jpg" alt="Emprendedores" class="h-full w-full object-cover">
-                </div>
-
-                <!-- Carousel Controls -->
-                <div class="absolute bottom-0 w-full p-4">
-                    <div class="flex justify-center space-x-2">
-                        <button @@click="activeSlide = 1" :class="{ 'bg-blue-600': activeSlide === 1 }" class="w-3 h-3 rounded-full bg-blue-300"></button>
-                        <button @@click="activeSlide = 2" :class="{ 'bg-blue-600': activeSlide === 2 }" class="w-3 h-3 rounded-full bg-blue-300"></button>
-                        <button @@click="activeSlide = 3" :class="{ 'bg-blue-600': activeSlide === 3 }" class="w-3 h-3 rounded-full bg-blue-300"></button>
-                    </div>
+            <div id="carousel" class="relative h-56 sm:h-72 md:h-96 lg:h-full">
+                <button id="prevButton" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6 text-gray-800">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button id="nextButton" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6 text-gray-800">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="indicators" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    <!-- Indicators will be dynamically inserted here -->
                 </div>
             </div>
         </div>
     </div>
 
     <!-- YouTube Video Section -->
-    <div class="bg-gray-100 py-12">
+    <div class="bg-gray-100 py-16 sm:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Descubre Feria Sámara Market</h2>
-            <div class="aspect-w-16 aspect-h-16">
-                <iframe src="https://www.youtube.com/embed/25V7mPgLubI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full rounded-lg shadow-lg"></iframe>
+            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Descubre Feria Sámara Market</h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="aspect-w-16 aspect-h-9 h-[600px] sm:h-[600px] md:h-[600px] lg:h-[600px]">
+                    <iframe src="https://www.youtube.com/embed/25V7mPgLubI"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            class="w-full h-full rounded-xl shadow-2xl"></iframe>
+                </div>
+                <p class="mt-6 text-center text-lg text-gray-600">
+                    Explora nuestra feria y conoce la experiencia única que ofrecemos en Playa Sámara.
+                </p>
             </div>
         </div>
     </div>
@@ -166,15 +169,106 @@
             </a>
         </div>
     </div>
+
+    <!-- Ubicación Section -->
+    <div id="ubicacion-section"></div>
+
+    <!-- CTA Section -->
+    <div class="bg-blue-600">
+        <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-white sm:text-4xl">
+                <span class="block">¿Quienes Somos?</span>
+            </h2>
+            <a asp-controller="Home" asp-action="QuienesSomos" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 sm:w-auto">
+                Ver
+            </a>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- UbicacionSection component -->
+    <script src="~/js/UbicacionSection.js"></script>
+
     <script>
-        // Auto-advance carousel
-        setInterval(function () {
-            let currentSlide = parseInt(document.querySelector('[x-data]').__x.$data.activeSlide);
-            let totalSlides = parseInt(document.querySelector('[x-data]').__x.$data.slides);
-            document.querySelector('[x-data]').__x.$data.activeSlide = currentSlide === totalSlides ? 1 : currentSlide + 1;
-        }, 5000);
+        document.addEventListener('DOMContentLoaded', function () {
+            // Render UbicacionSection
+            ReactDOM.render(
+                React.createElement(UbicacionSection),
+                document.getElementById('ubicacion-section')
+            );
+
+            // Carousel functionality
+            const carousel = document.getElementById('carousel');
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const indicators = document.getElementById('indicators');
+            const slides = [
+                { src: '/imagenes/carousel-1.jpg', alt: 'Feria Sámara Market' },
+                { src: '/imagenes/carousel-2.jpg', alt: 'Productos locales' },
+                { src: '/imagenes/carousel-3.jpg', alt: 'Emprendedores' },
+                { src: '/imagenes/carousel-4.jpg', alt: 'Playa Sámara' },
+                { src: '/imagenes/carousel-5.jpg', alt: 'Artesanías locales' }
+            ];
+            let currentSlide = 0;
+
+            function createSlide(slide, index) {
+                const div = document.createElement('div');
+                div.className = `absolute inset-0 w-full h-full transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+                const img = document.createElement('img');
+                img.src = slide.src;
+                img.alt = slide.alt;
+                img.className = 'h-full w-full object-cover';
+                img.onerror = function () {
+                    console.error(`Error loading image: ${slide.src}`);
+                    this.src = '/imagenes/placeholder.jpg'; // Asegúrate de tener una imagen de placeholder
+                };
+                div.appendChild(img);
+                return div;
+            }
+
+            function createIndicator(index) {
+                const button = document.createElement('button');
+                button.className = `w-3 h-3 rounded-full ${index === 0 ? 'bg-white' : 'bg-white bg-opacity-50'}`;
+                button.addEventListener('click', () => showSlide(index));
+                return button;
+            }
+
+            function loadSlides() {
+                slides.forEach((slide, index) => {
+                    carousel.insertBefore(createSlide(slide, index), nextButton);
+                    indicators.appendChild(createIndicator(index));
+                });
+            }
+
+            function showSlide(index) {
+                const slideElements = Array.from(carousel.children).filter(child => child.tagName === 'DIV');
+                slideElements[currentSlide].classList.replace('opacity-100', 'opacity-0');
+                slideElements[index].classList.replace('opacity-0', 'opacity-100');
+                indicators.children[currentSlide].classList.replace('bg-white', 'bg-white bg-opacity-50');
+                indicators.children[index].classList.replace('bg-white bg-opacity-50', 'bg-white');
+                currentSlide = index;
+            }
+
+            function nextSlide() {
+                showSlide((currentSlide + 1) % slides.length);
+            }
+
+            function prevSlide() {
+                showSlide((currentSlide - 1 + slides.length) % slides.length);
+            }
+
+            loadSlides();
+            nextButton.addEventListener('click', nextSlide);
+            prevButton.addEventListener('click', prevSlide);
+
+            // Auto-advance carousel
+            setInterval(nextSlide, 5000);
+        });
     </script>
 }

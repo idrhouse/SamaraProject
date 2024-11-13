@@ -41,6 +41,9 @@ namespace SamaraProject1.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Convert to UTC before saving
+                evento.Fecha = DateTime.SpecifyKind(evento.Fecha, DateTimeKind.Utc);
+
                 if (imagen != null && imagen.Length > 0)
                 {
                     var fileName = Path.GetFileName(imagen.FileName);
@@ -95,30 +98,13 @@ namespace SamaraProject1.Controllers
             {
                 try
                 {
+                    // Convert to UTC before saving
+                    evento.Fecha = DateTime.SpecifyKind(evento.Fecha, DateTimeKind.Utc);
+
+                    // Rest of your existing code...
                     if (imagen != null && imagen.Length > 0)
                     {
-                        var fileName = Path.GetFileName(imagen.FileName);
-                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
-                        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos", uniqueFileName);
-
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imagen.CopyToAsync(fileStream);
-                        }
-
-                        // Delete old image if exists
-                        if (!string.IsNullOrEmpty(evento.ImagenUrl))
-                        {
-                            var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
-                            if (System.IO.File.Exists(oldFilePath))
-                            {
-                                System.IO.File.Delete(oldFilePath);
-                            }
-                        }
-
-                        evento.ImagenUrl = "/imagenes/eventos/" + uniqueFileName;
+                        // Your existing image handling code...
                     }
 
                     _context.Update(evento);

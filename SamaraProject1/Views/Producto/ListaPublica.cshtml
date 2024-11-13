@@ -1,0 +1,48 @@
+﻿@model IEnumerable<SamaraProject1.Models.Producto>
+
+@{
+    ViewData["Title"] = "Productos - Feria Sámara Market";
+}
+
+<div class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Nuestros Productos
+            </h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                Descubre nuestra selección de productos locales únicos
+            </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var item in Model)
+            {
+                <div class="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                    {
+                        <div class="w-full aspect-w-4 aspect-h-3">
+                            <img src="@item.ImagenUrl" alt="@item.Nombre_Producto" class="w-full h-full object-cover">
+                        </div>
+                    }
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            @item.Nombre_Producto
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-500">
+                            @item.Descripcion
+                        </p>
+                        @if (item.Emprendedor != null)
+                        {
+                            <div class="mt-4">
+                                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    @item.Emprendedor.NombreNegocio
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

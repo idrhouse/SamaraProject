@@ -2,98 +2,90 @@
 
 @{
     ViewData["Title"] = "Editar Emprendedor";
-    var administradores = ViewBag.Administradores as List<SamaraProject1.Models.Administrador> ?? new List<SamaraProject1.Models.Administrador>();
 }
 
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="px-6 py-4">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Editar Emprendedor</h2>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Editar Emprendedor</h1>
 
-            <form asp-action="Editar" method="post" enctype="multipart/form-data" class="space-y-4">
-                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
-                <input type="hidden" asp-for="IdEmprendedor" />
+        <form asp-action="Editar" enctype="multipart/form-data" class="space-y-6">
+            <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
+            <input type="hidden" asp-for="IdEmprendedor" />
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label asp-for="NombreEmprendedor" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input asp-for="NombreEmprendedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                        <span asp-validation-for="NombreEmprendedor" class="text-xs text-red-500"></span>
-                    </div>
+            <div class="space-y-2">
+                <label asp-for="NombreEmprendedor" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="NombreEmprendedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <span asp-validation-for="NombreEmprendedor" class="text-sm text-red-500"></span>
+            </div>
 
-                    <div>
-                        <label asp-for="Apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
-                        <input asp-for="Apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                        <span asp-validation-for="Apellidos" class="text-xs text-red-500"></span>
-                    </div>
-                </div>
+            <div class="space-y-2">
+                <label asp-for="Apellidos" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <span asp-validation-for="Apellidos" class="text-sm text-red-500"></span>
+            </div>
 
-                <div>
-                    <label asp-for="NombreNegocio" class="block text-sm font-medium text-gray-700">Nombre del Negocio</label>
-                    <input asp-for="NombreNegocio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                    <span asp-validation-for="NombreNegocio" class="text-xs text-red-500"></span>
-                </div>
+            <div class="space-y-2">
+                <label asp-for="NombreNegocio" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="NombreNegocio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <span asp-validation-for="NombreNegocio" class="text-sm text-red-500"></span>
+            </div>
 
-                <div>
-                    <label asp-for="DescripcionNegocio" class="block text-sm font-medium text-gray-700">Descripción del Negocio</label>
-                    <textarea asp-for="DescripcionNegocio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required></textarea>
-                    <span asp-validation-for="DescripcionNegocio" class="text-xs text-red-500"></span>
-                </div>
+            <div class="space-y-2">
+                <label asp-for="DescripcionNegocio" class="block text-sm font-medium text-gray-700"></label>
+                <textarea asp-for="DescripcionNegocio" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                <span asp-validation-for="DescripcionNegocio" class="text-sm text-red-500"></span>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label asp-for="Telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                        <input asp-for="Telefono" type="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                        <span asp-validation-for="Telefono" class="text-xs text-red-500"></span>
-                    </div>
+            <div class="space-y-2">
+                <label asp-for="Telefono" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Telefono" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <span asp-validation-for="Telefono" class="text-sm text-red-500"></span>
+            </div>
 
-                    <div>
-                        <label asp-for="Correo" class="block text-sm font-medium text-gray-700">Correo</label>
-                        <input asp-for="Correo" type="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                        <span asp-validation-for="Correo" class="text-xs text-red-500"></span>
-                    </div>
-                </div>
+            <div class="space-y-2">
+                <label asp-for="Correo" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Correo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <span asp-validation-for="Correo" class="text-sm text-red-500"></span>
+            </div>
 
-                <div>
-                    <label asp-for="IdAdministrador" class="block text-sm font-medium text-gray-700">Administrador</label>
-                    <select asp-for="IdAdministrador"
-                            asp-items="@(new SelectList(administradores, "IdAdministrador", "NombreAdministrador"))"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            required>
-                        <option value="">-- Seleccione un Administrador --</option>
-                    </select>
-                    <span asp-validation-for="IdAdministrador" class="text-xs text-red-500"></span>
-                </div>
+            <div class="space-y-2">
+                <label asp-for="IdAdministrador" class="block text-sm font-medium text-gray-700"></label>
+                <select asp-for="IdAdministrador" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        asp-items="@(new SelectList(ViewBag.Administradores, "IdAdministrador", "NombreAdministrador"))">
+                    <option value="">-- Seleccione un Administrador --</option>
+                </select>
+                <span asp-validation-for="IdAdministrador" class="text-sm text-red-500"></span>
+            </div>
 
-                <div>
-                    <label for="imagen" class="block text-sm font-medium text-gray-700">Nueva Imagen del Emprendedor (opcional)</label>
-                    <input type="file" name="imagen" id="imagen" accept="image/*"
-                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                </div>
-
+            <div class="space-y-2">
+                <label asp-for="ImagenUrl" class="block text-sm font-medium text-gray-700"></label>
+                <input type="file" name="imagen" class="mt-1 block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-md file:border-0
+                    file:text-sm file:font-medium
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100" />
                 @if (!string.IsNullOrEmpty(Model.ImagenUrl))
                 {
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Imagen Actual</label>
-                        <img src="@Model.ImagenUrl" alt="Imagen actual del emprendedor" class="mt-2 h-48 w-full object-cover rounded-lg">
+                    <div class="mt-2">
+                        <img src="@Model.ImagenUrl" alt="Imagen actual del emprendedor" class="max-w-xs rounded-lg shadow-md" />
                     </div>
                 }
+            </div>
 
-                <div class="flex justify-end space-x-2 pt-4">
-                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                        Volver a la Lista
-                    </a>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                        Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex gap-4 pt-4">
+                
+                <a asp-action="Lista" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Volver a la Lista
+                </a>
+                <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

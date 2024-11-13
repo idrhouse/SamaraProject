@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace SamaraProject1.Controllers
 {
-    [Authorize]
     public class EmprendedorController : Controller
     {
         private readonly SamaraMarketContext _context;
@@ -25,6 +24,14 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> Lista()
         {
             var emprendedores = await _context.Emprendedores.Include(e => e.Administrador).ToListAsync();
+            return View(emprendedores);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ListaPublica()
+        {
+            var emprendedores = await _context.Emprendedores
+                .ToListAsync();
             return View(emprendedores);
         }
 
@@ -121,11 +128,17 @@ namespace SamaraProject1.Controllers
 
             var emprendedor = await _context.Emprendedores
                 .Include(e => e.Administrador)
+                .Include(e => e.Productos)
+                .Include(e => e.Stands)
                 .FirstOrDefaultAsync(m => m.IdEmprendedor == id);
+
             if (emprendedor == null)
             {
                 return NotFound();
             }
+
+            ViewBag.TieneProductos = emprendedor.Productos.Any();
+            ViewBag.TieneStands = emprendedor.Stands.Any();
 
             return View(emprendedor);
         }
@@ -135,14 +148,46 @@ namespace SamaraProject1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
-            var emprendedor = await _context.Emprendedores.FindAsync(id);
-            if (emprendedor != null)
+            var emprendedor = await _context.Emprendedores
+                .Include(e => e.Productos)
+                .Include(e => e.Stands)
+                .FirstOrDefaultAsync(e => e.IdEmprendedor == id);
+
+            if (emprendedor == null)
             {
-                _context.Emprendedores.Remove(emprendedor);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
+            if (emprendedor.Productos.Any() || emprendedor.Stands.Any())
+            {
+                ModelState.AddModelError("", "No se puede eliminar el emprendedor porque tiene productos o stands asociados.");
+                ViewBag.TieneProductos = emprendedor.Productos.Any();
+                ViewBag.TieneStands = emprendedor.Stands.Any();
+                return View(emprendedor);
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(emprendedor.ImagenUrl))
+                {
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, emprendedor.ImagenUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+
+                _context.Emprendedores.Remove(emprendedor);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al intentar eliminar el emprendedor: " + ex.Message);
+                ViewBag.TieneProductos = emprendedor.Productos.Any();
+                ViewBag.TieneStands = emprendedor.Stands.Any();
+                return View(emprendedor);
+            }
         }
 
         private bool EmprendedorExists(int id)

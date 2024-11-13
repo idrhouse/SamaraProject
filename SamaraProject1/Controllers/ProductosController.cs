@@ -24,6 +24,16 @@ namespace SamaraProject1.Controllers
             return View(productos);
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ListaPublica()
+        {
+            var productos = await _context.Productos
+                .Include(p => p.Emprendedor)
+                .Where(p => p.Emprendedor != null)  // Ensure the product has an associated entrepreneur
+                .ToListAsync();
+            return View(productos);
+        }
+
         public async Task<IActionResult> Crear()
         {
             ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();

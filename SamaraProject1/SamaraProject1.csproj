@@ -50,6 +50,9 @@
 	<Target Name="BuildWebpack" BeforeTargets="Build">
 		<Exec Command="npm run build" ContinueOnError="true" />
 	</Target>
+	<ItemGroup>
+	  <None Include="wwwroot\js\UbicacionSection.js" />
+	</ItemGroup>
 
 	<!-- Asegurarse de que los archivos generados se incluyan en la publicación -->
 	<ItemGroup>
