@@ -10,6 +10,12 @@
 	<PropertyGroup>
 		<NpmLastInstall>node_modules/.last-install</NpmLastInstall>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Views\NewFolder\**" />
+	  <Content Remove="Views\NewFolder\**" />
+	  <EmbeddedResource Remove="Views\NewFolder\**" />
+	  <None Remove="Views\NewFolder\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
@@ -28,7 +34,6 @@
 
 	<ItemGroup>
 		<Folder Include="Scripts\components\" />
-		<Folder Include="Views\NewFolder\" />
 		<Folder Include="wwwroot\imagenes\emprendedores\" />
 		<Folder Include="wwwroot\imagenes\eventos\" />
 		<Folder Include="wwwroot\imagenes\Productos\" />
