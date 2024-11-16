@@ -28,6 +28,13 @@ namespace SamaraProject1.Controllers
             return View(eventos);
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerEventos()
+        {
+            var eventos = await _context.Eventos.ToListAsync();
+            return Json(eventos);
+        }
+
         // GET: Evento/Crear
         public IActionResult Crear()
         {
@@ -101,15 +108,41 @@ namespace SamaraProject1.Controllers
                     // Convert to UTC before saving
                     evento.Fecha = DateTime.SpecifyKind(evento.Fecha, DateTimeKind.Utc);
 
-                    // Rest of your existing code...
+                    // Handle image upload
                     if (imagen != null && imagen.Length > 0)
                     {
-                        // Your existing image handling code...
+                        // Delete old image if exists
+                        if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                        {
+                            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        // Save new image
+                        var fileName = Path.GetFileName(imagen.FileName);
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
+                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos");
+
+                        // Ensure directory exists
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await imagen.CopyToAsync(fileStream);
+                        }
+
+                        evento.ImagenUrl = "/imagenes/eventos/" + uniqueFileName;
                     }
 
                     _context.Update(evento);
                     await _context.SaveChangesAsync();
                     TempData["Message"] = "Evento actualizado exitosamente.";
+                    return RedirectToAction(nameof(Lista));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -122,7 +155,12 @@ namespace SamaraProject1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Lista));
+                catch (Exception ex)
+                {
+                    // Log the error
+                    ModelState.AddModelError("", "Ha ocurrido un error al guardar la imagen: " + ex.Message);
+                    return View(evento);
+                }
             }
             return View(evento);
         }
