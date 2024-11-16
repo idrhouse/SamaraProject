@@ -16,15 +16,12 @@ namespace SamaraProject1.Models
         [StringLength(500)]
         public string? Descripcion_Stand { get; set; }
 
-        [Display(Name = "Imagen del Stand")]
-        [StringLength(500)]
-        public string? ImagenUrl { get; set; }
+        [Required(ErrorMessage = "El estado es requerido")]
+        public bool Disponible { get; set; } = true;
 
-        [Required(ErrorMessage = "El emprendedor es requerido")]
         [Display(Name = "Emprendedor")]
-        public int IdEmprendedor { get; set; }
+        public int? IdEmprendedor { get; set; }  // nullable int
 
-        [ForeignKey("IdEmprendedor")]
         public virtual Emprendedor? Emprendedor { get; set; }
     }
 }

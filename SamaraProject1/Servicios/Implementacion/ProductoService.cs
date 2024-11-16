@@ -15,12 +15,20 @@ namespace SamaraProject1.Servicios.Implementacion
 
         public async Task<List<Producto>> GetProductosAsync()
         {
-            return await _dbcontext.Productos.Include(p => p.Emprendedor).ToListAsync();
+            return await _dbcontext.Productos
+                .Include(p => p.ProductoEmprendedores)
+                    .ThenInclude(pe => pe.Emprendedor)
+                .Include(p => p.TipoProducto)
+                .ToListAsync();
         }
 
         public async Task<Producto> GetProductoByIdAsync(int id)
         {
-            return await _dbcontext.Productos.Include(p => p.Emprendedor).FirstOrDefaultAsync(p => p.IdProducto == id);
+            return await _dbcontext.Productos
+                .Include(p => p.ProductoEmprendedores)
+                    .ThenInclude(pe => pe.Emprendedor)
+                .Include(p => p.TipoProducto)
+                .FirstOrDefaultAsync(p => p.IdProducto == id);
         }
 
         public async Task<Producto> SaveProductoAsync(Producto producto)

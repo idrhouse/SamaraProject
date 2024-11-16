@@ -21,8 +21,11 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Producto> Productos { get; set; }
     public virtual DbSet<Stands> Stands { get; set; }
     public virtual DbSet<Evento> Eventos { get; set; }
+    public virtual DbSet<TipoProducto> TipoProducto { get; set; }
+    public virtual DbSet<ProductoEmprendedor> ProductoEmprendedores { get; set; }
 
-     protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Administrador>(entity =>
         {
@@ -69,11 +72,11 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.ImagenUrl)
-        .HasMaxLength(500)  
-        .IsUnicode(false) 
-        .IsRequired(false);
-            entity.Property(e => e.IdAdministrador).HasColumnName("IdAdministrador");
-
+                .HasMaxLength(500)  
+                .IsUnicode(false) 
+                .IsRequired(false);
+            entity.Property(e => e.IdAdministrador)
+                .HasColumnName("IdAdministrador");
             entity.HasOne(d => d.Administrador)
                 .WithMany(p => p.Emprendedores)
                 .HasForeignKey(d => d.IdAdministrador)
@@ -95,12 +98,10 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.ImagenUrl)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-            entity.Property(e => e.IdEmprendedor);
 
-            entity.HasOne(p => p.Emprendedor)
-                .WithMany(e => e.Productos)
-                .HasForeignKey(p => p.IdEmprendedor)
-                .HasConstraintName("FK_Productos_Emprendedor");
+            entity.HasOne(p => p.TipoProducto)
+                .WithMany(t => t.Productos)
+                .HasForeignKey(p => p.IdTipoProducto);
         });
 
         modelBuilder.Entity<Stands>(entity =>
@@ -120,13 +121,11 @@ public partial class SamaraMarketContext : DbContext
                 .IsUnicode(false)
                 .IsRequired(false);
 
-            entity.Property(e => e.ImagenUrl)
-                .HasMaxLength(500)
-                .IsUnicode(false)
-                .IsRequired(false);
+            entity.Property(e => e.Disponible)
+                .HasDefaultValue(true);
 
             entity.Property(e => e.IdEmprendedor)
-                .IsRequired();
+                .IsRequired(false);
 
             entity.HasOne(d => d.Emprendedor)
                 .WithMany(p => p.Stands)
@@ -154,6 +153,29 @@ public partial class SamaraMarketContext : DbContext
                 .IsUnicode(false);
         });
 
+        // Relación 1 a muchos: Producto - TipoProducto
+        modelBuilder.Entity<Producto>()
+            .HasOne(p => p.TipoProducto)
+            .WithMany(t => t.Productos)
+            .HasForeignKey(p => p.IdTipoProducto);
+
+        // Relación muchos a muchos: Producto - Emprendedor (tabla intermedia)
+        modelBuilder.Entity<ProductoEmprendedor>()
+            .HasKey(pe => new { pe.IdProducto, pe.IdEmprendedor });
+
+        modelBuilder.Entity<ProductoEmprendedor>()
+            .HasOne(pe => pe.Producto)
+            .WithMany(p => p.ProductoEmprendedores)
+            .HasForeignKey(pe => pe.IdProducto);
+
+        modelBuilder.Entity<ProductoEmprendedor>()
+            .HasOne(pe => pe.Emprendedor)
+            .WithMany(e => e.ProductoEmprendedores)
+            .HasForeignKey(pe => pe.IdEmprendedor);
+
+        //TipoProducto
+        modelBuilder.Entity<TipoProducto>()
+            .HasKey(t => t.IdTipoProducto);
 
         OnModelCreatingPartial(modelBuilder);
     }

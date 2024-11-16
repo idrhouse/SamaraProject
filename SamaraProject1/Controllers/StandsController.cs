@@ -25,9 +25,13 @@ namespace SamaraProject1.Controllers
         // GET: Stands
         public async Task<IActionResult> Lista()
         {
-            var stands = await _context.Stands.Include(s => s.Emprendedor).ToListAsync();
+            var stands = await _context.Stands
+                                       .Include(s => s.Emprendedor)  // Asegúrate de incluir la relación Emprendedor
+                                       .OrderBy(s => s.Numero_Stand)
+                                       .ToListAsync();
             return View(stands);
         }
+
 
         [AllowAnonymous]
         public async Task<IActionResult> ListaPublica()
@@ -45,15 +49,20 @@ namespace SamaraProject1.Controllers
         // POST: Stands/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(Stands stand, IFormFile imagen)
+        public async Task<IActionResult> Crear(Stands stand)
         {
             if (ModelState.IsValid)
             {
-                if (imagen != null)
+                // Verificar si ya existe un stand con el mismo número
+                var standExistenteNumero = await _context.Stands.AnyAsync(s => s.Numero_Stand == stand.Numero_Stand);
+                if (standExistenteNumero)
                 {
-                    stand.ImagenUrl = await GuardarImagen(imagen);
+                    ModelState.AddModelError("", "Ya existe un stand con este número. Por favor, elige un número diferente.");
+                    ViewBag.Emprendedores = new SelectList(_context.Emprendedores.ToList(), "IdEmprendedor", "NombreEmprendedor", stand.IdEmprendedor);
+                    return View(stand);
                 }
 
+                stand.Disponible = true; // Marcar como no disponible al asignarse
                 _context.Add(stand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Lista));
@@ -61,6 +70,7 @@ namespace SamaraProject1.Controllers
             ViewBag.Emprendedores = new SelectList(_context.Emprendedores.ToList(), "IdEmprendedor", "NombreEmprendedor", stand.IdEmprendedor);
             return View(stand);
         }
+
 
         // GET: Stands/Editar/5
         public async Task<IActionResult> Editar(int? id)
@@ -83,10 +93,17 @@ namespace SamaraProject1.Controllers
             return View(stand);
         }
 
+        // StandExist
+        private bool StandExists(int id)
+        {
+            return _context.Stands.Any(e => e.IdStand == id);
+        }
+
+
         // POST: Stands/Editar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("IdStand,Numero_Stand,Descripcion_Stand,IdEmprendedor,ImagenUrl")] Stands stand, IFormFile? imagen)
+        public async Task<IActionResult> Editar(int id, [Bind("IdStand,Numero_Stand,Descripcion_Stand,IdEmprendedor,Disponible")] Stands stand)
         {
             if (id != stand.IdStand)
             {
@@ -101,33 +118,22 @@ namespace SamaraProject1.Controllers
 
             try
             {
-                var existingStand = await _context.Stands
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(s => s.IdStand == id);
-
+                var existingStand = await _context.Stands.AsNoTracking().FirstOrDefaultAsync(s => s.IdStand == id);
                 if (existingStand == null)
                 {
                     return NotFound();
                 }
 
-                if (imagen != null && imagen.Length > 0)
+                // Solo se validará la reasignación si el IdEmprendedor o el Numero_Stand cambian
+                if (existingStand.Numero_Stand != stand.Numero_Stand ||
+                    (stand.IdEmprendedor != existingStand.IdEmprendedor && !existingStand.Disponible))
                 {
-                    if (!string.IsNullOrEmpty(existingStand.ImagenUrl))
-                    {
-                        var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, existingStand.ImagenUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-
-                    stand.ImagenUrl = await GuardarImagen(imagen);
-                }
-                else
-                {
-                    stand.ImagenUrl = existingStand.ImagenUrl;
+                    ModelState.AddModelError("", "El stand ya está asignado y no puede reasignarse.");
+                    ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
+                    return View(stand);
                 }
 
+                stand.Disponible = stand.IdEmprendedor == null; // Disponible si no tiene emprendedor asignado
                 _context.Entry(existingStand).State = EntityState.Detached;
                 _context.Entry(stand).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -149,6 +155,7 @@ namespace SamaraProject1.Controllers
                 return View(stand);
             }
         }
+
 
         // GET: Stands/Eliminar/5
         public async Task<IActionResult> Eliminar(int? id)
@@ -177,14 +184,6 @@ namespace SamaraProject1.Controllers
             var stand = await _context.Stands.FindAsync(id);
             if (stand != null)
             {
-                if (!string.IsNullOrEmpty(stand.ImagenUrl))
-                {
-                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, stand.ImagenUrl.TrimStart('/'));
-                    if (System.IO.File.Exists(imagePath))
-                    {
-                        System.IO.File.Delete(imagePath);
-                    }
-                }
                 _context.Stands.Remove(stand);
             }
 
@@ -192,29 +191,29 @@ namespace SamaraProject1.Controllers
             return RedirectToAction(nameof(Lista));
         }
 
-        private bool StandExists(int id)
+        // Acción para quitar el emprendedor de un stand y marcarlo como disponible
+        public async Task<IActionResult> QuitarEmprendedor(int id)
         {
-            return _context.Stands.Any(e => e.IdStand == id);
-        }
+            var stand = await _context.Stands
+                .Include(s => s.Emprendedor)  // Incluimos la relación con el emprendedor
+                .FirstOrDefaultAsync(s => s.IdStand == id);
 
-        private async Task<string> GuardarImagen(IFormFile imagen)
-        {
-            string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
-            string rutaCarpeta = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "stands");
-
-            if (!Directory.Exists(rutaCarpeta))
+            if (stand == null)
             {
-                Directory.CreateDirectory(rutaCarpeta);
+                return NotFound();  // Si el stand no existe, devolvemos un error
             }
 
-            string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
+            // Actualizar las propiedades del stand
+            stand.IdEmprendedor = null;  // Quitar el emprendedor (IdEmprendedor se vuelve NULL)
+            stand.Disponible = true;     // Marcar como disponible
 
-            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
-            {
-                await imagen.CopyToAsync(stream);
-            }
+            _context.Update(stand);  // Actualizar el stand en el contexto
+            await _context.SaveChangesAsync();  // Guardar los cambios en la base de datos
 
-            return "/imagenes/stands/" + nombreUnico;
+            TempData["Message"] = "El emprendedor ha sido quitado y el stand está disponible nuevamente.";  // Mensaje de éxito
+            return RedirectToAction(nameof(Lista));  // Redirigir a la lista de stands
         }
+
+
     }
 }

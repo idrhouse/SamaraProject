@@ -18,7 +18,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-500">Emprendedor</p>
-                        <p class="text-lg font-semibold text-gray-800">@Model.Emprendedor?.NombreEmprendedor</p>
+                        <p class="text-lg font-semibold text-gray-800">@string.Join(", ", Model.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))</p>
                     </div>
                 </div>
                 <div class="mt-4">
@@ -38,7 +38,7 @@
             <form asp-action="Eliminar" method="post">
                 <input type="hidden" asp-for="IdProducto" />
                 <div class="flex justify-end space-x-2">
-                    <a asp-action="Index" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Cancelar</a>
+                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Cancelar</a>
                     <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Confirmar Eliminación</button>
                 </div>
             </form>

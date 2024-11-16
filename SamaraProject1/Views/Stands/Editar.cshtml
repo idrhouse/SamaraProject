@@ -32,22 +32,7 @@
                 </select>
                 <span asp-validation-for="IdEmprendedor" class="text-sm text-red-500"></span>
             </div>
-
-            <div class="space-y-2">
-                <label asp-for="ImagenUrl" class="block text-sm font-medium text-gray-700"></label>
-                <input type="file" name="imagen" class="mt-1 block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
-                    file:text-sm file:font-medium
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100" />
-                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-                {
-                    <div class="mt-2">
-                        <img src="@Model.ImagenUrl" alt="Imagen actual del stand" class="max-w-xs rounded-lg shadow-md" />
-                    </div>
-                }
-            </div>
+                        
 
             <div class="flex justify-end space-x-2">
                 <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">Cancelar</a>

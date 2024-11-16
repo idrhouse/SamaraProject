@@ -16,6 +16,12 @@
 	  <EmbeddedResource Remove="Views\NewFolder\**" />
 	  <None Remove="Views\NewFolder\**" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Views\Stands\Lista.cshtml.css" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Views\Stands\Lista.cshtml.css" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
@@ -33,6 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Migrations\" />
 		<Folder Include="Scripts\components\" />
 		<Folder Include="wwwroot\imagenes\emprendedores\" />
 		<Folder Include="wwwroot\imagenes\eventos\" />
