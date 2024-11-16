@@ -1,0 +1,108 @@
+﻿@model dynamic
+
+<div class="container mx-auto mt-10">
+    <h1 class="text-4xl font-bold text-center mb-8">Dashboard</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-blue-500 text-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold">Total Emprendedores</h2>
+            <p class="text-3xl mt-2">@Model.TotalEmprendedores</p>
+        </div>
+        <div class="bg-green-500 text-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold">Total Productos</h2>
+            <p class="text-3xl mt-2">@Model.TotalProductos</p>
+        </div>
+        <div class="bg-yellow-500 text-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold">Total Eventos</h2>
+            <p class="text-3xl mt-2">@Model.TotalEventos</p>
+        </div>
+        <div class="bg-red-500 text-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold">Total Stands</h2>
+            <p class="text-3xl mt-2">@Model.TotalStands</p>
+        </div>
+    </div>
+
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Productos por Tipo</h2>
+        <canvas id="productosChart" class="w-full max-w-lg mx-auto"></canvas>
+    </div>
+
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Disponibilidad de Stands</h2>
+        <canvas id="standsChart" class="w-full max-w-lg mx-auto"></canvas>
+    </div>
+
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Próximos Eventos</h2>
+        <ul class="list-disc ml-6">
+            @foreach (var evento in Model.EventosFuturos)
+            {
+                DateTime fecha;
+                if (DateTime.TryParse(evento.Fecha, out fecha))
+                {
+                    <li>@evento.Nombre - @fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</li>
+                }
+                else
+                {
+                    <li>@evento.Nombre - Fecha inválida</li>
+                }
+            }
+
+
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos para Productos por Tipo
+    const productosData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductosPorTipo));
+    const productosLabels = productosData.map(p => p.Tipo);
+    const productosCounts = productosData.map(p => p.Cantidad);
+
+    // Gráfica de Productos por Tipo
+    new Chart(document.getElementById('productosChart'), {
+        type: 'bar',
+        data: {
+            labels: productosLabels,
+            datasets: [{
+                label: 'Cantidad de Productos',
+                data: productosCounts,
+                backgroundColor: '#34D399',
+                borderColor: '#059669',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Datos para Disponibilidad de Stands
+    const standsDisponibilidad = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.StandsDisponibilidad));
+    const standsLabels = ['Disponibles', 'Ocupados'];
+    const standsCounts = [standsDisponibilidad.Disponibles, standsDisponibilidad.Ocupados];
+
+    // Gráfica de Disponibilidad de Stands
+    new Chart(document.getElementById('standsChart'), {
+        type: 'pie',
+        data: {
+            labels: standsLabels,
+            datasets: [{
+                data: standsCounts,
+                backgroundColor: ['#3B82F6', '#EF4444'],
+                borderColor: ['#1D4ED8', '#B91C1C'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+</script>
