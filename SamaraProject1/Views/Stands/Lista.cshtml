@@ -38,7 +38,7 @@
                         <div>
                             <h2 class="text-lg font-semibold text-gray-800">Stand @item.Numero_Stand</h2>
                             <p class="text-gray-600 text-sm">Descripción: @item.Descripcion_Stand</p>
-                            <p class="text-sm text-gray-500">Emprendedor: @item.Emprendedor?.NombreEmprendedor</p>
+                            <p class="text-sm text-gray-500">Emprendedor: @(string.IsNullOrEmpty(item.Emprendedor?.NombreEmprendedor) ? "No asignado" : item.Emprendedor.NombreEmprendedor)</p>
                             <!-- Estado de disponibilidad con colores -->
                             <p class="text-sm font-semibold @(item.Disponible ? "text-green-600" : "text-red-600")">
                                 Estado: @(item.Disponible ? "Disponible" : "No disponible")

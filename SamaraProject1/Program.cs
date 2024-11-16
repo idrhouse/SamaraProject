@@ -34,6 +34,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
     });
 
+//builder.Services.AddCors(options =>
+//{
+ //   options.AddPolicy("AllowAll", policy =>
+   // {
+     //   policy.AllowAnyOrigin()  // Permite solicitudes desde cualquier origen
+       //       .AllowAnyHeader()  // Permite cualquier cabecera
+         //     .AllowAnyMethod();  // Permite cualquier método HTTP (GET, POST, etc.)
+    //});
+//});
+
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(
@@ -65,6 +75,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+
+//app.UseCors("AllowAll");
 
 app.UseAuthentication();
 

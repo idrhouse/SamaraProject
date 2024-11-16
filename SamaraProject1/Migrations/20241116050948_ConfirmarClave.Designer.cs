@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SamaraProject1.Models;
@@ -11,9 +12,11 @@ using SamaraProject1.Models;
 namespace SamaraProject1.Migrations
 {
     [DbContext(typeof(SamaraMarketContext))]
-    partial class SamaraMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20241116050948_ConfirmarClave")]
+    partial class ConfirmarClave
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +86,10 @@ namespace SamaraProject1.Migrations
                         .IsUnicode(false)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int>("IdAdministrador")
+                        .HasColumnType("integer")
+                        .HasColumnName("IdAdministrador");
+
                     b.Property<string>("ImagenUrl")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -107,6 +114,8 @@ namespace SamaraProject1.Migrations
 
                     b.HasKey("IdEmprendedor")
                         .HasName("PK__EMPRENDE__F9D7F7E5E4C9D6A3");
+
+                    b.HasIndex("IdAdministrador");
 
                     b.ToTable("Emprendedor", (string)null);
                 });
@@ -245,6 +254,18 @@ namespace SamaraProject1.Migrations
                     b.ToTable("TipoProducto");
                 });
 
+            modelBuilder.Entity("SamaraProject1.Models.Emprendedor", b =>
+                {
+                    b.HasOne("SamaraProject1.Models.Administrador", "Administrador")
+                        .WithMany("Emprendedores")
+                        .HasForeignKey("IdAdministrador")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Emprendedor_Administrador");
+
+                    b.Navigation("Administrador");
+                });
+
             modelBuilder.Entity("SamaraProject1.Models.Producto", b =>
                 {
                     b.HasOne("SamaraProject1.Models.Emprendedor", null)
@@ -287,6 +308,11 @@ namespace SamaraProject1.Migrations
                         .HasConstraintName("FK_Stands_Emprendedor");
 
                     b.Navigation("Emprendedor");
+                });
+
+            modelBuilder.Entity("SamaraProject1.Models.Administrador", b =>
+                {
+                    b.Navigation("Emprendedores");
                 });
 
             modelBuilder.Entity("SamaraProject1.Models.Emprendedor", b =>

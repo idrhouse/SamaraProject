@@ -15,12 +15,12 @@ namespace SamaraProject1.Servicios.Implementacion
 
         public async Task<List<Emprendedor>> GetEmprendedorAsync()
         {
-            return await _dbcontext.Emprendedores.Include(e => e.Administrador).ToListAsync();
+            return await _dbcontext.Emprendedores.ToListAsync();
         }
 
         public async Task<Emprendedor> GetEmprendedorByIdAsync(int id)
         {
-            return await _dbcontext.Emprendedores.Include(e => e.Administrador).FirstOrDefaultAsync(e => e.IdEmprendedor == id);
+            return await _dbcontext.Emprendedores.FirstOrDefaultAsync(e => e.IdEmprendedor == id);
         }
 
         public async Task<Emprendedor> SaveEmprendedorAsync(Emprendedor emprendedor)

@@ -75,12 +75,6 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(500)  
                 .IsUnicode(false) 
                 .IsRequired(false);
-            entity.Property(e => e.IdAdministrador)
-                .HasColumnName("IdAdministrador");
-            entity.HasOne(d => d.Administrador)
-                .WithMany(p => p.Emprendedores)
-                .HasForeignKey(d => d.IdAdministrador)
-                .HasConstraintName("FK_Emprendedor_Administrador");
         });
 
         modelBuilder.Entity<Producto>(entity =>

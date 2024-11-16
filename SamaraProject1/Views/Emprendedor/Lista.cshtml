@@ -19,11 +19,24 @@
         @foreach (var item in Model)
         {
             <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 ease-in-out transform hover:scale-105">
-                <img src="@(string.IsNullOrEmpty(item.ImagenUrl) ? "/imagenes/default-emprendedor.jpg" : item.ImagenUrl)" alt="@item.NombreEmprendedor" class="w-full h-48 object-cover">
+                <img src="@(string.IsNullOrEmpty(item.ImagenUrl) ? "/imagenes/emprendedores/default-emprendedor.jpg" : item.ImagenUrl)" alt="@item.NombreEmprendedor" class="w-full h-48 object-cover">
                 <div class="p-4">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">@item.NombreEmprendedor @item.Apellidos</h2>
+                    <h1 class="text-xl font-semibold text-gray-800 mb-2">@item.NombreEmprendedor @item.Apellidos</h1>
+                    <p class="text-x font-semibold text-gray-800 mb-2">Nombre del Negocio:</p>
                     <p class="text-gray-600 mb-2">@item.NombreNegocio</p>
-                    <p class="text-sm text-gray-500 mb-4">Administrador: @item.Administrador?.NombreAdministrador</p>
+                    <p class="text-x font-semibold text-gray-800 mb-2">Stand asignado:</p>
+                    <p class="text-gray-600 mb-2">
+                        @if (item.Stands == null || !item.Stands.Any())
+                        {
+                            @:Sin asignar
+                        }
+                        else
+                        {
+                            @: @string.Join(", ", item.Stands.Select(s => s.Numero_Stand))
+                        }
+                    </p>
+                    <p class="text-x font-semibold text-gray-800 mb-2">Teléfono:</p>
+                    <p class="text-gray-600 mb-2">@item.Telefono</p>
                     <div class="flex justify-end space-x-2">
                         <a href="@Url.Action("Editar", "Emprendedor", new { id = item.IdEmprendedor })" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out inline-flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">

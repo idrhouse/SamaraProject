@@ -1,30 +1,47 @@
-﻿namespace SamaraProject1.Models
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+
+namespace SamaraProject1.Models
 {
     public partial class Emprendedor
     {
-        public int IdEmprendedor { get; set; }  // id bigint
+        public int IdEmprendedor { get; set; }
 
-        public string NombreEmprendedor { get; set; }  // nombre nvarchar(255)
+        // Validación: Nombre no puede ser nulo y debe tener más de 3 caracteres
+        [Required(ErrorMessage = "El nombre del emprendedor es obligatorio.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "El nombre del emprendedor debe tener al menos 3 caracteres.")]
+        public string NombreEmprendedor { get; set; }
 
-        public string Apellidos { get; set; }  // apellidos nvarchar(255)
+        // Validación: Apellidos no pueden ser nulos y deben tener más de 3 caracteres
+        [Required(ErrorMessage = "Los apellidos son obligatorios.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Los apellidos deben tener al menos 3 caracteres.")]
+        public string Apellidos { get; set; }
 
-        public string NombreNegocio { get; set; }  // nombre_negocio nvarchar(255)
+        // Validación: Nombre del negocio no puede ser nulo y debe tener más de 3 caracteres
+        [Required(ErrorMessage = "El nombre del negocio es obligatorio.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "El nombre del negocio debe tener al menos 3 caracteres.")]
+        public string NombreNegocio { get; set; }
 
-        public string? DescripcionNegocio { get; set; }  // descripcion_negocio nvarchar(255)
+        // Validación: Descripción del negocio, opcional, pero si se ingresa, debe tener más de 3 caracteres
+        [StringLength(500, MinimumLength = 3, ErrorMessage = "La descripción del negocio debe tener al menos 3 caracteres.")]
+        public string? DescripcionNegocio { get; set; }
 
-        public string? Telefono { get; set; }  // telefono nvarchar(50)
+        // Validación: Teléfono debe tener al menos 8 caracteres numéricos
+        [StringLength(15, MinimumLength = 8, ErrorMessage = "El teléfono debe tener al menos 8 caracteres.")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "El teléfono solo debe contener números.")]
+        public string? Telefono { get; set; }
 
-        public string? Correo { get; set; }  // correo nvarchar(255)
+        // Validación: Correo debe ser único (no nulo si se ingresa) y debe cumplir con el formato estándar de correo
+        [EmailAddress(ErrorMessage = "Correo electrónico no válido.")]
+        public string? Correo { get; set; }
 
-        public int IdAdministrador { get; set; }  // id_administrador (Foreign Key)
-      
+        [Display(Name = "Imagen del Emprendedor")]
         public string? ImagenUrl { get; set; }
 
-        // Relación con la clase Administrador (Foreign Key)
-        public virtual Administrador? Administrador { get; set; }
         public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
+
         public virtual ICollection<Stands> Stands { get; set; } = new List<Stands>();
+
         public virtual ICollection<ProductoEmprendedor>? ProductoEmprendedores { get; set; }
     }
-
 }
