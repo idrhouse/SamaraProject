@@ -1,43 +1,61 @@
 ﻿@model SamaraProject1.Models.Evento
 
+@{
+    ViewData["Title"] = "Crear Evento";
+}
+
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nuevo Evento</h2>
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Crear Nuevo Evento</h2>
 
-            <form asp-action="Crear" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="mb-4 text-sm text-red-600"></div>
+            <form asp-action="Crear" method="post" enctype="multipart/form-data" class="space-y-4">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
 
-                <div class="grid gap-6 mb-6">
+                <div>
+                    <label asp-for="Nombre" class="block text-sm font-medium text-gray-700">Nombre del Evento</label>
+                    <input asp-for="Nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                    <span asp-validation-for="Nombre" class="text-xs text-red-500"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <textarea asp-for="Descripcion" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-xs text-red-500"></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label asp-for="Nombre" class="block text-sm font-medium text-gray-700 mb-2">Nombre del Evento</label>
-                        <input asp-for="Nombre" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                        <span asp-validation-for="Nombre" class="mt-1 text-sm text-red-600"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="Descripcion" class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                        <textarea asp-for="Descripcion" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                        <span asp-validation-for="Descripcion" class="mt-1 text-sm text-red-600"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="Fecha" class="block text-sm font-medium text-gray-700 mb-2">Fecha del Evento</label>
-                        <input asp-for="Fecha" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                        <span asp-validation-for="Fecha" class="mt-1 text-sm text-red-600"></span>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Imagen del Evento</label>
-                        <input type="file" name="imagen" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*" />
+                        <label asp-for="Fecha" class="block text-sm font-medium text-gray-700">Fecha</label>
+                        <input asp-for="Fecha" type="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                        <span asp-validation-for="Fecha" class="text-xs text-red-500"></span>
                     </div>
                 </div>
 
-                <div class="flex justify-end space-x-4 mt-6">
-                    <a asp-action="Lista" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label asp-for="HoraInicio" class="block text-sm font-medium text-gray-700">Hora de Inicio</label>
+                        <input asp-for="HoraInicio" type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                        <span asp-validation-for="HoraInicio" class="text-xs text-red-500"></span>
+                    </div>
+                    <div class="flex-1">
+                        <label asp-for="HoraFin" class="block text-sm font-medium text-gray-700">Hora de Finalización</label>
+                        <input asp-for="HoraFin" type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                        <span asp-validation-for="HoraFin" class="text-xs text-red-500"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="imagen" class="block text-sm font-medium text-gray-700">Imagen del Evento</label>
+                    <input type="file" name="imagen" id="imagen" accept="image/*"
+                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4">
+                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
                         Volver a la Lista
                     </a>
-                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
                         Crear Evento
                     </button>
                 </div>
@@ -47,5 +65,7 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

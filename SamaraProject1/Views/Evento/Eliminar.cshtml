@@ -1,44 +1,37 @@
 ﻿@model SamaraProject1.Models.Evento
 
+@{
+    ViewData["Title"] = "Eliminar Evento";
+}
+
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Eliminar Evento</h2>
-            <h3 class="text-xl font-semibold text-red-600 mb-4">¿Está seguro que desea eliminar este evento?</h3>
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">¿Está seguro de que desea eliminar este evento?</h2>
 
             <div class="mb-6">
-                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-                {
-                    <img src="@Model.ImagenUrl" alt="Imagen del evento" class="w-full h-64 object-cover rounded-lg" />
-                }
-                else
-                {
-                    <img src="/imagenes/default-event.png" alt="Imagen por defecto" class="w-full h-64 object-cover rounded-lg" />
-                }
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">@Model.Nombre</h3>
+                <p class="text-gray-600 mb-2">@Model.Descripcion</p>
+                <p class="text-gray-600 mb-2">Fecha: @Model.Fecha.ToLocalTime().ToString("dd/MM/yyyy")</p>
+                <p class="text-gray-600 mb-2">Hora: @Model.HoraInicio.ToString(@"hh\:mm") - @Model.HoraFin.ToString(@"hh\:mm")</p>
             </div>
 
-            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500">Nombre del Evento:</dt>
-                    <dd class="mt-1 text-sm text-gray-900">@Model.Nombre</dd>
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <div class="mb-6">
+                    <img src="@Url.Content($"~/imagenes/{Model.ImagenUrl}")" alt="Imagen del evento" class="w-full h-48 object-cover rounded-lg" />
                 </div>
+            }
 
-                <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500">Fecha:</dt>
-                    <dd class="mt-1 text-sm text-gray-900">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
-                </div>
-
-                <div class="sm:col-span-2">
-                    <dt class="text-sm font-medium text-gray-500">Descripción:</dt>
-                    <dd class="mt-1 text-sm text-gray-900">@Model.Descripcion</dd>
-                </div>
-            </dl>
-
-            <form asp-action="Eliminar" method="post" class="mt-6">
+            <form asp-action="Eliminar" method="post">
                 <input type="hidden" asp-for="IdEvento" />
                 <div class="flex justify-end space-x-4">
-                    <a asp-action="Lista" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Cancelar</a>
-                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Confirmar Eliminación</button>
+                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                        Eliminar
+                    </button>
                 </div>
             </form>
         </div>

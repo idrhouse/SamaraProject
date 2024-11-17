@@ -28,6 +28,13 @@ namespace SamaraProject1.Controllers
             return View(eventos);
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerEventos()
+        {
+            var eventos = await _context.Eventos.ToListAsync();
+            return Json(eventos);
+        }
+
         // GET: Evento/Crear
         public IActionResult Crear()
         {
@@ -37,36 +44,55 @@ namespace SamaraProject1.Controllers
         // POST: Evento/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("Nombre,Descripcion,Fecha")] Evento evento, IFormFile imagen)
+        public async Task<IActionResult> Crear(Evento evento, IFormFile? imagen)
         {
-            if (ModelState.IsValid)
+            // Validación personalizada del archivo
+            if (imagen == null || imagen.Length == 0)
             {
-                // Convert to UTC before saving
-                evento.Fecha = DateTime.SpecifyKind(evento.Fecha, DateTimeKind.Utc);
+                Console.WriteLine("No se recibió ningún archivo. Se usará una imagen predeterminada.");
+                evento.ImagenUrl = "/imagenes/eventos/default-evento.jpg";
+            }
+            else
+            {
+                evento.ImagenUrl = await GuardarImagen(imagen);
+                Console.WriteLine($"Imagen subida: {imagen.FileName}");
+            }
 
-                if (imagen != null && imagen.Length > 0)
+            if (evento.HoraInicio >= evento.HoraFin)
+            {
+                ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
+            }
+
+
+            // Validar el modelo
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
-                    var fileName = Path.GetFileName(imagen.FileName);
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
-                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos", uniqueFileName);
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(fileStream);
-                    }
-
-                    evento.ImagenUrl = "/imagenes/eventos/" + uniqueFileName;
+                    Console.WriteLine($"Error: {error.ErrorMessage}");
                 }
+                return View(evento);
+            }
 
+            // Convertir la fecha y hora a UTC antes de guardar
+            evento.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
+
+            try
+            {
                 _context.Add(evento);
                 await _context.SaveChangesAsync();
-                TempData["Message"] = "Evento creado exitosamente.";
-                return RedirectToAction(nameof(Lista));
+                Console.WriteLine("Evento creado exitosamente.");
             }
-            return View(evento);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al guardar el evento: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "Hubo un error al guardar los datos.");
+                return View(evento);
+            }
+
+            return RedirectToAction(nameof(Lista));
         }
+
 
         // GET: Evento/Editar/5
         public async Task<IActionResult> Editar(int? id)
@@ -81,15 +107,27 @@ namespace SamaraProject1.Controllers
             {
                 return NotFound();
             }
+
+            // Establecer HoraInicio y HoraFin para la vista
+            evento.HoraInicio = evento.Fecha.TimeOfDay;
             return View(evento);
         }
 
         // POST: Evento/Editar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("IdEvento,Nombre,Descripcion,Fecha,ImagenUrl")] Evento evento, IFormFile imagen)
+        public async Task<IActionResult> Editar(int id, Evento evento, IFormFile? imagen)
         {
             if (id != evento.IdEvento)
+            {
+                return NotFound();
+            }
+
+            var eventoExistente = await _context.Eventos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.IdEvento == id);
+
+            if (eventoExistente == null)
             {
                 return NotFound();
             }
@@ -98,18 +136,20 @@ namespace SamaraProject1.Controllers
             {
                 try
                 {
-                    // Convert to UTC before saving
-                    evento.Fecha = DateTime.SpecifyKind(evento.Fecha, DateTimeKind.Utc);
-
-                    // Rest of your existing code...
                     if (imagen != null && imagen.Length > 0)
                     {
-                        // Your existing image handling code...
+                        evento.ImagenUrl = await GuardarImagen(imagen);
                     }
+                    else
+                    {
+                        evento.ImagenUrl = eventoExistente.ImagenUrl;
+                    }
+
+                    // Convertir la fecha y hora a UTC antes de guardar
+                    evento.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
 
                     _context.Update(evento);
                     await _context.SaveChangesAsync();
-                    TempData["Message"] = "Evento actualizado exitosamente.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -137,6 +177,7 @@ namespace SamaraProject1.Controllers
 
             var evento = await _context.Eventos
                 .FirstOrDefaultAsync(m => m.IdEvento == id);
+
             if (evento == null)
             {
                 return NotFound();
@@ -156,25 +197,52 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            // Delete image if exists
-            if (!string.IsNullOrEmpty(evento.ImagenUrl))
+            try
             {
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
-                if (System.IO.File.Exists(filePath))
+                if (!string.IsNullOrEmpty(evento.ImagenUrl) &&
+                    !evento.ImagenUrl.Equals("/imagenes/eventos/1e197cea-904c-49ea-a11a-b862881a9ea2_135011440_202779264886845_4680377247879112035_n", StringComparison.OrdinalIgnoreCase))
                 {
-                    System.IO.File.Delete(filePath);
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
                 }
-            }
 
-            _context.Eventos.Remove(evento);
-            await _context.SaveChangesAsync();
-            TempData["Message"] = "Evento eliminado exitosamente.";
-            return RedirectToAction(nameof(Lista));
+                _context.Eventos.Remove(evento);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al intentar eliminar el evento: " + ex.Message);
+                return View(evento);
+            }
         }
 
         private bool EventoExists(int id)
         {
             return _context.Eventos.Any(e => e.IdEvento == id);
+        }
+
+        private async Task<string> GuardarImagen(IFormFile imagen)
+        {
+            string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
+            string rutaCarpeta = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos");
+
+            if (!Directory.Exists(rutaCarpeta))
+            {
+                Directory.CreateDirectory(rutaCarpeta);
+            }
+
+            string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
+
+            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+            {
+                await imagen.CopyToAsync(stream);
+            }
+
+            return "/imagenes/eventos/" + nombreUnico;
         }
     }
 }
