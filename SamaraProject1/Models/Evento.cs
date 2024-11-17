@@ -7,5 +7,7 @@
         public string? Descripcion { get; set; }
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
         public string? ImagenUrl { get; set; }
+        public TimeSpan HoraInicio { get; set; }
+        public TimeSpan HoraFin { get; set; }
     }
 }

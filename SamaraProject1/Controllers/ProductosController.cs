@@ -77,6 +77,12 @@ namespace SamaraProject1.Controllers
                 {
                     producto.ImagenUrl = await GuardarImagen(imagen);
                 }
+                else
+                {
+                    // Imagen predeterminada
+                    producto.ImagenUrl = "/imagenes/productos/producto_defecto.png";
+                    Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
+                }
 
                 // Create the product without assigning Emprendedores yet
                 _context.Add(producto);

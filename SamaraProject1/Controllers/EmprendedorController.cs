@@ -40,80 +40,64 @@ namespace SamaraProject1.Controllers
         // GET: Emprendedor/Crear
         public IActionResult Crear()
         {
-            ViewBag.Administradores = _context.Administrador.ToList();
             return View();
         }
 
         // POST: Emprendedor/Crear        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile imagen)
+        public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile? imagen)
         {
-            // Verificar si se está recibiendo un archivo
-            if (imagen != null)
-            {
-                Console.WriteLine($"Archivo recibido: {imagen.FileName}");
-                if (imagen.Length > 0)
-                {
-                    Console.WriteLine($"Tamaño del archivo: {imagen.Length} bytes");
-                    // Proceder con el almacenamiento de la imagen
-                }
-                else
-                {
-                    Console.WriteLine("El archivo recibido está vacío.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No se recibió ningún archivo.");
-            }
-
-
-            // Verificar si el modelo es válido
+            // Validar el modelo
             if (!ModelState.IsValid)
             {
-                // Mostrar errores de validación en la consola
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"Error: {error.ErrorMessage}");
                 }
-
-                // Si hay errores, retornar a la vista con los errores
-                ViewBag.Administradores = await _context.Administrador.ToListAsync();
                 return View(emprendedor);
             }
 
-            // Verificar si se subió una imagen
+            // Manejo de la imagen
             if (imagen != null && imagen.Length > 0)
             {
-                // Guardar la imagen
                 emprendedor.ImagenUrl = await GuardarImagen(imagen);
-                Console.WriteLine($"Imagen subida: {imagen.FileName}");  // Mensaje de depuración
+                Console.WriteLine($"Imagen subida: {imagen.FileName}");
             }
             else
             {
-                // Si no se subió una imagen, asignar una imagen predeterminada
+                // Imagen predeterminada
                 emprendedor.ImagenUrl = "/imagenes/emprendedores/default-emprendedor.jpg";
                 Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
             }
 
-            // Verificar si el correo ya existe
+            // Validar si el correo ya existe
             var correoExistente = await _context.Emprendedores
                 .FirstOrDefaultAsync(e => e.Correo == emprendedor.Correo);
 
             if (correoExistente != null)
             {
-                // Si el correo existe, mostrar error
                 ModelState.AddModelError("Correo", "Ya existe un emprendedor con este correo.");
-                ViewBag.Administradores = await _context.Administrador.ToListAsync();
                 return View(emprendedor);
             }
 
-            // Guardar el nuevo emprendedor en la base de datos
-            _context.Add(emprendedor);
-            await _context.SaveChangesAsync();
+            // Guardar el emprendedor
+            try
+            {
+                _context.Add(emprendedor);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Nuevo emprendedor creado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al guardar en la base de datos: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "Hubo un error al guardar los datos.");
+                return View(emprendedor);
+            }
+
             return RedirectToAction(nameof(Lista));
         }
+
 
 
 
@@ -131,9 +115,10 @@ namespace SamaraProject1.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Administradores = _context.Administrador.ToList();
-            return View(emprendedor);
+
+            return View(emprendedor); 
         }
+
 
         // POST: Emprendedor/Editar/5
         [HttpPost]
@@ -145,7 +130,7 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            var emprendedorExistente = await _context.Emprendedores.AsNoTracking().FirstOrDefaultAsync(e => e.IdEmprendedor == id);
+            var emprendedorExistente = await _context.Emprendedores.FindAsync(id);
 
             if (emprendedorExistente == null)
             {
@@ -160,10 +145,8 @@ namespace SamaraProject1.Controllers
 
                 if (correoExistente != null)
                 {
-                    // Si ya existe el correo, agregar el error y retornar la vista con el mensaje
                     ModelState.AddModelError("Correo", "Ya existe un emprendedor con este correo.");
-                    ViewBag.Administradores = await _context.Administrador.ToListAsync();
-                    return View(emprendedor);
+                    return View(emprendedor); // Devolvemos solo el emprendedor
                 }
             }
 
@@ -174,16 +157,18 @@ namespace SamaraProject1.Controllers
                     // Manejo de la imagen
                     if (imagen != null && imagen.Length > 0)
                     {
-                        emprendedor.ImagenUrl = await GuardarImagen(imagen);
-                    }
-                    else
-                    {
-                        // Si no se sube una nueva imagen, mantener la imagen existente
-                        emprendedor.ImagenUrl = emprendedorExistente.ImagenUrl;
+                        emprendedorExistente.ImagenUrl = await GuardarImagen(imagen);
                     }
 
-                    // Actualizar solo los valores que han cambiado
-                    _context.Entry(emprendedorExistente).CurrentValues.SetValues(emprendedor);
+                    // Actualizar solo los valores modificados manualmente
+                    emprendedorExistente.NombreEmprendedor = emprendedor.NombreEmprendedor;
+                    emprendedorExistente.Apellidos = emprendedor.Apellidos;
+                    emprendedorExistente.Correo = emprendedor.Correo;
+                    emprendedorExistente.DescripcionNegocio = emprendedor.DescripcionNegocio;
+                    emprendedorExistente.NombreNegocio = emprendedor.NombreNegocio;
+                    emprendedorExistente.Telefono = emprendedor.Telefono;
+
+                    _context.Update(emprendedorExistente); // Adjuntar y marcar como modificado
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -192,19 +177,16 @@ namespace SamaraProject1.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    throw; // Relanzar la excepción para errores inesperados
                 }
 
                 return RedirectToAction(nameof(Lista));
             }
 
-            // Si no es válido, retornar la vista con los errores
-            ViewBag.Administradores = await _context.Administrador.ToListAsync();
-            return View(emprendedor);
+            return View(emprendedor); // Devolvemos solo el emprendedor
         }
+
+
 
         // GET: Emprendedor/Eliminar/5
         public async Task<IActionResult> Eliminar(int? id)
