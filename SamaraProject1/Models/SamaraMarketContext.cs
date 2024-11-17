@@ -142,6 +142,10 @@ public partial class SamaraMarketContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Fecha)
                 .HasColumnType("datetime");
+            entity.Property(e => e.HoraInicio)
+                .HasColumnType("time");
+            entity.Property(e => e.HoraFin)
+                .HasColumnType("time");
             entity.Property(e => e.ImagenUrl)
                 .HasMaxLength(500)
                 .IsUnicode(false);
