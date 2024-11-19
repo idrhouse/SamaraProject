@@ -47,34 +47,32 @@ namespace SamaraProject1.Controllers
                     return View(modelo);
                 }
 
-                // Generar el token
+                // Generar token y preparar correo
                 var token = Guid.NewGuid().ToString();
-
-                // Establecer la fecha de expiración (24 horas después de la generación)
                 administrador.TokenRecuperacion = token;
-                administrador.TokenExpiracion = DateTime.UtcNow.AddDays(1); // Establecer expiración en 1 día
+                administrador.TokenExpiracion = DateTime.UtcNow.AddDays(1);
 
                 var updateResult = await _administradorService.ActualizarAdministrador(administrador);
-
                 if (!updateResult)
                 {
                     throw new Exception("No se pudo actualizar el token de recuperación.");
                 }
 
                 var enlace = Url.Action("RestablecerClave", "RecuperarClave", new { token }, Request.Scheme);
-
                 await EnviarCorreoRecuperacion(modelo.Correo, enlace);
 
-                TempData["SuccessMessage"] = "Se ha enviado un enlace de recuperación a su correo.";
-                return RedirectToAction("IniciarSesion", "Inicio");
+                // Mensaje de éxito
+                TempData["SuccessMessage"] = "Se ha enviado un enlace de recuperación a tu correo electrónico.";
+                return RedirectToAction("RecuperarClave");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error en el proceso de recuperación de contraseña para el correo: {Correo}", modelo.Correo);
-                ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud. Por favor, inténtelo de nuevo más tarde.");
-                return View(modelo);
+                _logger.LogError(ex, "Error en la recuperación de contraseña: {Mensaje}", ex.Message);
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud. Por favor, inténtalo de nuevo.";
+                return RedirectToAction("RecuperarClave");
             }
         }
+
 
 
         [HttpGet]

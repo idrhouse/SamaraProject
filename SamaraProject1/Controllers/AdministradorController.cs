@@ -38,7 +38,7 @@ namespace SamaraProject1.Controllers
         }
 
         [HttpGet]
-        public IActionResult Nuevo()
+        public IActionResult Crear()
         {
             return View();
         }
