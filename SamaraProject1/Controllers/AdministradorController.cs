@@ -40,7 +40,7 @@ namespace SamaraProject1.Controllers
         [HttpGet]
         public IActionResult Crear()
         {
-            return View();
+            return View(); //
         }
 
         [HttpPost]
