@@ -19,7 +19,7 @@ builder.Services.AddDbContext<SamaraMarketContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("SamaraMarketDatabase"));
 });
 
-
+builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<IEmprendedorService, EmprendedorService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
@@ -36,13 +36,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 //builder.Services.AddCors(options =>
 //{
- //   options.AddPolicy("AllowAll", policy =>
-   // {
-     //   policy.AllowAnyOrigin()  // Permite solicitudes desde cualquier origen
-       //       .AllowAnyHeader()  // Permite cualquier cabecera
-         //     .AllowAnyMethod();  // Permite cualquier método HTTP (GET, POST, etc.)
-    //});
+//   options.AddPolicy("AllowAll", policy =>
+// {
+//   policy.AllowAnyOrigin()  // Permite solicitudes desde cualquier origen
+//       .AllowAnyHeader()  // Permite cualquier cabecera
+//     .AllowAnyMethod();  // Permite cualquier método HTTP (GET, POST, etc.)
 //});
+//});
+
+builder.Services.AddScoped<IAdministradorService, AdministradorService>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddLogging();
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -75,6 +79,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+
+
 
 //app.UseCors("AllowAll");
 

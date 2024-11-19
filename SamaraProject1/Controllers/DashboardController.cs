@@ -40,11 +40,15 @@ namespace SamaraProject1.Controllers
 
             // Eventos próximos
             var eventosFuturos = _context.Eventos
-                .Where(e => e.Fecha > DateTime.UtcNow)
-                .OrderBy(e => e.Fecha)
-                .Take(5)
-                .Select(e => new { e.Nombre, Fecha = e.Fecha.ToString("dd/MM/yyyy") })
+                .Where(e => e.Fecha >= DateTime.UtcNow)
                 .ToList();
+            if (eventosFuturos == null || !eventosFuturos.Any())
+            {
+                // Si no hay eventos futuros, asigna un mensaje adecuado o una lista vacía
+                eventosFuturos = new List<Evento>(); // O puedes usar un mensaje si lo prefieres
+                                                     // O si quieres un mensaje: 
+                TempData["Mensaje"] = "No hay eventos futuros disponibles.";
+            }
 
             // Pasar datos a la vista
             var model = new

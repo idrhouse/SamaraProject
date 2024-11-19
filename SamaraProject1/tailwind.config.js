@@ -8,6 +8,15 @@ module.exports = {
         './components/**/*.{js,jsx,ts,tsx}',
         './wwwroot/js/**/*.{js,jsx,ts,tsx}',
     ],
+    future: {
+        // Habilitar la opción 'arbitrary value support'
+        // Esta opción ya está habilitada en Tailwind CSS v3.x
+        // en versiones anteriores de Tailwind deberías configurarlo
+        // en el objeto `future` o `purge`
+        removeDeprecatedGapUtilities: true,
+        // Permitir valores arbitrarios
+        purgeLayersByDefault: true,
+    },
     theme: {
         container: {
             center: true,

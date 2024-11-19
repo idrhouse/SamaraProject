@@ -3,24 +3,38 @@ using SamaraProject1.Models;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Recursos;
 using Microsoft.AspNetCore.Authorization;
-namespace SamaraProject1.Controllers
+using SamaraProject1.Servicios.Contrato;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System;
 
+namespace SamaraProject1.Controllers
 {
     [Authorize]
     public class AdministradorController : Controller
     {
-        private readonly SamaraMarketContext _samaraMarketContext;
+        private readonly IAdministradorService _administradorService;
+        private readonly ILogger<AdministradorController> _logger;
 
-        public AdministradorController(SamaraMarketContext samaraMarketContext)
+        public AdministradorController(IAdministradorService administradorService, ILogger<AdministradorController> logger)
         {
-            _samaraMarketContext = samaraMarketContext;
+            _administradorService = administradorService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> Lista()
         {
-            List<Administrador> lista = await _samaraMarketContext.Administrador.ToListAsync();
-            return View(lista);
+            try
+            {
+                var lista = await _administradorService.GetAllAdministradores();
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener la lista de administradores");
+                return View("Error");
+            }
         }
 
         [HttpGet]
@@ -32,132 +46,145 @@ namespace SamaraProject1.Controllers
         [HttpPost]
         public async Task<IActionResult> Nuevo(Administrador administrador)
         {
-            // Validación de correo único
-            if (await _samaraMarketContext.Administrador.AnyAsync(a => a.Correo == administrador.Correo))
-            {
-                ModelState.AddModelError("Correo", "Ya existe un administrador con ese correo.");
-            }
-
-            // Validación de contraseña mínima de 8 caracteres
-            if (administrador.Clave != null && administrador.Clave.Length < 8)
-            {
-                ModelState.AddModelError("Clave", "La contraseña debe tener al menos 8 caracteres.");
-            }
-
-            // Validación de confirmación de contraseña
-            if (administrador.Clave != administrador.ConfirmarClave)
-            {
-                ModelState.AddModelError("ConfirmarClave", "Las contraseñas no coinciden.");
-            }
-
-            // Si el modelo no es válido, regresar a la vista
             if (!ModelState.IsValid)
             {
                 return View(administrador);
             }
 
-            // Guardar el nuevo administrador
-            await _samaraMarketContext.Administrador.AddAsync(administrador);
-            await _samaraMarketContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
-        }
+            try
+            {
+                // Validación de correo único
+                if (await _administradorService.ExisteAdministradorConCorreo(administrador.Correo))
+                {
+                    ModelState.AddModelError("Correo", "Ya existe un administrador con ese correo.");
+                    return View(administrador);
+                }
 
+                // Validación de contraseña mínima de 8 caracteres
+                if (administrador.Clave != null && administrador.Clave.Length < 8)
+                {
+                    ModelState.AddModelError("Clave", "La contraseña debe tener al menos 8 caracteres.");
+                    return View(administrador);
+                }
+
+                // Validación de confirmación de contraseña
+                if (administrador.Clave != administrador.ConfirmarClave)
+                {
+                    ModelState.AddModelError("ConfirmarClave", "Las contraseñas no coinciden.");
+                    return View(administrador);
+                }
+
+                administrador.Clave = Utilidades.Cifrar(administrador.Clave);
+                await _administradorService.SaveAdministrador(administrador);
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear nuevo administrador");
+                ModelState.AddModelError("", "Ocurrió un error al guardar el administrador.");
+                return View(administrador);
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
-            Administrador administrador = await _samaraMarketContext.Administrador.FirstAsync(a => a.IdAdministrador == id);
-            return View(administrador);
+            try
+            {
+                var administrador = await _administradorService.GetAdministradorPorId(id);
+                if (administrador == null)
+                {
+                    return NotFound();
+                }
+                return View(administrador);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener administrador para editar");
+                return View("Error");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Editar(Administrador administrador)
         {
-            // Validación de correo único (exceptuando el administrador actual)
-            if (await _samaraMarketContext.Administrador
-                .AnyAsync(a => a.Correo == administrador.Correo && a.IdAdministrador != administrador.IdAdministrador))
-            {
-                ModelState.AddModelError("Correo", "Ya existe un administrador con ese correo.");
-            }
-
-            // Validación de contraseña mínima de 8 caracteres
-            if (administrador.Clave != null && administrador.Clave.Length < 8)
-            {
-                ModelState.AddModelError("Clave", "La contraseña debe tener al menos 8 caracteres.");
-            }
-
-            // Validación de confirmación de contraseña
-            if (administrador.Clave != administrador.ConfirmarClave)
-            {
-                ModelState.AddModelError("ConfirmarClave", "Las contraseñas no coinciden.");
-            }
-
-            // Si el modelo no es válido, regresar a la vista
             if (!ModelState.IsValid)
             {
                 return View(administrador);
             }
 
-            // Actualizar el administrador
-            _samaraMarketContext.Administrador.Update(administrador);
-            await _samaraMarketContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
-        }
+            try
+            {
+                // Validación de correo único (exceptuando el administrador actual)
+                if (await _administradorService.ExisteAdministradorConCorreo(administrador.Correo, administrador.IdAdministrador))
+                {
+                    ModelState.AddModelError("Correo", "Ya existe un administrador con ese correo.");
+                    return View(administrador);
+                }
 
+                // Validación de contraseña mínima de 8 caracteres
+                if (!string.IsNullOrEmpty(administrador.Clave) && administrador.Clave.Length < 8)
+                {
+                    ModelState.AddModelError("Clave", "La contraseña debe tener al menos 8 caracteres.");
+                    return View(administrador);
+                }
+
+                // Validación de confirmación de contraseña
+                if (administrador.Clave != administrador.ConfirmarClave)
+                {
+                    ModelState.AddModelError("ConfirmarClave", "Las contraseñas no coinciden.");
+                    return View(administrador);
+                }
+
+                if (!string.IsNullOrEmpty(administrador.Clave))
+                {
+                    administrador.Clave = Utilidades.Cifrar(administrador.Clave);
+                }
+
+                await _administradorService.EditarAdministrador(administrador);
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al editar administrador");
+                ModelState.AddModelError("", "Ocurrió un error al editar el administrador.");
+                return View(administrador);
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> Eliminar(int id)
         {
-            Administrador administrador = await _samaraMarketContext.Administrador.FirstAsync(a => a.IdAdministrador == id);
-            _samaraMarketContext.Administrador.Remove(administrador);
-            await _samaraMarketContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
+            try
+            {
+                var administrador = await _administradorService.GetAdministradorPorId(id);
+                if (administrador == null)
+                {
+                    return NotFound();
+                }
+                return View(administrador);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener administrador para eliminar");
+                return View("Error");
+            }
         }
 
-        // Método para obtener el nombre del Administrador autenticado
-        private async Task<string> ObtenerNombreAdministrador()
+        [HttpPost, ActionName("Eliminar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarConfirmado(int id)
         {
-            var usuarioId = User.Identity.Name;
-            Console.WriteLine($"Usuario autenticado: {usuarioId}");
-
-            if (string.IsNullOrEmpty(usuarioId))
+            try
             {
-                Console.WriteLine("El usuario no está autenticado.");
-                return "No autenticado";
+                await _administradorService.EliminarAdministrador(id);
+                return RedirectToAction(nameof(Lista));
             }
-
-            var administrador = await _samaraMarketContext.Administrador
-                .FirstOrDefaultAsync(a => a.Correo == usuarioId);
-
-            if (administrador == null)
+            catch (Exception ex)
             {
-                Console.WriteLine($"No se encontró administrador con el correo: {usuarioId}");
+                _logger.LogError(ex, "Error al eliminar administrador");
+                return View("Error");
             }
-
-            return administrador?.NombreAdministrador ?? "Administrador";
         }
-
-
-
-        // Método para pasarlo a la vista en el Layout
-        public async Task<IActionResult> Layout()
-        {
-            // Obtener el nombre del administrador autenticado
-            var nombreAdministrador = await ObtenerNombreAdministrador();
-
-            // Verificar si el valor es correcto
-            if (string.IsNullOrEmpty(nombreAdministrador))
-            {
-                // Si no se encuentra el nombre, puedes manejarlo de alguna forma
-                nombreAdministrador = "Administrador";
-            }
-
-            ViewData["NombreAdministrador"] = nombreAdministrador;
-
-            return View();
-        }
-
     }
-
 }
-

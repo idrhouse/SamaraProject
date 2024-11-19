@@ -16,5 +16,9 @@ public partial class Administrador
     public string? Clave { get; set; }
 
     public string? ConfirmarClave { get; set; }
+
+    public string? TokenRecuperacion { get; set; }
+
+    public DateTime? TokenExpiracion { get; set; }
 }
 

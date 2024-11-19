@@ -45,6 +45,10 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.NombreAdministrador)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.TokenRecuperacion)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .IsRequired(false);
         });
 
         modelBuilder.Entity<Emprendedor>(entity =>

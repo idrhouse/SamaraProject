@@ -7,6 +7,7 @@ using SamaraProject1.Servicios.Contrato;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SamaraProject1.Controllers
 {
@@ -19,10 +20,13 @@ namespace SamaraProject1.Controllers
             _administradorService = administradorService;
         }
 
+        [Authorize]
         public IActionResult Registrarse()
         {
             return View();
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Registrarse(Administrador modelo)
         {
@@ -40,8 +44,10 @@ namespace SamaraProject1.Controllers
 
         }
 
-        public  IActionResult IniciarSesion()
+        public IActionResult IniciarSesion()
         {
+            ViewData["SuccessMessage"] = TempData["SuccessMessage"];
+            ViewData["ErrorMessage"] = TempData["ErrorMessage"];
             return View();
         }
 

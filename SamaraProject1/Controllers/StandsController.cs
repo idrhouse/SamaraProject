@@ -36,7 +36,7 @@ namespace SamaraProject1.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ListaPublica()
         {
-            var stands = await _context.Stands.Include(s => s.Emprendedor).ToListAsync();
+            var stands = await _context.Stands.OrderBy(s => s.Numero_Stand).ToListAsync();
             return View(stands);
         }
         // GET: Stands/Crear

@@ -1,0 +1,55 @@
+﻿@model SamaraProject1.Models.RestablecerClaveModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 h-screen">
+
+    <!-- Fondo gris que cubre toda la pantalla -->
+    <div class="min-h-screen bg-white flex items-center justify-center">
+        <div class="w-full max-w-md px-6 py-8 bg-white shadow-lg rounded-lg">
+            <a href="javascript:history.back()" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Volver
+            </a>
+            <!-- Título que se muestra encima del formulario -->            
+            <h2 class="text-3xl font-semibold text-center text-blue-600 mb-6">Restablecer Contraseña</h2>
+            <!-- Formulario de restablecer contraseña -->
+            <form asp-action="RestablecerClave" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+
+                <input type="hidden" asp-for="Token" />
+
+                <!-- Campo para la nueva contraseña -->
+                <div class="mb-4">
+                    <label asp-for="NuevaClave" class="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
+                    <input asp-for="NuevaClave" type="password" class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Introduce tu nueva contraseña" />
+                    <span asp-validation-for="NuevaClave" class="text-red-500 text-sm"></span>
+                </div>
+
+                <!-- Campo para confirmar la nueva contraseña -->
+                <div class="mb-4">
+                    <label asp-for="ConfirmarNuevaClave" class="block text-sm font-medium text-gray-700">Confirmar Nueva Contraseña</label>
+                    <input asp-for="ConfirmarNuevaClave" type="password" class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirma tu nueva contraseña" />
+                    <span asp-validation-for="ConfirmarNuevaClave" class="text-red-500 text-sm"></span>
+                </div>
+
+                <!-- Botón de enviar -->
+                <div class="mb-6">
+                    <input type="submit" value="Restablecer Contraseña" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
