@@ -44,7 +44,7 @@ namespace SamaraProject1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Nuevo(Administrador administrador)
+        public async Task<IActionResult> Crear(Administrador administrador)
         {
             if (!ModelState.IsValid)
             {
