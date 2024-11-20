@@ -29,7 +29,7 @@
             <form asp-controller="Inicio" asp-action="IniciarSesion" method="post">
                 <!-- Campo Correo -->
                 <div class="mb-4">
-                    <input type="text" name="correo" placeholder="Correo electrónico" required class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input type="text" name="correo" placeholder="Correo electrónico" required class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" oninput="this.value = this.value.toLowerCase()">
                 </div>
 
                 <!-- Campo Contraseña -->

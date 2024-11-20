@@ -128,7 +128,7 @@ namespace SamaraProject1.Controllers
                 if (existingStand.Numero_Stand != stand.Numero_Stand ||
                     (stand.IdEmprendedor != existingStand.IdEmprendedor && !existingStand.Disponible))
                 {
-                    ModelState.AddModelError("", "El stand ya está asignado y no puede reasignarse.");
+                    ModelState.AddModelError("", $"El stand número {stand.Numero_Stand} ya está creado.");
                     ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
                     return View(stand);
                 }

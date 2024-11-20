@@ -159,6 +159,12 @@ namespace SamaraProject1.Controllers
                     {
                         emprendedorExistente.ImagenUrl = await GuardarImagen(imagen);
                     }
+                    else
+                    {
+                        // Imagen predeterminada
+                        emprendedor.ImagenUrl = "/imagenes/emprendedores/default-emprendedor.jpg";
+                        Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
+                    }
 
                     // Actualizar solo los valores modificados manualmente
                     emprendedorExistente.NombreEmprendedor = emprendedor.NombreEmprendedor;

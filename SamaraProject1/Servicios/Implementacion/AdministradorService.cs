@@ -118,7 +118,7 @@ namespace SamaraProject1.Servicios.Implementacion
 
         public async Task<List<Administrador>> GetAllAdministradores()
         {
-            return await _dbContext.Administrador.ToListAsync();
+            return await _dbContext.Administrador.OrderBy(a => a.IdAdministrador).ToListAsync();
         }
 
         public async Task<Administrador> GetAdministradorPorId(int id)

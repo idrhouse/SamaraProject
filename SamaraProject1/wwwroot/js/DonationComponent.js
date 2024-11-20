@@ -37,7 +37,7 @@ class DonationComponent {
               Transferencia Bancaria
             </h3>
             <p class="text-gray-700 mb-4">
-              Puedes realizar tu donación mediante transferencia bancaria a las siguientes cuentas:
+              Puedes realizar tu donación mediante transferencia bancaria a la siguiente cuenta:
             </p>
             <ul class="list-disc pl-5 text-gray-600">
               <li>Asociación Samara Viva</li>
