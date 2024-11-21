@@ -35,11 +35,11 @@
                 </div>
             </div>
 
-            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            @if (Model.ImagenDatos != null)
             {
                 <div class="mb-4">
                     <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Emprendedor</p>
-                    <img src="@Model.ImagenUrl" alt="Imagen del emprendedor" class="w-full h-48 object-cover rounded-lg">
+                    <img src="@Url.Action("ObtenerImagen", "Emprendedor", new { id = Model.IdEmprendedor })" alt="@Model.NombreEmprendedor" class="rounded-md shadow-lg max-w-full">
                 </div>
             }
 

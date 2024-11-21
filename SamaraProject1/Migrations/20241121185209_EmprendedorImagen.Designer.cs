@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SamaraProject1.Models;
@@ -11,9 +12,11 @@ using SamaraProject1.Models;
 namespace SamaraProject1.Migrations
 {
     [DbContext(typeof(SamaraMarketContext))]
-    partial class SamaraMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20241121185209_EmprendedorImagen")]
+    partial class EmprendedorImagen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,8 +142,10 @@ namespace SamaraProject1.Migrations
                     b.Property<TimeSpan>("HoraInicio")
                         .HasColumnType("time");
 
-                    b.Property<byte[]>("ImagenDatos")
-                        .HasColumnType("bytea");
+                    b.Property<string>("ImagenUrl")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Nombre")
                         .HasMaxLength(50)
@@ -173,8 +178,10 @@ namespace SamaraProject1.Migrations
                         .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("ImagenDatos")
-                        .HasColumnType("bytea");
+                    b.Property<string>("ImagenUrl")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Nombre_Producto")
                         .IsRequired()

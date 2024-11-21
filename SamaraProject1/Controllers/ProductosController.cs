@@ -63,7 +63,24 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
+        //Obtener Imagen
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ObtenerImagen(int id)
+        {
+            var productos = _context.Productos.FirstOrDefault(e => e.IdProducto == id);
 
+            if (productos == null || productos.ImagenDatos == null)
+            {
+                // Devuelve una imagen predeterminada si no existe la imagen
+                var rutaDefault = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/default-producto.png");
+                var defaultImage = System.IO.File.ReadAllBytes(rutaDefault);
+                return File(defaultImage, "image/jpeg");
+            }
+
+            // Devuelve la imagen almacenada en la base de datos
+            return File(productos.ImagenDatos, "image/jpeg");
+        }
 
 
         //POST Crear
@@ -73,38 +90,41 @@ namespace SamaraProject1.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                if (!ModelState.IsValid)
                 {
-                    producto.ImagenUrl = await GuardarImagen(imagen);
-                }
-                else
-                {
-                    // Imagen predeterminada
-                    producto.ImagenUrl = "/imagenes/productos/producto_defecto.png";
-                    Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
+                    return View(producto);
                 }
 
-                // Create the product without assigning Emprendedores yet
-                _context.Add(producto);
-                await _context.SaveChangesAsync();
-
-                // Now add the relationships
-                if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
+            if (imagen != null && imagen.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
                 {
-                    foreach (var idEmprendedor in SelectedEmprendedores)
+                    await imagen.CopyToAsync(memoryStream);
+                        producto.ImagenDatos = memoryStream.ToArray();
+                }
+            }
+
+            // Create the product without assigning Emprendedores yet
+            _context.Add(producto);
+            await _context.SaveChangesAsync();
+
+            // Now add the relationships
+            if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
+            {
+                foreach (var idEmprendedor in SelectedEmprendedores)
+                {
+                    var productoEmprendedor = new ProductoEmprendedor
                     {
-                        var productoEmprendedor = new ProductoEmprendedor
-                        {
-                            IdProducto = producto.IdProducto,
-                            IdEmprendedor = idEmprendedor
-                        };
-                        _context.Add(productoEmprendedor);
-                    }
-                    await _context.SaveChangesAsync();
+                        IdProducto = producto.IdProducto,
+                        IdEmprendedor = idEmprendedor
+                    };
+                    _context.Add(productoEmprendedor);
                 }
+                await _context.SaveChangesAsync();
+            }
 
-                TempData["Message"] = "Producto creado exitosamente.";
-                return RedirectToAction(nameof(Lista));
+            TempData["Message"] = "Producto creado exitosamente.";
+            return RedirectToAction(nameof(Lista));
             }
 
             // If we got this far, something failed; redisplay form
@@ -163,14 +183,16 @@ namespace SamaraProject1.Controllers
 
                     if (imagen != null && imagen.Length > 0)
                     {
-                        // If a new image is uploaded, delete the old one and save the new one
-                        await EliminarImagenAnterior(existingProduct.ImagenUrl);
-                        producto.ImagenUrl = await GuardarImagen(imagen);
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imagen.CopyToAsync(memoryStream);
+                            existingProduct.ImagenDatos = memoryStream.ToArray();
+                        }
                     }
                     else
                     {
                         // If no new image is uploaded, keep the existing image URL
-                        producto.ImagenUrl = existingProduct.ImagenUrl;
+                        producto.ImagenDatos = existingProduct.ImagenDatos;
                     }
 
                     // Update the product
@@ -232,17 +254,23 @@ namespace SamaraProject1.Controllers
             return View(producto);
         }
 
+        //Post Eliminar
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarEliminar(int id)
         {
             var producto = await _context.Productos.FindAsync(id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
             if (producto != null)
             {
-                await EliminarImagenAnterior(producto.ImagenUrl);
                 _context.Productos.Remove(producto);
                 await _context.SaveChangesAsync();
-                TempData["Message"] = "Producto eliminado exitosamente.";
+                return RedirectToAction(nameof(Lista));
             }
             return RedirectToAction(nameof(Lista));
         }
@@ -252,33 +280,7 @@ namespace SamaraProject1.Controllers
             return _context.Productos.Any(e => e.IdProducto == id);
         }
 
-        private async Task<string> GuardarImagen(IFormFile imagen)
-        {
-            string folder = "imagenes/productos";
-            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folder);
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + imagen.FileName;
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await imagen.CopyToAsync(fileStream);
-            }
-            return $"/{folder}/{uniqueFileName}";
-        }
+        
 
-        private async Task EliminarImagenAnterior(string? imagenUrl)
-        {
-            if (!string.IsNullOrEmpty(imagenUrl))
-            {
-                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imagenUrl.TrimStart('/'));
-                if (System.IO.File.Exists(imagePath))
-                {
-                    System.IO.File.Delete(imagePath);
-                }
-            }
-        }
     }
 }

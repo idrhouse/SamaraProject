@@ -43,32 +43,43 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
+        //Obtener Imagen
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ObtenerImagen(int id)
+        {
+            var emprendedor = _context.Emprendedores.FirstOrDefault(e => e.IdEmprendedor == id);
+
+            if (emprendedor == null || emprendedor.ImagenDatos == null)
+            {
+                // Devuelve una imagen predeterminada si no existe la imagen
+                var rutaDefault = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/default-profile.png");
+                var defaultImage = System.IO.File.ReadAllBytes(rutaDefault);
+                return File(defaultImage, "image/jpeg");
+            }
+
+            // Devuelve la imagen almacenada en la base de datos
+            return File(emprendedor.ImagenDatos, "image/jpeg");
+        }
+
+
         // POST: Emprendedor/Crear        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile? imagen)
         {
-            // Validar el modelo
             if (!ModelState.IsValid)
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Error: {error.ErrorMessage}");
-                }
                 return View(emprendedor);
             }
 
-            // Manejo de la imagen
             if (imagen != null && imagen.Length > 0)
             {
-                emprendedor.ImagenUrl = await GuardarImagen(imagen);
-                Console.WriteLine($"Imagen subida: {imagen.FileName}");
-            }
-            else
-            {
-                // Imagen predeterminada
-                emprendedor.ImagenUrl = "/imagenes/emprendedores/default-emprendedor.jpg";
-                Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imagen.CopyToAsync(memoryStream);
+                    emprendedor.ImagenDatos = memoryStream.ToArray();
+                }
             }
 
             // Validar si el correo ya existe
@@ -81,25 +92,17 @@ namespace SamaraProject1.Controllers
                 return View(emprendedor);
             }
 
-            // Guardar el emprendedor
-            try
+            // Si no se sube una imagen, deja el campo null o lógica de imagen predeterminada
+            if (emprendedor.ImagenDatos == null)
             {
-                _context.Add(emprendedor);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Nuevo emprendedor creado exitosamente.");
+                emprendedor.ImagenDatos = null; // O mantenlo como null para usar un endpoint de imagen predeterminada
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al guardar en la base de datos: {ex.Message}");
-                ModelState.AddModelError(string.Empty, "Hubo un error al guardar los datos.");
-                return View(emprendedor);
-            }
+
+            _context.Add(emprendedor);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Lista));
         }
-
-
-
 
 
         // GET: Emprendedor/Editar/5
@@ -137,64 +140,36 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            // Verificar si el correo ha cambiado y si ya existe otro emprendedor con el mismo correo
-            if (emprendedor.Correo != emprendedorExistente.Correo)
+            if (imagen != null && imagen.Length > 0)
             {
-                var correoExistente = await _context.Emprendedores
-                    .FirstOrDefaultAsync(e => e.Correo == emprendedor.Correo && e.IdEmprendedor != id);
-
-                if (correoExistente != null)
+                using (var memoryStream = new MemoryStream())
                 {
-                    ModelState.AddModelError("Correo", "Ya existe un emprendedor con este correo.");
-                    return View(emprendedor); // Devolvemos solo el emprendedor
+                    await imagen.CopyToAsync(memoryStream);
+                    emprendedorExistente.ImagenDatos = memoryStream.ToArray();
                 }
             }
-
-            if (ModelState.IsValid)
+            else
             {
-                try
-                {
-                    // Manejo de la imagen
-                    if (imagen != null && imagen.Length > 0)
-                    {
-                        emprendedorExistente.ImagenUrl = await GuardarImagen(imagen);
-                    }
-                    else
-                    {
-                        // Imagen predeterminada
-                        emprendedor.ImagenUrl = "/imagenes/emprendedores/default-emprendedor.jpg";
-                        Console.WriteLine("No se subió imagen, se usará imagen predeterminada.");
-                    }
-
-                    // Actualizar solo los valores modificados manualmente
-                    emprendedorExistente.NombreEmprendedor = emprendedor.NombreEmprendedor;
-                    emprendedorExistente.Apellidos = emprendedor.Apellidos;
-                    emprendedorExistente.Correo = emprendedor.Correo;
-                    emprendedorExistente.DescripcionNegocio = emprendedor.DescripcionNegocio;
-                    emprendedorExistente.NombreNegocio = emprendedor.NombreNegocio;
-                    emprendedorExistente.Telefono = emprendedor.Telefono;
-
-                    _context.Update(emprendedorExistente); // Adjuntar y marcar como modificado
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EmprendedorExists(emprendedor.IdEmprendedor))
-                    {
-                        return NotFound();
-                    }
-                    throw; // Relanzar la excepción para errores inesperados
-                }
-
-                return RedirectToAction(nameof(Lista));
+                // If no new image is uploaded, keep the existing image URL
+                emprendedor.ImagenDatos = emprendedorExistente.ImagenDatos;
             }
 
-            return View(emprendedor); // Devolvemos solo el emprendedor
+            emprendedorExistente.NombreEmprendedor = emprendedor.NombreEmprendedor;
+            emprendedorExistente.Apellidos = emprendedor.Apellidos;
+            emprendedorExistente.Correo = emprendedor.Correo;
+            emprendedorExistente.DescripcionNegocio = emprendedor.DescripcionNegocio;
+            emprendedorExistente.NombreNegocio = emprendedor.NombreNegocio;
+            emprendedorExistente.Telefono = emprendedor.Telefono;
+
+            _context.Update(emprendedorExistente);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Lista));
         }
 
 
 
-        // GET: Emprendedor/Eliminar/5
+        // GET: Emprendedor/Eliminar
         public async Task<IActionResult> Eliminar(int? id)
         {
             if (id == null)
@@ -233,9 +208,10 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
+
             if (emprendedor.Productos.Any() || emprendedor.Stands.Any())
             {
-                ModelState.AddModelError("", "No se puede eliminar el emprendedor porque tiene productos o stands asociados.");
+                ModelState.AddModelError("", "No se puede eliminar el emprendedor porque tiene stands asociados.");
                 ViewBag.TieneProductos = emprendedor.Productos.Any();
                 ViewBag.TieneStands = emprendedor.Stands.Any();
                 return View(emprendedor);
@@ -243,15 +219,7 @@ namespace SamaraProject1.Controllers
 
             try
             {
-                if (!string.IsNullOrEmpty(emprendedor.ImagenUrl))
-                {
-                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, emprendedor.ImagenUrl.TrimStart('/'));
-                    if (System.IO.File.Exists(imagePath))
-                    {
-                        System.IO.File.Delete(imagePath);
-                    }
-                }
-
+                // Eliminar el emprendedor de la base de datos
                 _context.Emprendedores.Remove(emprendedor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Lista));
@@ -265,29 +233,5 @@ namespace SamaraProject1.Controllers
             }
         }
 
-        private bool EmprendedorExists(int id)
-        {
-            return _context.Emprendedores.Any(e => e.IdEmprendedor == id);
-        }
-
-        private async Task<string> GuardarImagen(IFormFile imagen)
-        {
-            string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
-            string rutaCarpeta = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "emprendedores");
-
-            if (!Directory.Exists(rutaCarpeta))
-            {
-                Directory.CreateDirectory(rutaCarpeta);
-            }
-
-            string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
-
-            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
-            {
-                await imagen.CopyToAsync(stream);
-            }
-
-            return "/imagenes/emprendedores/" + nombreUnico;
-        }
     }
 }

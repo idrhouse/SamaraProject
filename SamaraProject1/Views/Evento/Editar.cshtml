@@ -48,9 +48,9 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Imagen Actual</label>
-                    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                    @if (Model.ImagenDatos != null)
                     {
-                        <img src="@Model.ImagenUrl" alt="Imagen actual" class="mt-2 h-32 w-32 object-cover rounded-lg" />
+                        <img src="@Url.Action("ObtenerImagen", "Evento", new { id = Model.IdEvento })" alt="@Model.Nombre" class="mt-2 h-32 w-32 object-cover rounded-lg">                        
                     }
                     else
                     {

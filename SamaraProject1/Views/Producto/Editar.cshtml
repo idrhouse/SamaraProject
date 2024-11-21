@@ -44,11 +44,11 @@
                     <input type="file" name="imagen" id="imagen" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
 
-                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                @if (Model.ImagenDatos != null)
                 {
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Imagen Actual</label>
-                        <img src="@Model.ImagenUrl" alt="Imagen actual del producto" class="mt-2 h-48 w-full object-cover rounded-lg">
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Producto</p>
+                        <img src="@Url.Action("ObtenerImagen", "Producto", new { id = Model.IdProducto })" alt="@Model.Nombre_Producto" class="rounded-md shadow-lg max-w-full">
                     </div>
                 }
 

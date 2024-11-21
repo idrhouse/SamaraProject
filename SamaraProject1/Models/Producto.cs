@@ -13,7 +13,9 @@ namespace SamaraProject1.Models
         [Required(ErrorMessage = "La descripción es obligatoria.")]
         [MaxLength(500)]
         public string? Descripcion { get; set; }
-        public string? ImagenUrl { get; set; }
+
+        [Display(Name = "Imagen del Producto")]
+        public byte[]? ImagenDatos { get; set; }
 
         [Required(ErrorMessage = "Seleccione un tipo de producto.")]
         public int? IdTipoProducto { get; set; }

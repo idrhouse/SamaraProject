@@ -36,7 +36,7 @@ namespace SamaraProject1.Models
         public string? Correo { get; set; }
 
         [Display(Name = "Imagen del Emprendedor")]
-        public string? ImagenUrl { get; set; }
+        public byte[]? ImagenDatos { get; set; }
 
         public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
 

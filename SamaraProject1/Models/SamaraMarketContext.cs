@@ -75,10 +75,8 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.Correo)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.ImagenUrl)
-                .HasMaxLength(500)  
-                .IsUnicode(false) 
-                .IsRequired(false);
+            entity.Property(e => e.ImagenDatos)
+                .HasColumnType("bytea");
         });
 
         modelBuilder.Entity<Producto>(entity =>
@@ -93,9 +91,8 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-            entity.Property(e => e.ImagenUrl)
-                .HasMaxLength(500)
-                .IsUnicode(false);
+            entity.Property(e => e.ImagenDatos)
+                .HasColumnType("bytea");
 
             entity.HasOne(p => p.TipoProducto)
                 .WithMany(t => t.Productos)
@@ -151,10 +148,9 @@ public partial class SamaraMarketContext : DbContext
                 .IsRequired();  
             entity.Property(e => e.HoraFin)
                 .HasColumnType("time")  
-                .IsRequired();  
-            entity.Property(e => e.ImagenUrl)
-                .HasMaxLength(500)
-                .IsUnicode(false);
+                .IsRequired();
+            entity.Property(e => e.ImagenDatos)
+                .HasColumnType("bytea");
         });
 
         // Relación 1 a muchos: Producto - TipoProducto

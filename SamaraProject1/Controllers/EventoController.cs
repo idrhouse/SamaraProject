@@ -29,9 +29,24 @@ namespace SamaraProject1.Controllers
         }
 
         [AllowAnonymous]
+        public IActionResult Calendario()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
         public async Task<IActionResult> ObtenerEventos()
         {
-            var eventos = await _context.Eventos.ToListAsync();
+            var eventos = await _context.Eventos.Select(e => new
+            {
+                id = e.IdEvento,
+                title = e.Nombre,
+                start = e.Fecha,
+                end = e.Fecha.Date + e.HoraFin,
+                description = e.Descripcion,
+                allDay = false
+            }).ToListAsync();
+
             return Json(eventos);
         }
 
@@ -41,29 +56,30 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
+        //Obtener Imagen
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ObtenerImagen(int id)
+        {
+            var evento = _context.Eventos.FirstOrDefault(e => e.IdEvento == id);
+
+            if (evento == null || evento.ImagenDatos == null)
+            {
+                // Devuelve una imagen predeterminada si no existe la imagen
+                var rutaDefault = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/default-evento.jpg");
+                var defaultImage = System.IO.File.ReadAllBytes(rutaDefault);
+                return File(defaultImage, "image/jpeg");
+            }
+
+            // Devuelve la imagen almacenada en la base de datos
+            return File(evento.ImagenDatos, "image/jpeg");
+        }
+
         // POST: Evento/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Evento evento, IFormFile? imagen)
         {
-            // Validación personalizada del archivo
-            if (imagen == null || imagen.Length == 0)
-            {
-                Console.WriteLine("No se recibió ningún archivo. Se usará una imagen predeterminada.");
-                evento.ImagenUrl = "/imagenes/eventos/default-evento.jpg";
-            }
-            else
-            {
-                evento.ImagenUrl = await GuardarImagen(imagen);
-                Console.WriteLine($"Imagen subida: {imagen.FileName}");
-            }
-
-            if (evento.HoraInicio >= evento.HoraFin)
-            {
-                ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
-            }
-
-
             // Validar el modelo
             if (!ModelState.IsValid)
             {
@@ -73,6 +89,28 @@ namespace SamaraProject1.Controllers
                 }
                 return View(evento);
             }
+
+            // Validación personalizada del archivo
+            if (imagen != null && imagen.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imagen.CopyToAsync(memoryStream);
+                    evento.ImagenDatos = memoryStream.ToArray();
+                }
+            }
+
+            if (evento.Fecha < DateTime.Today)
+            {
+                ModelState.AddModelError("Fecha", "No se puede agregar una fecha anterior al día de hoy.");
+                return View(evento);
+            }
+
+            if (evento.HoraInicio >= evento.HoraFin)
+            {
+                ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
+                return View(evento);
+            }            
 
             // Convertir la fecha y hora a UTC antes de guardar
             evento.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
@@ -132,17 +170,34 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
+            if (evento.Fecha < DateTime.Today)
+            {
+                ModelState.AddModelError("Fecha", "No se puede agregar una fecha anterior al día de hoy.");
+                return View(evento);
+            }
+
+            if (evento.HoraInicio >= evento.HoraFin)
+            {
+                ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
+                return View(evento);
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (imagen != null && imagen.Length > 0)
                     {
-                        evento.ImagenUrl = await GuardarImagen(imagen);
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imagen.CopyToAsync(memoryStream);
+                            eventoExistente.ImagenDatos = memoryStream.ToArray();
+                        }
                     }
                     else
                     {
-                        evento.ImagenUrl = eventoExistente.ImagenUrl;
+                        // If no new image is uploaded, keep the existing image URL
+                        evento.ImagenDatos = eventoExistente.ImagenDatos;
                     }
 
                     // Convertir la fecha y hora a UTC antes de guardar
@@ -192,6 +247,7 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
             var evento = await _context.Eventos.FindAsync(id);
+
             if (evento == null)
             {
                 return NotFound();
@@ -199,50 +255,28 @@ namespace SamaraProject1.Controllers
 
             try
             {
-                if (!string.IsNullOrEmpty(evento.ImagenUrl) &&
-                    !evento.ImagenUrl.Equals("/imagenes/eventos/1e197cea-904c-49ea-a11a-b862881a9ea2_135011440_202779264886845_4680377247879112035_n", StringComparison.OrdinalIgnoreCase))
+                if (evento != null)                    
                 {
-                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, evento.ImagenUrl.TrimStart('/'));
-                    if (System.IO.File.Exists(imagePath))
-                    {
-                        System.IO.File.Delete(imagePath);
-                    }
+                    _context.Eventos.Remove(evento);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Lista));
                 }
 
-                _context.Eventos.Remove(evento);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Lista));
+                
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Ocurrió un error al intentar eliminar el evento: " + ex.Message);
                 return View(evento);
             }
+            return RedirectToAction(nameof(Lista));
+
         }
 
         private bool EventoExists(int id)
         {
             return _context.Eventos.Any(e => e.IdEvento == id);
         }
-
-        private async Task<string> GuardarImagen(IFormFile imagen)
-        {
-            string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
-            string rutaCarpeta = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", "eventos");
-
-            if (!Directory.Exists(rutaCarpeta))
-            {
-                Directory.CreateDirectory(rutaCarpeta);
-            }
-
-            string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
-
-            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
-            {
-                await imagen.CopyToAsync(stream);
-            }
-
-            return "/imagenes/eventos/" + nombreUnico;
-        }
+                
     }
 }
