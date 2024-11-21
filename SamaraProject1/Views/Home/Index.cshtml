@@ -63,24 +63,43 @@
 
     </div>
 
-<!-- YouTube Video Section -->
-<div class="bg-gray-100 py-16 sm:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Descubre Feria Sámara Market</h2>
-        <div class="max-w-5xl mx-auto">
-            <div class="aspect-w-16 aspect-h-9 h-[600px] sm:h-[600px] md:h-[600px] lg:h-[600px]">
-                <iframe src="https://www.youtube.com/embed/25V7mPgLubI"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen
-                        class="w-full h-full rounded-xl shadow-2xl"></iframe>
+    <!-- YouTube Video Section -->
+    <div class="bg-gray-100 py-16 sm:py-24 mb-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Descubre Feria Sámara Market</h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="aspect-w-16 aspect-h-9 h-[600px] sm:h-[600px] md:h-[600px] lg:h-[600px]">
+                    <iframe src="https://www.youtube.com/embed/25V7mPgLubI"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            class="w-full h-full rounded-xl shadow-2xl"></iframe>
+                </div>
+                <p class="mt-6 text-center text-lg text-gray-600">
+                    Explora nuestra feria y conoce la experiencia única que ofrecemos en Playa Sámara.
+                </p>
             </div>
-            <p class="mt-6 text-center text-lg text-gray-600">
-                Explora nuestra feria y conoce la experiencia única que ofrecemos en Playa Sámara.
-            </p>
         </div>
     </div>
-</div>
+
+    <!-- Carrousel productos component -->
+    <div class="bg-white py-16">
+        <h2 class="text-center text-2xl font-bold mb-4">Productos Destacados</h2>
+        <p id="current-product-name" class="text-center text-lg text-gray-700 mb-8"></p>
+        <div class="relative" id="featured-carousel">
+            <div id="featured-slides" class="overflow-hidden relative w-full h-64">
+                <!-- Las imágenes se cargarán dinámicamente aquí -->
+            </div>
+            <!-- Botones de navegación -->
+            <button id="prevFeatured" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300">
+                &#8592;
+            </button>
+            <button id="nextFeatured" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300">
+                &#8594;
+            </button>
+        </div>
+    </div>
+
 
     <!-- Features Section -->
     <div class="py-12 bg-white">
@@ -201,6 +220,9 @@
             </a>
         </div>
     </div>
+
+    
+
 </div>
 
 @section Scripts {
@@ -219,7 +241,94 @@
     <!-- CalendarioEventos component -->
     <script src="~/js/CalendarioEventos.js"></script>
 
+    <!-- Donation component -->
     <script src="/js/DonationComponent.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const featuredCarousel = document.getElementById('featured-carousel');
+            const featuredSlides = document.getElementById('featured-slides');
+            const currentProductName = document.getElementById('current-product-name');
+            const prevButton = document.getElementById('prevFeatured');
+            const nextButton = document.getElementById('nextFeatured');
+
+            let featuredIndex = 0;
+            let featuredProducts = [];
+            let autoAdvanceInterval;
+
+            // Cargar imágenes desde el backend
+            async function loadFeaturedProducts() {
+                try {
+                    const response = await fetch('/FeaturedProducts'); // Nueva ruta del controlador
+                    featuredProducts = await response.json();
+                    renderSlides();
+                    updateProductName();
+                    startAutoAdvance();
+                } catch (error) {
+                    console.error('Error al cargar los productos destacados:', error);
+                }
+            }
+
+            function renderSlides() {
+                featuredSlides.innerHTML = '';
+                featuredProducts.forEach((product, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = `absolute inset-0 w-full h-full transition-opacity duration-500 ${index === featuredIndex ? 'opacity-100' : 'opacity-0'}`;
+                    slide.innerHTML = `<img src="${product.imageUrl}" alt="${product.name}" class="object-cover w-full h-full" />`;
+                    featuredSlides.appendChild(slide);
+                });
+            }
+
+            function updateProductName() {
+                if (featuredProducts.length > 0) {
+                    currentProductName.textContent = featuredProducts[featuredIndex].name;
+                } else {
+                    currentProductName.textContent = "No hay productos destacados.";
+                }
+            }
+
+            function showSlide(index) {
+                featuredIndex = (index + featuredProducts.length) % featuredProducts.length;
+                renderSlides();
+                updateProductName();
+            }
+
+            function nextSlide() {
+                showSlide(featuredIndex + 1);
+            }
+
+            function prevSlide() {
+                showSlide(featuredIndex - 1);
+            }
+
+            function startAutoAdvance() {
+                stopAutoAdvance(); // Detener cualquier intervalo anterior
+                autoAdvanceInterval = setInterval(nextSlide, 5000); // Cambiar slide cada 5 segundos
+            }
+
+            function stopAutoAdvance() {
+                if (autoAdvanceInterval) {
+                    clearInterval(autoAdvanceInterval);
+                    autoAdvanceInterval = null;
+                }
+            }
+
+            prevButton.addEventListener('click', () => {
+                stopAutoAdvance(); // Detener autoavance temporalmente cuando el usuario interactúa
+                prevSlide();
+            });
+
+            nextButton.addEventListener('click', () => {
+                stopAutoAdvance(); // Detener autoavance temporalmente cuando el usuario interactúa
+                nextSlide();
+            });
+
+            loadFeaturedProducts();
+        });
+    </script>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

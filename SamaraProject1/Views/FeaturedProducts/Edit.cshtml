@@ -1,0 +1,91 @@
+﻿@model SamaraProject1.Models.FeaturedProduct
+
+<div class="max-w-2xl mx-auto py-10 mt-4 bg-white shadow-lg rounded-lg">
+    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Editar Producto Destacado</h1>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">@TempData["Error"]</span>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">@TempData["Success"]</span>
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data" action="/FeaturedProducts/Edit/@Model.Id" class="space-y-6">
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Producto</label>
+            <input type="text" id="name" name="name" value="@Model.Name"
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div>
+            <label for="image" class="block text-sm font-medium text-gray-700">Imagen (opcional)</label>
+            <input type="file" id="image" name="image" accept="image/*"
+                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <p class="mt-2 text-sm text-gray-500">Deja este campo vacío para no cambiar la imagen actual.</p>
+        </div>
+        <div>
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-6 flex justify-between items-center">
+        <a href="/FeaturedProducts/List"
+           class="text-blue-600 hover:underline hover:text-blue-800">Regresar al Listado</a>
+        <button id="deleteButton"
+                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+            Eliminar
+        </button>
+    </div>
+</div>
+
+<!-- Modal para confirmación de eliminación -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">¿Estás seguro?</h2>
+        <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer. ¿Deseas continuar?</p>
+        <div class="flex justify-end space-x-3">
+            <button id="cancelButton"
+                    class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
+                Cancelar
+            </button>
+            <form id="deleteForm" method="post" action="/FeaturedProducts/Delete/@Model.Id">
+                <button type="submit"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Seleccionar botones y modal
+    const deleteButton = document.getElementById('deleteButton');
+    const cancelButton = document.getElementById('cancelButton');
+    const confirmModal = document.getElementById('confirmModal');
+    const deleteForm = document.getElementById('deleteForm');
+
+    // Mostrar el modal
+    deleteButton.addEventListener('click', () => {
+        confirmModal.classList.remove('hidden');
+    });
+
+    // Ocultar el modal sin eliminar
+    cancelButton.addEventListener('click', () => {
+        confirmModal.classList.add('hidden');
+    });
+
+    // Enviar el formulario de eliminación y cerrar el modal
+    deleteForm.addEventListener('submit', (event) => {
+        // Aquí puedes agregar algún código adicional si es necesario
+        confirmModal.classList.add('hidden'); // Ocultar el modal cuando se confirme la eliminación
+    });
+</script>
