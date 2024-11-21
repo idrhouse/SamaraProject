@@ -37,16 +37,7 @@ namespace SamaraProject1.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerEventos()
         {
-            var eventos = await _context.Eventos.Select(e => new
-            {
-                id = e.IdEvento,
-                title = e.Nombre,
-                start = e.Fecha,
-                end = e.Fecha.Date + e.HoraFin,
-                description = e.Descripcion,
-                allDay = false
-            }).ToListAsync();
-
+            var eventos = await _context.Eventos.ToListAsync();
             return Json(eventos);
         }
 

@@ -2163,3 +2163,45 @@ body {
         padding-bottom: 8rem
     }
 }
+
+
+.modern-calendar {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+    .modern-calendar .fc-toolbar-title {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .modern-calendar .fc-button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+        .modern-calendar .fc-button:hover {
+            background-color: #45a049;
+        }
+
+    .modern-calendar .fc-event {
+        background-color: #3788d8;
+        border: none;
+        border-radius: 3px;
+        padding: 2px 5px;
+    }
+
+    .modern-calendar .fc-event-main {
+        color: white;
+    }
