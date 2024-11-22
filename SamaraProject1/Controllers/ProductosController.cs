@@ -173,13 +173,20 @@ namespace SamaraProject1.Controllers
             {
                 try
                 {
-                    // Fetch the existing product from the database
-                    var existingProduct = await _context.Productos.AsNoTracking().FirstOrDefaultAsync(p => p.IdProducto == id);
+                    // Obtén el producto existente de la base de datos
+                    var existingProduct = await _context.Productos
+                        .Include(p => p.ProductoEmprendedores)
+                        .FirstOrDefaultAsync(p => p.IdProducto == id);
 
                     if (existingProduct == null)
                     {
                         return NotFound();
                     }
+
+                    // Actualiza los datos del producto existente con los nuevos datos
+                    existingProduct.Nombre_Producto = producto.Nombre_Producto;
+                    existingProduct.Descripcion = producto.Descripcion;
+                    existingProduct.IdTipoProducto = producto.IdTipoProducto;
 
                     if (imagen != null && imagen.Length > 0)
                     {
@@ -189,35 +196,26 @@ namespace SamaraProject1.Controllers
                             existingProduct.ImagenDatos = memoryStream.ToArray();
                         }
                     }
-                    else
-                    {
-                        // If no new image is uploaded, keep the existing image URL
-                        producto.ImagenDatos = existingProduct.ImagenDatos;
-                    }
 
-                    // Update the product
-                    _context.Update(producto);
+                    // Elimina relaciones existentes de ProductoEmprendedores
+                    _context.ProductoEmprendedores.RemoveRange(existingProduct.ProductoEmprendedores);
 
-                    // Remove existing relationships
-                    var existingRelationships = await _context.ProductoEmprendedores
-                        .Where(pe => pe.IdProducto == producto.IdProducto)
-                        .ToListAsync();
-                    _context.ProductoEmprendedores.RemoveRange(existingRelationships);
-
-                    // Add new relationships
+                    // Añade las nuevas relaciones
                     if (SelectedEmprendedores != null)
                     {
                         foreach (var emprendedorId in SelectedEmprendedores)
                         {
                             _context.ProductoEmprendedores.Add(new ProductoEmprendedor
                             {
-                                IdProducto = producto.IdProducto,
+                                IdProducto = existingProduct.IdProducto,
                                 IdEmprendedor = emprendedorId
                             });
                         }
                     }
 
+                    // Guarda los cambios
                     await _context.SaveChangesAsync();
+
                     TempData["Message"] = "Producto actualizado exitosamente.";
                     return RedirectToAction(nameof(Lista));
                 }
@@ -233,11 +231,14 @@ namespace SamaraProject1.Controllers
                     }
                 }
             }
+
             ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
             ViewBag.SelectedEmprendedores = SelectedEmprendedores;
+
             return View(producto);
         }
+
 
         //DELETE
         public async Task<IActionResult> Eliminar(int id)
