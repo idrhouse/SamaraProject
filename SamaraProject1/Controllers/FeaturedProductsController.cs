@@ -57,6 +57,7 @@ namespace SamaraProject1.Controllers
             System.IO.File.WriteAllText(_dataFilePath, json);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetFeaturedProducts()
         {

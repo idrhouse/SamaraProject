@@ -160,67 +160,68 @@ namespace SamaraProject1.Controllers
         }
 
         //POST Editar
-        // POST: Evento/Editar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, Evento evento, IFormFile? imagen)
+        public async Task<IActionResult> Editar(int id, Producto producto, List<int> SelectedEmprendedores, IFormFile? imagen)
         {
-            if (id != evento.IdEvento)
+            if (id != producto.IdProducto)
             {
                 return NotFound();
-            }
-
-            // Obtener el evento existente desde la base de datos
-            var eventoExistente = await _context.Eventos.FirstOrDefaultAsync(e => e.IdEvento == id);
-
-            if (eventoExistente == null)
-            {
-                return NotFound();
-            }
-
-            // Validaciones personalizadas
-            if (evento.Fecha < DateTime.Today)
-            {
-                ModelState.AddModelError("Fecha", "No se puede agregar una fecha anterior al día de hoy.");
-                return View(evento);
-            }
-
-            if (evento.HoraInicio >= evento.HoraFin)
-            {
-                ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
-                return View(evento);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Actualizar datos del evento existente
-                    eventoExistente.Nombre = evento.Nombre;
-                    eventoExistente.Descripcion = evento.Descripcion;
-                    eventoExistente.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
-                    eventoExistente.HoraInicio = evento.HoraInicio;
-                    eventoExistente.HoraFin = evento.HoraFin;
+                    // Obtén el producto existente de la base de datos
+                    var existingProduct = await _context.Productos
+                        .Include(p => p.ProductoEmprendedores)
+                        .FirstOrDefaultAsync(p => p.IdProducto == id);
 
-                    // Manejo de imagen
+                    if (existingProduct == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Actualiza los datos del producto existente con los nuevos datos
+                    existingProduct.Nombre_Producto = producto.Nombre_Producto;
+                    existingProduct.Descripcion = producto.Descripcion;
+                    existingProduct.IdTipoProducto = producto.IdTipoProducto;
+
                     if (imagen != null && imagen.Length > 0)
                     {
                         using (var memoryStream = new MemoryStream())
                         {
                             await imagen.CopyToAsync(memoryStream);
-                            eventoExistente.ImagenDatos = memoryStream.ToArray();
+                            existingProduct.ImagenDatos = memoryStream.ToArray();
                         }
                     }
 
-                    // Guardar los cambios en la base de datos
-                    _context.Update(eventoExistente);
+                    // Elimina relaciones existentes de ProductoEmprendedores
+                    _context.ProductoEmprendedores.RemoveRange(existingProduct.ProductoEmprendedores);
+
+                    // Añade las nuevas relaciones
+                    if (SelectedEmprendedores != null)
+                    {
+                        foreach (var emprendedorId in SelectedEmprendedores)
+                        {
+                            _context.ProductoEmprendedores.Add(new ProductoEmprendedor
+                            {
+                                IdProducto = existingProduct.IdProducto,
+                                IdEmprendedor = emprendedorId
+                            });
+                        }
+                    }
+
+                    // Guarda los cambios
                     await _context.SaveChangesAsync();
 
+                    TempData["Message"] = "Producto actualizado exitosamente.";
                     return RedirectToAction(nameof(Lista));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventoExists(evento.IdEvento))
+                    if (!ProductoExists(producto.IdProducto))
                     {
                         return NotFound();
                     }
@@ -231,7 +232,11 @@ namespace SamaraProject1.Controllers
                 }
             }
 
-            return View(evento);
+            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
+            ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
+            ViewBag.SelectedEmprendedores = SelectedEmprendedores;
+
+            return View(producto);
         }
 
 
