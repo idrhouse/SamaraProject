@@ -78,7 +78,6 @@ namespace SamaraProject1.Controllers
         }
 
 
-
         [HttpPost("Add")]
         public IActionResult AddFeaturedProduct([FromForm] IFormFile image, [FromForm] string name)
         {

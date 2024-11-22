@@ -8,7 +8,7 @@ namespace SamaraProject1.Models
         public string Token { get; set; }
 
         [Required(ErrorMessage = "La nueva contraseña es requerida.")]
-        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} caracteres de longitud.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {8} caracteres de longitud.", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Nueva contraseña")]
         public string NuevaClave { get; set; }

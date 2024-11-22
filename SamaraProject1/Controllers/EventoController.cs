@@ -152,15 +152,15 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            var eventoExistente = await _context.Eventos
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.IdEvento == id);
+            // Buscar el evento existente
+            var eventoExistente = await _context.Eventos.FindAsync(id);
 
             if (eventoExistente == null)
             {
                 return NotFound();
             }
 
+            // Validaciones personalizadas
             if (evento.Fecha < DateTime.Today)
             {
                 ModelState.AddModelError("Fecha", "No se puede agregar una fecha anterior al día de hoy.");
@@ -177,6 +177,14 @@ namespace SamaraProject1.Controllers
             {
                 try
                 {
+                    // Actualizar datos del evento existente
+                    eventoExistente.Nombre = evento.Nombre;
+                    eventoExistente.Descripcion = evento.Descripcion;
+                    eventoExistente.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
+                    eventoExistente.HoraInicio = evento.HoraInicio;
+                    eventoExistente.HoraFin = evento.HoraFin;
+
+                    // Manejar la imagen
                     if (imagen != null && imagen.Length > 0)
                     {
                         using (var memoryStream = new MemoryStream())
@@ -185,16 +193,9 @@ namespace SamaraProject1.Controllers
                             eventoExistente.ImagenDatos = memoryStream.ToArray();
                         }
                     }
-                    else
-                    {
-                        // If no new image is uploaded, keep the existing image URL
-                        evento.ImagenDatos = eventoExistente.ImagenDatos;
-                    }
 
-                    // Convertir la fecha y hora a UTC antes de guardar
-                    evento.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
-
-                    _context.Update(evento);
+                    // Actualizar el evento en el contexto
+                    _context.Update(eventoExistente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -210,8 +211,10 @@ namespace SamaraProject1.Controllers
                 }
                 return RedirectToAction(nameof(Lista));
             }
+
             return View(evento);
         }
+
 
         // GET: Evento/Eliminar/5
         public async Task<IActionResult> Eliminar(int? id)
