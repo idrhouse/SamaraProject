@@ -111,6 +111,12 @@ namespace SamaraProject1.Controllers
                     return View(modelo);
                 }
 
+                if (modelo.NuevaClave.Length < 8)
+                {
+                    ModelState.AddModelError("NuevaClave", "La nueva contraseña debe tener al menos 8 caracteres.");
+                    return View(modelo);
+                }
+
                 administrador.Clave = Utilidades.Cifrar(modelo.NuevaClave);
                 administrador.TokenRecuperacion = null;  // Limpiar el token
                 administrador.TokenExpiracion = null;   // Limpiar la fecha de expiración
