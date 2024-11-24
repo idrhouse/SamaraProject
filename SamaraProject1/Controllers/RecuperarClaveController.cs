@@ -76,11 +76,18 @@ namespace SamaraProject1.Controllers
 
 
         [HttpGet]
-        public IActionResult RestablecerClave(string token)
+        public async Task<IActionResult> RestablecerClaveAsync(string token)
         {
             if (string.IsNullOrEmpty(token))
             {
                 return RedirectToAction("IniciarSesion", "Inicio");
+            }
+
+            var administrador = await _administradorService.GetAdministradorPorToken(token);
+            if (administrador == null || administrador.TokenExpiracion < DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "El token ha expirado o es inválido.";
+                return RedirectToAction("RecuperarClave", "RecuperarClave"); // Redirigir a una página de error
             }
 
             var modelo = new RestablecerClaveModel { Token = token };
