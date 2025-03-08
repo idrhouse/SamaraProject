@@ -44,6 +44,15 @@
                     <span asp-validation-for="DescripcionNegocio" class="text-xs text-red-500"></span>
                 </div>
 
+                <!-- Categoria -->
+                <div class="form-group">
+                    <label asp-for="IdCategoria" class="control-label"></label>
+                    <select asp-for="IdCategoria" class="form-control" asp-items="ViewBag.Categorias">
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                    <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Teléfono -->
                     <div>

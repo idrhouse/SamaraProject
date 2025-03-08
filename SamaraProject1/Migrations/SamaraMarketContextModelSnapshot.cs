@@ -67,6 +67,24 @@ namespace SamaraProject1.Migrations
                     b.ToTable("Administrador", (string)null);
                 });
 
+            modelBuilder.Entity("SamaraProject1.Models.Categoria", b =>
+                {
+                    b.Property<int>("IdCategoria")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdCategoria"));
+
+                    b.Property<string>("NombreCategoria")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("IdCategoria");
+
+                    b.ToTable("Categorias");
+                });
+
             modelBuilder.Entity("SamaraProject1.Models.Emprendedor", b =>
                 {
                     b.Property<int>("IdEmprendedor")
@@ -91,6 +109,9 @@ namespace SamaraProject1.Migrations
                         .IsUnicode(false)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int>("IdCategoria")
+                        .HasColumnType("integer");
+
                     b.Property<byte[]>("ImagenDatos")
                         .HasColumnType("bytea");
 
@@ -114,6 +135,8 @@ namespace SamaraProject1.Migrations
                     b.HasKey("IdEmprendedor")
                         .HasName("PK__EMPRENDE__F9D7F7E5E4C9D6A3");
 
+                    b.HasIndex("IdCategoria");
+
                     b.ToTable("Emprendedor", (string)null);
                 });
 
@@ -131,7 +154,7 @@ namespace SamaraProject1.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<TimeSpan>("HoraFin")
                         .HasColumnType("time");
@@ -253,6 +276,17 @@ namespace SamaraProject1.Migrations
                     b.ToTable("TipoProducto");
                 });
 
+            modelBuilder.Entity("SamaraProject1.Models.Emprendedor", b =>
+                {
+                    b.HasOne("SamaraProject1.Models.Categoria", "Categoria")
+                        .WithMany("Emprendedores")
+                        .HasForeignKey("IdCategoria")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+                });
+
             modelBuilder.Entity("SamaraProject1.Models.Producto", b =>
                 {
                     b.HasOne("SamaraProject1.Models.Emprendedor", null)
@@ -295,6 +329,11 @@ namespace SamaraProject1.Migrations
                         .HasConstraintName("FK_Stands_Emprendedor");
 
                     b.Navigation("Emprendedor");
+                });
+
+            modelBuilder.Entity("SamaraProject1.Models.Categoria", b =>
+                {
+                    b.Navigation("Emprendedores");
                 });
 
             modelBuilder.Entity("SamaraProject1.Models.Emprendedor", b =>

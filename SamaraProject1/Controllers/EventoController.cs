@@ -101,7 +101,7 @@ namespace SamaraProject1.Controllers
             {
                 ModelState.AddModelError("HoraInicio", "La hora de inicio no puede ser mayor o igual a la hora de finalización.");
                 return View(evento);
-            }            
+            }
 
             // Convertir la fecha y hora a UTC antes de guardar
             evento.Fecha = DateTime.SpecifyKind(evento.Fecha.Date + evento.HoraInicio, DateTimeKind.Utc);
@@ -161,7 +161,7 @@ namespace SamaraProject1.Controllers
             }
 
             // Validaciones personalizadas
-            if (evento.Fecha < DateTime.Today)
+            if (evento.Fecha < DateTime.UtcNow.Date)
             {
                 ModelState.AddModelError("Fecha", "No se puede agregar una fecha anterior al día de hoy.");
                 return View(evento);

@@ -23,6 +23,7 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Evento> Eventos { get; set; }
     public virtual DbSet<TipoProducto> TipoProducto { get; set; }
     public virtual DbSet<ProductoEmprendedor> ProductoEmprendedores { get; set; }
+    public virtual DbSet<Categoria> Categorias { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -142,15 +143,23 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.Fecha)
-                .HasColumnType("datetime");
+                .HasColumnType("timestamp with time zone") // Correcto
+                .IsRequired();
             entity.Property(e => e.HoraInicio)
-                .HasColumnType("time")  
-                .IsRequired();  
+                .HasColumnType("time")
+                .IsRequired();
             entity.Property(e => e.HoraFin)
-                .HasColumnType("time")  
+                .HasColumnType("time")
                 .IsRequired();
             entity.Property(e => e.ImagenDatos)
                 .HasColumnType("bytea");
+        });
+
+        modelBuilder.Entity<Categoria>(entity =>
+        {
+            entity.HasKey(c => c.IdCategoria); // Define IdCategoria como clave primaria
+            entity.Property(c => c.IdCategoria).ValueGeneratedOnAdd(); // Autoincremental
+            entity.Property(c => c.NombreCategoria).IsRequired().HasMaxLength(100);
         });
 
         // Relación 1 a muchos: Producto - TipoProducto
@@ -176,6 +185,14 @@ public partial class SamaraMarketContext : DbContext
         //TipoProducto
         modelBuilder.Entity<TipoProducto>()
             .HasKey(t => t.IdTipoProducto);
+
+        modelBuilder.Entity<Emprendedor>()
+            .HasOne(e => e.Categoria)
+            .WithMany(c => c.Emprendedores)
+            .HasForeignKey(e => e.IdCategoria)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
 using System;
@@ -40,6 +41,26 @@ namespace SamaraProject1.Controllers
         // GET: Emprendedor/Crear
         public IActionResult Crear()
         {
+            // Obtén la lista de categorías desde la base de datos
+            var categorias = _context.Categorias.ToList();
+
+            if (!categorias.Any())
+            {
+                // Si no hay categorías, muestra un mensaje de error
+                ModelState.AddModelError("", "No hay categorías disponibles.");
+                return View();
+            }
+
+            // Convierte la lista de categorías en una lista de SelectListItem
+            var categoriasSelectList = categorias.Select(c => new SelectListItem
+            {
+                Value = c.IdCategoria.ToString(), // El valor que se enviará al servidor
+                Text = c.NombreCategoria // El texto que se mostrará en el DropDownList
+            }).ToList();
+
+            // Pasa la lista convertida a la vista
+            ViewBag.Categorias = categoriasSelectList;
+
             return View();
         }
 
@@ -62,17 +83,46 @@ namespace SamaraProject1.Controllers
             return File(emprendedor.ImagenDatos, "image/jpeg");
         }
 
-
-        // POST: Emprendedor/Crear        
+        // POST: Emprendedor/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile? imagen)
         {
             if (!ModelState.IsValid)
             {
+                // Log de errores de validación
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Error de validación: {error.ErrorMessage}");
+                }
+
+                // Recargar las categorías en el ViewBag si el modelo no es válido
+                var categorias = _context.Categorias.ToList();
+                var categoriasSelectList = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria
+                }).ToList();
+                ViewBag.Categorias = categoriasSelectList;
+
                 return View(emprendedor);
             }
 
+            // Validar si la categoría existe
+            var categoriaExistente = await _context.Categorias
+                .FirstOrDefaultAsync(c => c.IdCategoria == emprendedor.IdCategoria);
+
+            if (categoriaExistente == null)
+            {
+                ModelState.AddModelError("IdCategoria", "La categoría seleccionada no es válida.");
+                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                return View(emprendedor);
+            }
+
+            // Asignar la categoría al emprendedor
+            emprendedor.Categoria = categoriaExistente;
+
+            // Manejo de la imagen
             if (imagen != null && imagen.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -89,23 +139,29 @@ namespace SamaraProject1.Controllers
             if (correoExistente != null)
             {
                 ModelState.AddModelError("Correo", "Ya existe un emprendedor con este correo.");
+                ViewBag.Categorias = await _context.Categorias.ToListAsync();
                 return View(emprendedor);
             }
 
-            // Si no se sube una imagen, deja el campo null o lógica de imagen predeterminada
-            if (emprendedor.ImagenDatos == null)
+            try
             {
-                emprendedor.ImagenDatos = null; // O mantenlo como null para usar un endpoint de imagen predeterminada
+                // Guardar el emprendedor en la base de datos
+                _context.Add(emprendedor);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Lista));
             }
-
-            _context.Add(emprendedor);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Lista));
+            catch (Exception ex)
+            {
+                // Manejar errores de base de datos
+                ModelState.AddModelError("", "Ocurrió un error al guardar el emprendedor: " + ex.Message);
+                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                return View(emprendedor);
+            }
         }
 
 
-        // GET: Emprendedor/Editar/5
+        // GET: Emprendedor/Editar
         public async Task<IActionResult> Editar(int? id)
         {
             if (id == null)
@@ -119,7 +175,16 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            return View(emprendedor); 
+            // Convierte la lista de categorías en una lista de SelectListItem
+            var categorias = _context.Categorias.ToList();
+            var categoriasSelectList = categorias.Select(c => new SelectListItem
+            {
+                Value = c.IdCategoria.ToString(),
+                Text = c.NombreCategoria
+            }).ToList();
+            ViewBag.Categorias = categoriasSelectList;
+
+            return View(emprendedor);
         }
 
 
@@ -133,6 +198,31 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
+            if (!ModelState.IsValid)
+            {
+                // Recargar las categorías en el ViewBag si el modelo no es válido
+                var categorias = _context.Categorias.ToList();
+                var categoriasSelectList = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria
+                }).ToList();
+                ViewBag.Categorias = categoriasSelectList;
+
+                return View(emprendedor);
+            }
+
+            // Validar si la categoría existe
+            var categoriaExistente = await _context.Categorias
+                .FirstOrDefaultAsync(c => c.IdCategoria == emprendedor.IdCategoria);
+
+            if (categoriaExistente == null)
+            {
+                ModelState.AddModelError("IdCategoria", "La categoría seleccionada no es válida.");
+                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                return View(emprendedor);
+            }
+
             var emprendedorExistente = await _context.Emprendedores.FindAsync(id);
 
             if (emprendedorExistente == null)
@@ -140,6 +230,7 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
+            // Manejo de la imagen
             if (imagen != null && imagen.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -150,24 +241,33 @@ namespace SamaraProject1.Controllers
             }
             else
             {
-                // If no new image is uploaded, keep the existing image URL
-                emprendedor.ImagenDatos = emprendedorExistente.ImagenDatos;
+                emprendedorExistente.ImagenDatos = emprendedor.ImagenDatos;
             }
 
+            // Actualizar los datos del emprendedor existente
             emprendedorExistente.NombreEmprendedor = emprendedor.NombreEmprendedor;
             emprendedorExistente.Apellidos = emprendedor.Apellidos;
             emprendedorExistente.Correo = emprendedor.Correo;
             emprendedorExistente.DescripcionNegocio = emprendedor.DescripcionNegocio;
             emprendedorExistente.NombreNegocio = emprendedor.NombreNegocio;
             emprendedorExistente.Telefono = emprendedor.Telefono;
+            emprendedorExistente.IdCategoria = emprendedor.IdCategoria;
+            emprendedorExistente.Categoria = categoriaExistente; // Asignar la categoría
 
-            _context.Update(emprendedorExistente);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Lista));
+            try
+            {
+                _context.Update(emprendedorExistente);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores de base de datos
+                ModelState.AddModelError("", "Ocurrió un error al actualizar el emprendedor: " + ex.Message);
+                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                return View(emprendedor);
+            }
         }
-
-
 
         // GET: Emprendedor/Eliminar
         public async Task<IActionResult> Eliminar(int? id)

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SamaraProject1.Models.Categoria>
+
+
+@{
+    ViewData["Title"] = "Lista de Categorias";
+
+}
+
+<h1>Categorías</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nueva Categoría</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.NombreCategoria)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdCategoria" class="btn btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.IdCategoria" class="btn btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdCategoria" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -38,6 +38,9 @@ namespace SamaraProject1.Models
         [Display(Name = "Imagen del Emprendedor")]
         public byte[]? ImagenDatos { get; set; }
 
+        public int IdCategoria { get; set; }
+        public virtual Categoria? Categoria { get; set; }
+
         public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
 
         public virtual ICollection<Stands> Stands { get; set; } = new List<Stands>();
