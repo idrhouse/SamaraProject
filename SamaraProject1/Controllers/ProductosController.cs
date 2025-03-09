@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SamaraProject1.Models;
 using System.IO;
@@ -40,11 +41,25 @@ namespace SamaraProject1.Controllers
             return View(productos);
         }
 
-        // GET: Crear
-        public async Task<IActionResult> Crear()
+        // GET: ObtenerEmprendedoresPorCategoria
+        public async Task<IActionResult> ObtenerEmprendedoresPorCategoria(int idCategoria)
         {
-            var emprendedores = await _context.Emprendedores.ToListAsync();
+            var emprendedores = await _context.Emprendedores
+                .Where(e => e.IdCategoria == idCategoria)
+                .Select(e => new { e.IdEmprendedor, e.NombreEmprendedor })
+                .ToListAsync();
+
+            return Json(emprendedores);
+        }
+
+        // GET: Crear
+        public async Task<IActionResult> Crear(int? idCategoria)
+        {
+            var emprendedores = await _context.Emprendedores
+                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
+                .ToListAsync();
             var tipoProductos = await _context.TipoProducto.ToListAsync();
+            var categorias = await _context.Categorias.ToListAsync();
 
             if (!emprendedores.Any())
             {
@@ -58,7 +73,8 @@ namespace SamaraProject1.Controllers
 
             // Asignar datos correctamente al ViewBag
             ViewBag.Emprendedores = emprendedores;
-            ViewBag.TipoProductos = tipoProductos; 
+            ViewBag.TipoProductos = tipoProductos;
+            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria");
 
             return View();
         }

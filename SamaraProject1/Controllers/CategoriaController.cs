@@ -36,7 +36,7 @@ namespace SamaraProject1.Controllers
             {
                 _context.Add(categoria);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Lista));
             }
             return View(categoria);
         }
@@ -87,7 +87,7 @@ namespace SamaraProject1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Lista));
             }
             return View(categoria);
         }
@@ -119,7 +119,7 @@ namespace SamaraProject1.Controllers
             var categoria = await _context.Categorias.FindAsync(id);
             _context.Categorias.Remove(categoria);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Lista));
         }
 
         private bool CategoriaExists(int id)

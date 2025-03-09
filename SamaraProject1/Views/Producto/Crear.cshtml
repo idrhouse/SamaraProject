@@ -24,12 +24,18 @@
                 </div>
 
                 <div>
+                    <label for="IdCategoria" class="block text-sm font-medium text-gray-700">Categoría del Emprendedor</label>
+                    <select id="IdCategoria" name="IdCategoria" asp-items="@ViewBag.Categorias" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" onchange="cargarEmprendedores()">
+                        <option value="">-- Seleccione una Categoría --</option>
+                    </select>
+                </div>
+
+                <div>
                     <label for="Emprendedores" class="block text-sm font-medium text-gray-700">Seleccione Emprendedores</label>
                     <select id="Emprendedores" name="SelectedEmprendedores" multiple asp-items="@(new MultiSelectList(ViewBag.Emprendedores, "IdEmprendedor", "NombreEmprendedor"))" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     </select>
                     <small class="text-gray-500">Use Ctrl (Cmd en Mac) para seleccionar múltiples emprendedores.</small>
                 </div>
-
 
                 <div>
                     <label asp-for="IdTipoProducto" class="block text-sm font-medium text-gray-700">Tipo de Producto</label>
@@ -54,7 +60,24 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        function cargarEmprendedores() {
+            var idCategoria = document.getElementById("IdCategoria").value;
+            var url = '@Url.Action("ObtenerEmprendedoresPorCategoria", "Producto")' + '?idCategoria=' + idCategoria;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    var select = document.getElementById("Emprendedores");
+                    select.innerHTML = "";
+
+                    data.forEach(function (emprendedor) {
+                        var option = document.createElement("option");
+                        option.value = emprendedor.idEmprendedor;
+                        option.text = emprendedor.nombreEmprendedor;
+                        select.appendChild(option);
+                    });
+                });
+        }
+    </script>
 }

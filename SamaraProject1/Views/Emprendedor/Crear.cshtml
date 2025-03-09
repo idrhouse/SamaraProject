@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Crear Emprendedor";
-    var administradores = ViewBag.Administradores as List<SamaraProject1.Models.Administrador> ?? new List<SamaraProject1.Models.Administrador>();
 }
 
 <div class="container mx-auto px-4 py-8">
@@ -11,22 +10,19 @@
             <h2 class="text-2xl font-bold mb-4 text-gray-800">Crear Nuevo Emprendedor</h2>
 
             <form asp-action="Crear" method="post" enctype="multipart/form-data" class="space-y-4">
-                <!-- Resumen de validaciones globales -->
                 <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Nombre -->
                     <div>
                         <label asp-for="NombreEmprendedor" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input asp-for="NombreEmprendedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                        <span asp-validation-for="NombreEmprendedor" class="text-xs text-red-500"></span>
+                        <input asp-for="NombreEmprendedor" class="form-control" />
+                        <span asp-validation-for="NombreEmprendedor" class="text-danger"></span>
                     </div>
 
-                    <!-- Apellidos -->
                     <div>
                         <label asp-for="Apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
-                        <input asp-for="Apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                        <span asp-validation-for="Apellidos" class="text-xs text-red-500"></span>
+                        <input asp-for="Apellidos" class="form-control" />
+                        <span asp-validation-for="Apellidos" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -42,15 +38,6 @@
                     <label asp-for="DescripcionNegocio" class="block text-sm font-medium text-gray-700">Descripción del Negocio</label>
                     <textarea asp-for="DescripcionNegocio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
                     <span asp-validation-for="DescripcionNegocio" class="text-xs text-red-500"></span>
-                </div>
-
-                <!-- Categoria -->
-                <div class="form-group">
-                    <label asp-for="IdCategoria" class="control-label"></label>
-                    <select asp-for="IdCategoria" class="form-control" asp-items="ViewBag.Categorias">
-                        <option value="">Seleccione una categoría</option>
-                    </select>
-                    <span asp-validation-for="IdCategoria" class="text-danger"></span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,21 +56,22 @@
                     </div>
                 </div>
 
-                <!-- Imagen -->
                 <div>
-                    <label for="imagen" class="block text-sm font-medium text-gray-700">Imagen del Emprendedor</label>
-                    <input type="file" name="imagen" id="imagen" accept="image/*" class="mt-1 block w-full text-sm text-gray-500" />
+                    <label asp-for="IdCategoria" class="control-label"></label>
+                    <select asp-for="IdCategoria" class="form-control" asp-items="ViewBag.Categorias">
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                    <span asp-validation-for="IdCategoria" class="text-danger"></span>
                 </div>
 
+                <div>
+                    <label for="imagen" class="block text-sm font-medium text-gray-700">Imagen del Emprendedor</label>
+                    <input type="file" name="imagen" id="imagen" accept="image/*" class="form-control" />
+                </div>
 
-                <!-- Botones -->
                 <div class="flex justify-end space-x-2 pt-4">
-                    <a asp-action="Lista" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                        Volver a la Lista
-                    </a>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                        Crear Emprendedor
-                    </button>
+                    <a asp-action="Lista" class="btn btn-secondary">Volver a la Lista</a>
+                    <button type="submit" class="btn btn-primary">Crear Emprendedor</button>
                 </div>
             </form>
         </div>
@@ -91,7 +79,6 @@
 </div>
 
 @section Scripts {
-    @* Renderizar los scripts de validación *@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
