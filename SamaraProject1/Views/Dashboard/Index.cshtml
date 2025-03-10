@@ -1,68 +1,89 @@
 ﻿@model dynamic
 
-<div class="container mx-auto mt-10">
-    <h1 class="text-4xl font-bold text-center mb-8">Dashboard</h1>
+@{
+    ViewData["Title"] = "Dashboard - Feria Sámara Market";
+}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-blue-500 text-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-bold">Total Emprendedores</h2>
-            <p class="text-3xl mt-2">@Model.TotalEmprendedores</p>
-        </div>
-        <div class="bg-green-500 text-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-bold">Total Productos</h2>
-            <p class="text-3xl mt-2">@Model.TotalProductos</p>
-        </div>
-        <div class="bg-yellow-500 text-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-bold">Total Eventos</h2>
-            <p class="text-3xl mt-2">@Model.TotalEventos</p>
-        </div>
-        <div class="bg-red-500 text-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-bold">Total Stands</h2>
-            <p class="text-3xl mt-2">@Model.TotalStands</p>
-        </div>
-    </div>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-8">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                Dashboard
+            </span>
+        </h1>
 
-    <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Productos por Tipo</h2>
-        <canvas id="productosChart" class="w-full max-w-lg mx-auto"></canvas>
-    </div>
-
-    <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Disponibilidad de Stands</h2>
-        <canvas id="standsChart" class="w-full max-w-lg mx-auto"></canvas>
-    </div>
-
-    <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Próximos Eventos</h2>
-        @if (TempData["Mensaje"] != null)
-        {
-            <div class="alert alert-warning">
-                @TempData["Mensaje"]
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold">Total Emprendedores</h2>
+                <p class="text-3xl mt-2 font-semibold">@Model.TotalEmprendedores</p>
             </div>
-        }
-        <ul class="list-disc ml-6 mb-4">
-            @foreach (var evento in Model.EventosFuturos)
+            <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold">Total Productos</h2>
+                <p class="text-3xl mt-2 font-semibold">@Model.TotalProductos</p>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold">Total Eventos</h2>
+                <p class="text-3xl mt-2 font-semibold">@Model.TotalEventos</p>
+            </div>
+            <div class="bg-gradient-to-br from-red-500 to-red-600 text-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold">Total Stands</h2>
+                <p class="text-3xl mt-2 font-semibold">@Model.TotalStands</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Productos por Tipo</h2>
+                <canvas id="productosChart" class="w-full"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Disponibilidad de Stands</h2>
+                <canvas id="standsChart" class="w-full"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Próximos Eventos</h2>
+            @if (TempData["Mensaje"] != null)
             {
-                DateTime fecha;
-                if (DateTime.TryParse(evento.Fecha.ToString(), out fecha))
-                {
-                    string horaInicioFormateada = evento.HoraInicio.ToString(@"hh\:mm"); 
-                    string horaFinFormateada = evento.HoraFin.ToString(@"hh\:mm"); 
-
-                    <li>
-                        @evento.Nombre -
-                        @fecha.ToLocalTime().ToString("dd/MM/yyyy") -
-                        @horaInicioFormateada -
-                        @horaFinFormateada
-                    </li>
-                }
-                else
-                {
-                    <li>@evento.Nombre - Fecha inválida</li>
-                }
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+                    <p class="font-bold">Atención</p>
+                    <p>@TempData["Mensaje"]</p>
+                </div>
             }
-        </ul>
+            <ul class="space-y-2">
+                @foreach (var evento in Model.EventosFuturos)
+                {
+                    DateTime fecha;
+                    if (DateTime.TryParse(evento.Fecha.ToString(), out fecha))
+                    {
+                        string horaInicioFormateada = evento.HoraInicio.ToString(@"hh\:mm");
+                        string horaFinFormateada = evento.HoraFin.ToString(@"hh\:mm");
 
+                        <li class="flex items-center space-x-2">
+                            <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-gray-700">
+                                @evento.Nombre -
+                                @fecha.ToLocalTime().ToString("dd/MM/yyyy") -
+                                @horaInicioFormateada -
+                                @horaFinFormateada
+                            </span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="flex items-center space-x-2">
+                            <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-gray-700">@evento.Nombre - Fecha inválida</span>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -81,8 +102,8 @@
             datasets: [{
                 label: 'Cantidad de Productos',
                 data: productosCounts,
-                backgroundColor: '#3DF5E2',
-                borderColor: '#2DB5A7',
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgb(29, 78, 216)',
                 borderWidth: 1
             }]
         },
@@ -90,6 +111,11 @@
             responsive: true,
             plugins: {
                 legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
     });
@@ -101,21 +127,22 @@
 
     // Gráfica de Disponibilidad de Stands
     new Chart(document.getElementById('standsChart'), {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: standsLabels,
             datasets: [{
                 data: standsCounts,
-                backgroundColor: ['#3B82F6', '#EF4444'],
-                borderColor: ['#1D4ED8', '#B91C1C'],
+                backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+                borderColor: ['rgb(21, 128, 61)', 'rgb(185, 28, 28)'],
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'top' }
+                legend: { position: 'bottom' }
             }
         }
     });
 </script>
+

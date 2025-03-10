@@ -1,62 +1,72 @@
 ﻿@model IEnumerable<SamaraProject1.Models.Emprendedor>
 
-
 @{
     ViewData["Title"] = "Lista de Emprendedores";
-
 }
 
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Emprendedores</h1>
-        <a href="@Url.Action("Crear", "Emprendedor")" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-            </svg>
-            Nuevo Emprendedor
-        </a>
-    </div>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                    Emprendedores
+                </span>
+            </h1>
+            <a href="@Url.Action("Crear", "Emprendedor")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Nuevo Emprendedor
+            </a>
+        </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach (var item in Model)
-        {
-            <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 ease-in-out transform hover:scale-105">
-                <div class="w-full aspect-w-4 aspect-h-3">
-                    <img src="@Url.Action("ObtenerImagen", "Emprendedor", new { id = item.IdEmprendedor })" alt="@item.NombreEmprendedor" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4">
-                    <h1 class="text-xl font-semibold text-gray-800 mb-2">@item.NombreEmprendedor @item.Apellidos</h1>
-                    <p class="text-x font-semibold text-gray-800 mb-2">Nombre del Negocio:</p>
-                    <p class="text-gray-600 mb-2">@item.NombreNegocio</p>
-                    <p class="text-x font-semibold text-gray-800 mb-2">Stand(s) asignado:</p>
-                    <p class="text-gray-600 mb-2">
-                        @if (item.Stands == null || !item.Stands.Any())
-                        {
-                            @:Sin asignar
-                        }
-                        else
-                        {
-                            @: @string.Join(", ", item.Stands.Select(s => s.Numero_Stand))
-                        }
-                    </p>
-                    <p class="text-x font-semibold text-gray-800 mb-2">Teléfono:</p>
-                    <p class="text-gray-600 mb-2">@item.Telefono</p>
-                    <div class="flex justify-end space-x-2">
-                        <a href="@Url.Action("Editar", "Emprendedor", new { id = item.IdEmprendedor })" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out inline-flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            @foreach (var item in Model)
+            {
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+                    <div class="w-full aspect-w-16 aspect-h-9 relative">
+                        <img src="@Url.Action("ObtenerImagen", "Emprendedor", new { id = item.IdEmprendedor })" alt="@item.NombreEmprendedor" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <h2 class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 text-xl sm:text-2xl font-bold text-white">@item.NombreEmprendedor @item.Apellidos</h2>
+                    </div>
+                    <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4zm3 1h6v4H7V5zm8 8v2h1v-2h-1zm-2-2H7v4h6v-4zm2 0h1v2h-1v-2zm1-2V9h-1v2h1zm-5-2v2h-2V9h2zm2 0h-1V7h1v2zm1-2v2h-1V7h1zm-5 0v2H7V7h2zm2-2v2h-2V5h2zm4 0v2h-1V5h1z" clip-rule="evenodd" />
                             </svg>
-                            Editar
-                        </a>
-                        <a href="@Url.Action("Eliminar", "Emprendedor", new { id = item.IdEmprendedor })" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out inline-flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            @item.NombreNegocio
+                        </div>
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                             </svg>
-                            Eliminar
-                        </a>
+                            @item.Telefono
+                        </div>
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                            </svg>
+                            Stand(s): @(item.Stands == null || !item.Stands.Any() ? "Sin asignar" : string.Join(", ", item.Stands.Select(s => s.Numero_Stand)))
+                        </div>
+                        <p class="text-xs sm:text-sm text-gray-600">@(item.DescripcionNegocio?.Length > 100 ? item.DescripcionNegocio.Substring(0, 100) + "..." : item.DescripcionNegocio)</p>
+                        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4">
+                            <a href="@Url.Action("Editar", "Emprendedor", new { id = item.IdEmprendedor })" class="inline-flex items-center justify-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                </svg>
+                                Editar
+                            </a>
+                            <a href="@Url.Action("Eliminar", "Emprendedor", new { id = item.IdEmprendedor })" class="inline-flex items-center justify-center px-3 py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-full sm:w-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                                Eliminar
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
+

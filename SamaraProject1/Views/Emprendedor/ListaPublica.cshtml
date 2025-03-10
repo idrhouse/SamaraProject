@@ -4,53 +4,62 @@
     ViewData["Title"] = "Emprendedores - Feria Sámara Market";
 }
 
-<div class="bg-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-6">
-            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
+            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
                 Volver
             </a>
-        </div>
-        <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                Nuestros Emprendedores
-            </h2>
-            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-                Conoce a los talentosos emprendedores detrás de nuestros productos
-            </p>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                    Nuestros Emprendedores
+                </span>
+            </h1>
         </div>
 
-        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-600 text-center mb-8">
+            Conoce a los talentosos emprendedores detrás de nuestros productos
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             @foreach (var item in Model)
             {
-                <div class="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    @if (item.ImagenDatos != null)
-                    {
-                        <div class="w-full aspect-w-4 aspect-h-3">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+                    <div class="w-full aspect-w-16 aspect-h-9 relative">
+                        @if (item.ImagenDatos != null)
+                        {
                             <img src="@Url.Action("ObtenerImagen", "Emprendedor", new { id = item.IdEmprendedor })" alt="@item.NombreEmprendedor" class="w-full h-full object-cover">
-                        </div>
-                    }
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            @item.NombreEmprendedor @item.Apellidos
-                        </h3>
-                        <p class="mt-2 text-sm font-medium text-blue-600">
+                        }
+                        else
+                        {
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <svg class="h-20 w-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                        }
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <h2 class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 text-xl sm:text-2xl font-bold text-white">@item.NombreEmprendedor @item.Apellidos</h2>
+                    </div>
+                    <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4zm3 1h6v4H7V5zm8 8v2h1v-2h-1zm-2-2H7v4h6v-4zm2 0h1v2h-1v-2zm1-2V9h-1v2h1zm-5-2v2h-2V9h2zm2 0h-1V7h1v2zm1-2v2h-1V7h1zm-5 0v2H7V7h2zm2-2v2h-2V5h2zm4 0v2h-1V5h1z" clip-rule="evenodd" />
+                            </svg>
                             @item.NombreNegocio
-                        </p>
-                        <p class="mt-2 text-sm text-gray-500">
-                            @item.DescripcionNegocio
-                        </p>
-                        <div class="mt-4 flex items-center text-sm text-gray-500">
-                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        </div>
+                        <p class="text-xs sm:text-sm text-gray-600">@(item.DescripcionNegocio?.Length > 100 ? item.DescripcionNegocio.Substring(0, 100) + "..." : item.DescripcionNegocio)</p>
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                             </svg>
                             @item.Telefono
                         </div>
-                        <div class="mt-2 flex items-center text-sm text-gray-500">
-                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                             </svg>
@@ -61,4 +70,5 @@
             }
         </div>
     </div>
-</div>    
+</div>
+
