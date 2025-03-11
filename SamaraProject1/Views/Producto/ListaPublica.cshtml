@@ -4,45 +4,66 @@
     ViewData["Title"] = "Productos - Feria Sámara Market";
 }
 
-<div class="bg-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-6">
-            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-6 flex justify-between items-center">
+            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
                 Volver
             </a>
         </div>
-        <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                Nuestros Productos
-            </h2>
-            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                    Nuestros Productos
+                </span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
                 Descubre nuestra selección de productos locales únicos
             </p>
         </div>
 
-        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             @foreach (var item in Model)
             {
-                <div class="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    @if (item.ImagenDatos != null)
-                    {
-                        <div class="w-full aspect-w-4 aspect-h-3">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+                    <div class="w-full aspect-w-16 aspect-h-9 relative">
+                        @if (item.ImagenDatos != null)
+                        {
                             <img src="@Url.Action("ObtenerImagen", "Producto", new { id = item.IdProducto })" alt="@item.Nombre_Producto" class="w-full h-full object-cover">
+                        }
+                        else
+                        {
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <svg class="h-20 w-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        }
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <h2 class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 text-xl sm:text-2xl font-bold text-white">@item.Nombre_Producto</h2>
+                    </div>
+                    <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                        <p class="text-gray-600">@(item.Descripcion?.Length > 100 ? item.Descripcion.Substring(0, 100) + "..." : item.Descripcion)</p>
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                            </svg>
+                            @item.TipoProducto?.NombreTipo
                         </div>
-                    }
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            @item.Nombre_Producto
-                        </h3>
-                        <p class="mt-2 text-sm text-gray-500">
-                            @item.Descripcion
-                        </p>
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                            </svg>
+                            @string.Join(", ", item.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))
+                        </div>
                     </div>
                 </div>
             }
         </div>
     </div>
-</div>  
+</div>
+

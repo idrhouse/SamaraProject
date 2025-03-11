@@ -10,12 +10,6 @@
 	<PropertyGroup>
 		<NpmLastInstall>node_modules/.last-install</NpmLastInstall>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Views\Stands\Lista.cshtml.css" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Content Include="Views\Stands\Lista.cshtml.css" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="dotenv.net" Version="3.2.1" />

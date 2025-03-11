@@ -7,83 +7,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <title>Iniciar Sesión - Feria Sámara Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="w-full max-w-md px-6 py-8 bg-white shadow-md rounded-lg">
-            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
-                <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                </svg>
-                Volver
-            </a>
-            <div class="text-center mb-6">
-                <h3 class="text-2xl font-semibold text-blue-600">Iniciar Sesión</h3>
-                <p class="text-gray-500">Accede a tu cuenta</p>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white shadow-2xl rounded-3xl overflow-hidden">
+        <div class="px-4 sm:px-6 md:px-8 py-6 bg-gradient-to-r from-blue-500 to-indigo-600">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Iniciar Sesión</h2>
+                <a href="javascript:history.back()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Volver
+                </a>
             </div>
+        </div>
 
-            <!-- Formulario de inicio de sesión -->
-            <form asp-controller="Inicio" asp-action="IniciarSesion" method="post">
-                <!-- Campo Correo -->
-                <div class="mb-4">
-                    <input type="text" name="correo" placeholder="Correo electrónico" required class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" oninput="this.value = this.value.toLowerCase()">
+        <div class="px-4 sm:px-6 md:px-8 py-8 space-y-6">
+            <form asp-controller="Inicio" asp-action="IniciarSesion" method="post" class="space-y-6">
+                <div>
+                    <label for="correo" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <div class="mt-1">
+                        <input id="correo" name="correo" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="tu@email.com" oninput="this.value = this.value.toLowerCase()">
+                    </div>
                 </div>
 
-                <!-- Campo Contraseña -->
-                <div class="mb-4">
-                    <input type="password" name="clave" placeholder="Contraseña" required class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <div>
+                    <label for="clave" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <div class="mt-1">
+                        <input id="clave" name="clave" type="password" autocomplete="current-password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="••••••••">
+                    </div>
                 </div>
 
-                <!-- Mensaje de error -->
                 @if (ViewData["MENSAJE"] != null)
                 {
-                    <div class="mb-4">
-                        <div class="bg-red-100 text-red-600 p-3 rounded-md">
-                            @ViewData["MENSAJE"]
+                    <div class="rounded-md bg-red-50 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">@ViewData["MENSAJE"]</h3>
+                            </div>
                         </div>
                     </div>
                 }
 
-                <!-- Botón de submit -->
-                <div class="mb-6">
-                    <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Iniciar Sesión
                     </button>
                 </div>
             </form>
 
-            <!-- Formulario de recuperación de contraseña -->
             <div class="text-center">
-                <p class="text-sm text-gray-500 mb-6">
-                    <div class="form-group mb-2">
-                        <a asp-controller="RecuperarClave" asp-action="RecuperarClave" class="text-xl font-semibold text-blue-600">¿Olvidaste tu contraseña?</a>
-                    </div>
-                </p>
-                <!--<p class="text-sm text-gray-500">¿No tienes una cuenta? <a href="@Url.Action("Registrarse","Inicio")" class="text-blue-600 hover:text-blue-700 font-semibold">Regístrate</a></p> -->
+                <a asp-controller="RecuperarClave" asp-action="RecuperarClave" class="font-medium text-blue-600 hover:text-blue-500">¿Olvidaste tu contraseña?</a>
             </div>
-
-            
-
         </div>
     </div>
-
-    <script>
-        // Mostrar y ocultar formularios
-        document.getElementById('forgot-password-link').addEventListener('click', function (e) {
-            e.preventDefault();
-            document.getElementById('forgot-password-form').classList.remove('hidden');
-        });
-
-        document.getElementById('back-to-login').addEventListener('click', function (e) {
-            e.preventDefault();
-            document.getElementById('forgot-password-form').classList.add('hidden');
-        });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
+

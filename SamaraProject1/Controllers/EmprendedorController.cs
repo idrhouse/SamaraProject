@@ -26,7 +26,7 @@ namespace SamaraProject1.Controllers
         // GET: Emprendedor
         public async Task<IActionResult> Lista()
         {
-            var emprendedores = await _context.Emprendedores.Include(e => e.Stands).ToListAsync();
+            var emprendedores = await _context.Emprendedores.Include(e => e.Stands).Include(e => e.Categoria).ToListAsync();
             return View(emprendedores);
         }
 
