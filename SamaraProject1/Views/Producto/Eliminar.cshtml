@@ -27,43 +27,58 @@
                     <p>¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.</p>
                 </div>
 
-                <div class="bg-gray-50 rounded-lg p-4 sm:p-6 shadow-inner mb-6">
-                    <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">@Model.Nombre_Producto</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Emprendedor(es)</p>
-                            <p class="text-base sm:text-lg font-semibold text-gray-800">@string.Join(", ", Model.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Tipo de Producto</p>
-                            <p class="text-base sm:text-lg font-semibold text-gray-800">@Model.TipoProducto.NombreTipo</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-2">Descripción</p>
-                        <p class="text-gray-700">@Model.Descripcion</p>
-                    </div>
-                </div>
-
-                @if (Model.ImagenDatos != null)
+                @if (Model != null)
                 {
-                    <div class="mb-6">
-                        <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Producto</p>
-                        <img src="@Url.Action("ObtenerImagen", "Producto", new { id = Model.IdProducto })" alt="@Model.Nombre_Producto" class="w-full h-48 object-cover rounded-lg shadow-md">
+                    <div class="bg-gray-50 rounded-lg p-4 sm:p-6 shadow-inner mb-6">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">@Model.Nombre_Producto</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Emprendedor(es)</p>
+                                <p class="text-base sm:text-lg font-semibold text-gray-800">
+                                    @(Model.ProductoEmprendedores?.Any() == true
+                                        ? string.Join(", ", Model.ProductoEmprendedores.Select(pe => pe.Emprendedor?.NombreEmprendedor))
+                                        : "No hay emprendedores asociados")
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Tipo de Producto</p>
+                                <p class="text-base sm:text-lg font-semibold text-gray-800">@(Model.TipoProducto?.NombreTipo ?? "No especificado")</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-2">Descripción</p>
+                            <p class="text-gray-700">@Model.Descripcion</p>
+                        </div>
+                    </div>
+
+                    @if (Model.ImagenDatos != null)
+                    {
+                        <div class="mb-6">
+                            <p class="text-sm font-medium text-gray-500 mb-2">Imagen del Producto</p>
+                            <img src="@Url.Action("ObtenerImagen", "Producto", new { id = Model.IdProducto })"
+                                 alt="@Model.Nombre_Producto"
+                                 class="w-full h-48 object-cover rounded-lg shadow-md">
+                        </div>
+                    }
+
+                    <form asp-action="Eliminar" method="post">
+                        <input type="hidden" asp-for="IdProducto" />
+                        <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                            <a asp-action="Lista" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                                Confirmar Eliminación
+                            </button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-gray-500">No se encontró el producto especificado.</p>
                     </div>
                 }
-
-                <form asp-action="Eliminar" method="post">
-                    <input type="hidden" asp-for="IdProducto" />
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                        <a asp-action="Lista" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                            Confirmar Eliminación
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

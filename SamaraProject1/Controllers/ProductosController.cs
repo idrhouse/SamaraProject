@@ -41,7 +41,6 @@ namespace SamaraProject1.Controllers
             return View(productos);
         }
 
-        // GET: ObtenerEmprendedoresPorCategoria
         public async Task<IActionResult> ObtenerEmprendedoresPorCategoria(int idCategoria)
         {
             var emprendedores = await _context.Emprendedores
@@ -52,7 +51,6 @@ namespace SamaraProject1.Controllers
             return Json(emprendedores);
         }
 
-        // GET: Crear
         public async Task<IActionResult> Crear(int? idCategoria)
         {
             var emprendedores = await _context.Emprendedores
@@ -71,7 +69,6 @@ namespace SamaraProject1.Controllers
                 ModelState.AddModelError("", "No hay tipos de productos registrados.");
             }
 
-            // Asignar datos correctamente al ViewBag
             ViewBag.Emprendedores = emprendedores;
             ViewBag.TipoProductos = tipoProductos;
             ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria");
@@ -79,7 +76,6 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
-        //Obtener Imagen
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ObtenerImagen(int id)
@@ -88,69 +84,55 @@ namespace SamaraProject1.Controllers
 
             if (productos == null || productos.ImagenDatos == null)
             {
-                // Devuelve una imagen predeterminada si no existe la imagen
                 var rutaDefault = Path.Combine(_webHostEnvironment.WebRootPath, "imagenes/default-producto.png");
                 var defaultImage = System.IO.File.ReadAllBytes(rutaDefault);
                 return File(defaultImage, "image/jpeg");
             }
 
-            // Devuelve la imagen almacenada en la base de datos
             return File(productos.ImagenDatos, "image/jpeg");
         }
 
-
-        //POST Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Producto producto, int[] SelectedEmprendedores, IFormFile? imagen)
         {
             if (ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
+                if (imagen != null && imagen.Length > 0)
                 {
-                    return View(producto);
-                }
-
-            if (imagen != null && imagen.Length > 0)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await imagen.CopyToAsync(memoryStream);
-                        producto.ImagenDatos = memoryStream.ToArray();
-                }
-            }
-
-            // Create the product without assigning Emprendedores yet
-            _context.Add(producto);
-            await _context.SaveChangesAsync();
-
-            // Now add the relationships
-            if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
-            {
-                foreach (var idEmprendedor in SelectedEmprendedores)
-                {
-                    var productoEmprendedor = new ProductoEmprendedor
+                    using (var memoryStream = new MemoryStream())
                     {
-                        IdProducto = producto.IdProducto,
-                        IdEmprendedor = idEmprendedor
-                    };
-                    _context.Add(productoEmprendedor);
+                        await imagen.CopyToAsync(memoryStream);
+                        producto.ImagenDatos = memoryStream.ToArray();
+                    }
                 }
+
+                _context.Add(producto);
                 await _context.SaveChangesAsync();
+
+                if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
+                {
+                    foreach (var idEmprendedor in SelectedEmprendedores)
+                    {
+                        var productoEmprendedor = new ProductoEmprendedor
+                        {
+                            IdProducto = producto.IdProducto,
+                            IdEmprendedor = idEmprendedor
+                        };
+                        _context.Add(productoEmprendedor);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
+                TempData["Message"] = "Producto creado exitosamente.";
+                return RedirectToAction(nameof(Lista));
             }
 
-            TempData["Message"] = "Producto creado exitosamente.";
-            return RedirectToAction(nameof(Lista));
-            }
-
-            // If we got this far, something failed; redisplay form
             ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
             ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
             return View(producto);
         }
 
-
-        //GET Editar
         public async Task<IActionResult> Editar(int? id)
         {
             if (id == null)
@@ -175,7 +157,6 @@ namespace SamaraProject1.Controllers
             return View(producto);
         }
 
-        //POST Editar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(int id, Producto producto, List<int> SelectedEmprendedores, IFormFile? imagen)
@@ -189,7 +170,6 @@ namespace SamaraProject1.Controllers
             {
                 try
                 {
-                    // Obtén el producto existente de la base de datos
                     var existingProduct = await _context.Productos
                         .Include(p => p.ProductoEmprendedores)
                         .FirstOrDefaultAsync(p => p.IdProducto == id);
@@ -199,7 +179,6 @@ namespace SamaraProject1.Controllers
                         return NotFound();
                     }
 
-                    // Actualiza los datos del producto existente con los nuevos datos
                     existingProduct.Nombre_Producto = producto.Nombre_Producto;
                     existingProduct.Descripcion = producto.Descripcion;
                     existingProduct.IdTipoProducto = producto.IdTipoProducto;
@@ -213,10 +192,8 @@ namespace SamaraProject1.Controllers
                         }
                     }
 
-                    // Elimina relaciones existentes de ProductoEmprendedores
                     _context.ProductoEmprendedores.RemoveRange(existingProduct.ProductoEmprendedores);
 
-                    // Añade las nuevas relaciones
                     if (SelectedEmprendedores != null)
                     {
                         foreach (var emprendedorId in SelectedEmprendedores)
@@ -229,7 +206,6 @@ namespace SamaraProject1.Controllers
                         }
                     }
 
-                    // Guarda los cambios
                     await _context.SaveChangesAsync();
 
                     TempData["Message"] = "Producto actualizado exitosamente.";
@@ -255,19 +231,12 @@ namespace SamaraProject1.Controllers
             return View(producto);
         }
 
-
-        private bool EventoExists(int id)
-        {
-            return _context.Eventos.Any(e => e.IdEvento == id);
-        }
-
-
-        //DELETE
         public async Task<IActionResult> Eliminar(int id)
         {
             var producto = await _context.Productos
                 .Include(p => p.ProductoEmprendedores)
                     .ThenInclude(pe => pe.Emprendedor)
+                .Include(p => p.TipoProducto)
                 .FirstOrDefaultAsync(m => m.IdProducto == id);
             if (producto == null)
             {
@@ -277,24 +246,24 @@ namespace SamaraProject1.Controllers
             return View(producto);
         }
 
-        //Post Eliminar
         [HttpPost, ActionName("Eliminar")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarEliminar(int id)
         {
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos
+                .Include(p => p.ProductoEmprendedores)
+                .FirstOrDefaultAsync(p => p.IdProducto == id);
 
             if (producto == null)
             {
                 return NotFound();
             }
 
-            if (producto != null)
-            {
-                _context.Productos.Remove(producto);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Lista));
-            }
+            _context.ProductoEmprendedores.RemoveRange(producto.ProductoEmprendedores);
+            _context.Productos.Remove(producto);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Producto eliminado exitosamente.";
             return RedirectToAction(nameof(Lista));
         }
 
@@ -302,8 +271,6 @@ namespace SamaraProject1.Controllers
         {
             return _context.Productos.Any(e => e.IdProducto == id);
         }
-
-        
-
     }
 }
+

@@ -1,11 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "Como Unirte a la Feria";
+    ViewData["Title"] = "Cómo Unirte a la Feria - Sámara Market";
 }
 
-<div class="min-h-screen bg-gradient-to-b from-blue-100 to-white py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
-        <div class="mb-6">
-            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+        <div class="mb-6 flex justify-between items-center">
+            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
@@ -14,58 +14,45 @@
         </div>
 
         <div class="text-center mb-12">
-            <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span class="block">Como Unirte a la</span>
-                <span class="block text-blue-600">Feria Sámara Market</span>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                    Cómo Unirte a la Feria Sámara Market
+                </span>
             </h1>
-            <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
                 Descubre los requisitos para ser parte de nuestra vibrante comunidad de emprendedores.
             </p>
         </div>
 
-        <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div class="p-6 sm:p-10">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8">Requisitos para Unirte</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Requisitos para Unirte</h2>
                 <p class="text-lg text-gray-700 mb-6">Para unirte a nuestra comunidad, asegúrate de cumplir con los siguientes requisitos:</p>
 
                 <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span class="text-gray-700">Ser nacional o tener cédula de residencia.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span class="text-gray-700">En caso de producción agrícola contar con los permisos y los carnés correspondientes al día.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span class="text-gray-700">En caso de productos comestibles contar con el carné de manipulación de alimentos al día.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span class="text-gray-700">El 80% de los productos deben ser de producción propia.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span class="text-gray-700">Contar con una mesa, silla y/o exhibidores correspondientes.</span>
-                    </li>
+                    @foreach (var requisito in new[] {
+                    "Ser nacional o tener cédula de residencia.",
+                    "En caso de producción agrícola contar con los permisos y los carnés correspondientes al día.",
+                    "En caso de productos comestibles contar con el carné de manipulación de alimentos al día.",
+                    "El 80% de los productos deben ser de producción propia.",
+                    "Contar con una mesa, silla y/o exhibidores correspondientes."
+                    })
+                    {
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700">@requisito</span>
+                        </li>
+                    }
                 </ul>
 
-                <div class="mt-10 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                    <p class="text-lg text-blue-700">
+                <div class="mt-10 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-6 rounded-r-lg shadow-md">
+                    <p class="text-lg text-gray-800 mb-4">
                         Si cumples los requisitos, puedes aplicar utilizando el siguiente formulario:
                     </p>
-                    <a href="https://forms.gle/jj1LkRQGqBnc7ZRA9" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    <a href="https://forms.gle/jj1LkRQGqBnc7ZRA9" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105">
                         Aplicar Ahora
                         <svg class="ml-2 -mr-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -76,3 +63,4 @@
         </div>
     </div>
 </div>
+
