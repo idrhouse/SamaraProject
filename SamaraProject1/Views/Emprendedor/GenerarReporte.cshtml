@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Generar Reporte de Emprendedores";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-6 flex justify-between items-center">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                    Generar Reporte
+                </span>
+            </h1>
+            <a href="@Url.Action("Lista", "Emprendedor")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Volver a la Lista
+            </a>
+        </div>
+
+        <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Seleccione el rango de fechas y formato</h2>
+
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="fechaInicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio</label>
+                            <input type="date" id="fechaInicio" name="fechaInicio" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+                        <div>
+                            <label for="fechaFin" class="block text-sm font-medium text-gray-700 mb-1">Fecha Fin</label>
+                            <input type="date" id="fechaFin" name="fechaFin" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-medium text-gray-800 mb-3">Formato de Reporte</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button id="btnExcel" class="inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Exportar a Excel
+                            </button>
+                            <button id="btnPDF" class="inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                Exportar a PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formularios ocultos para enviar reportes -->
+<form id="excelForm" method="post" action="@Url.Action("GenerarReporteExcel", "Emprendedor")" style="display:none;">
+    <input type="hidden" id="excelFechaInicio" name="fechaInicio" />
+    <input type="hidden" id="excelFechaFin" name="fechaFin" />
+</form>
+
+<form id="pdfForm" method="post" action="@Url.Action("GenerarReportePDF", "Emprendedor")" style="display:none;">
+    <input type="hidden" id="pdfFechaInicio" name="fechaInicio" />
+    <input type="hidden" id="pdfFechaFin" name="fechaFin" />
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fechas predeterminadas (último mes)
+            const fechaFin = document.getElementById('fechaFin');
+            const fechaInicio = document.getElementById('fechaInicio');
+
+            const hoy = new Date();
+            fechaFin.valueAsDate = hoy;
+
+            const unMesAtras = new Date();
+            unMesAtras.setMonth(unMesAtras.getMonth() - 1);
+            fechaInicio.valueAsDate = unMesAtras;
+
+            // Generar reporte Excel
+            document.getElementById('btnExcel').addEventListener('click', function() {
+                if (validarFechas()) {
+                    document.getElementById('excelFechaInicio').value = fechaInicio.value;
+                    document.getElementById('excelFechaFin').value = fechaFin.value;
+                    document.getElementById('excelForm').submit();
+                }
+            });
+
+            // Generar reporte PDF
+            document.getElementById('btnPDF').addEventListener('click', function() {
+                if (validarFechas()) {
+                    document.getElementById('pdfFechaInicio').value = fechaInicio.value;
+                    document.getElementById('pdfFechaFin').value = fechaFin.value;
+                    document.getElementById('pdfForm').submit();
+                }
+            });
+
+            // Validar fechas
+            function validarFechas() {
+                const inicio = new Date(fechaInicio.value);
+                const fin = new Date(fechaFin.value);
+
+                if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+                    alert('Por favor, seleccione fechas válidas.');
+                    return false;
+                }
+
+                if (inicio > fin) {
+                    alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
+                    return false;
+                }
+
+                return true;
+            }
+        });
+    </script>
+}
+

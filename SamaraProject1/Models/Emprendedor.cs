@@ -38,6 +38,9 @@ namespace SamaraProject1.Models
         [Display(Name = "Imagen del Emprendedor")]
         public byte[]? ImagenDatos { get; set; }
 
+        // Fecha de creación para filtrar reportes
+        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+
         public int IdCategoria { get; set; }
         public virtual Categoria? Categoria { get; set; }
 
@@ -48,3 +51,4 @@ namespace SamaraProject1.Models
         public virtual ICollection<ProductoEmprendedor>? ProductoEmprendedores { get; set; }
     }
 }
+
