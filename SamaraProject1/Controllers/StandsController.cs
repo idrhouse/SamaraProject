@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClosedXML.Excel;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +42,7 @@ namespace SamaraProject1.Controllers
             var stands = await _context.Stands.OrderBy(s => s.Numero_Stand).ToListAsync();
             return View(stands);
         }
+
         // GET: Stands/Crear
         public IActionResult Crear()
         {
@@ -62,14 +66,18 @@ namespace SamaraProject1.Controllers
                     return View(stand);
                 }
 
-                stand.Disponible = true; // Marcar como no disponible al asignarse
+                // Corregido: el stand será NO disponible si tiene emprendedor, disponible si no tiene.
+                stand.Disponible = stand.IdEmprendedor == null;
+
                 _context.Add(stand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Lista));
             }
+
             ViewBag.Emprendedores = new SelectList(_context.Emprendedores.ToList(), "IdEmprendedor", "NombreEmprendedor", stand.IdEmprendedor);
             return View(stand);
         }
+
 
 
         // GET: Stands/Editar/5
@@ -214,6 +222,129 @@ namespace SamaraProject1.Controllers
             return RedirectToAction(nameof(Lista));  // Redirigir a la lista de stands
         }
 
+        // GET: Stands/GenerarReporte
+        public IActionResult GenerarReporte()
+        {
+            return View();
+        }
+
+        // POST: Stands/GenerarReporteExcel
+        [HttpPost]
+        public async Task<IActionResult> GenerarReporteExcel(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var stands = await _context.Stands
+                .Include(s => s.Emprendedor)
+                .Where(s => s.IdStand > 0) // Modificar según el criterio de fecha si es necesario
+                .ToListAsync();
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Stands");
+                worksheet.Cell(1, 1).Value = "ID";
+                worksheet.Cell(1, 2).Value = "Número de Stand";
+                worksheet.Cell(1, 3).Value = "Descripción";
+                worksheet.Cell(1, 4).Value = "Disponible";
+                worksheet.Cell(1, 5).Value = "Emprendedor";
+
+                var headerRow = worksheet.Row(1);
+                headerRow.Style.Font.Bold = true;
+                headerRow.Style.Fill.BackgroundColor = XLColor.LightBlue;
+
+                int row = 2;
+                foreach (var stand in stands)
+                {
+                    worksheet.Cell(row, 1).Value = stand.IdStand;
+                    worksheet.Cell(row, 2).Value = stand.Numero_Stand;
+                    worksheet.Cell(row, 3).Value = stand.Descripcion_Stand ?? "N/A";
+                    worksheet.Cell(row, 4).Value = stand.Disponible ? "Sí" : "No";
+                    worksheet.Cell(row, 5).Value = stand.Emprendedor?.NombreEmprendedor ?? "Sin emprendedor";
+                    row++;
+                }
+
+                worksheet.Columns().AdjustToContents();
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    string fileName = $"Stands_{fechaInicio:yyyyMMdd}_a_{fechaFin:yyyyMMdd}.xlsx";
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+        }
+
+        // POST: Stands/GenerarReportePDF
+        [HttpPost]
+        public async Task<IActionResult> GenerarReportePDF(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var stands = await _context.Stands
+                .Include(s => s.Emprendedor)
+                .Where(s => s.IdStand > 0)
+                .ToListAsync();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+                PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                document.Open();
+
+                Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLUE);
+                Paragraph title = new Paragraph("Reporte de Stands", titleFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 20
+                };
+                document.Add(title);
+
+                PdfPTable table = new PdfPTable(5) { WidthPercentage = 100 };
+                table.SetWidths(new float[] { 0.5f, 1.5f, 2f, 1f, 2f });
+
+                Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
+                BaseColor headerBackground = new BaseColor(51, 122, 183);
+
+                string[] headers = { "ID", "Número de Stand", "Descripción", "Disponible", "Emprendedor" };
+                foreach (var header in headers)
+                {
+                    AddCellToTable(table, header, headerFont, headerBackground);
+                }
+
+                Font dataFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.BLACK);
+                BaseColor evenRowColor = new BaseColor(240, 240, 240);
+                BaseColor oddRowColor = BaseColor.WHITE;
+
+                int rowNum = 0;
+                foreach (var stand in stands)
+                {
+                    BaseColor rowColor = (rowNum % 2 == 0) ? evenRowColor : oddRowColor;
+                    rowNum++;
+
+                    AddCellToTable(table, stand.IdStand.ToString(), dataFont, rowColor);
+                    AddCellToTable(table, stand.Numero_Stand.ToString(), dataFont, rowColor);
+                    AddCellToTable(table, stand.Descripcion_Stand ?? "N/A", dataFont, rowColor);
+                    AddCellToTable(table, stand.Disponible ? "Sí" : "No", dataFont, rowColor);
+                    AddCellToTable(table, stand.Emprendedor?.NombreEmprendedor ?? "Sin emprendedor", dataFont, rowColor);
+                }
+
+                document.Add(table);
+                document.Close();
+                writer.Close();
+
+                string fileName = $"Stands_{fechaInicio:yyyyMMdd}_a_{fechaFin:yyyyMMdd}.pdf";
+                return File(memoryStream.ToArray(), "application/pdf", fileName);
+            }
+        }
+
+        private void AddCellToTable(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5
+            };
+            table.AddCell(cell);
+        }
 
     }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClosedXML.Excel;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -271,6 +274,151 @@ namespace SamaraProject1.Controllers
         {
             return _context.Productos.Any(e => e.IdProducto == id);
         }
+
+
+        // GET: Producto/GenerarReporte
+        public IActionResult GenerarReporte()
+        {
+            return View();
+        }
+
+        // POST: Producto/GenerarReporteExcel
+        [HttpPost]
+        public async Task<IActionResult> GenerarReporteExcel(DateTime fechaInicio, DateTime fechaFin)
+        {
+            DateTime fechaInicioUtc = DateTime.SpecifyKind(fechaInicio.Date, DateTimeKind.Utc);
+            DateTime fechaFinUtc = DateTime.SpecifyKind(fechaFin.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
+            var productos = await _context.Productos
+                .Include(p => p.TipoProducto)
+                .Include(p => p.ProductoEmprendedores)
+                .ThenInclude(pe => pe.Emprendedor)
+                .Where(p => p.IdProducto > 0) // Modificar según el criterio de fecha si es necesario
+                .ToListAsync();
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Productos");
+                worksheet.Cell(1, 1).Value = "ID";
+                worksheet.Cell(1, 2).Value = "Nombre";
+                worksheet.Cell(1, 3).Value = "Descripción";
+                worksheet.Cell(1, 4).Value = "Tipo de Producto";
+                worksheet.Cell(1, 5).Value = "Emprendedores";
+
+                var headerRow = worksheet.Row(1);
+                headerRow.Style.Font.Bold = true;
+                headerRow.Style.Fill.BackgroundColor = XLColor.LightBlue;
+
+                int row = 2;
+                foreach (var producto in productos)
+                {
+                    worksheet.Cell(row, 1).Value = producto.IdProducto;
+                    worksheet.Cell(row, 2).Value = producto.Nombre_Producto;
+                    worksheet.Cell(row, 3).Value = producto.Descripcion;
+                    worksheet.Cell(row, 4).Value = producto.TipoProducto?.NombreTipo ?? "Sin tipo";
+
+                    string emprendedores = producto.ProductoEmprendedores != null && producto.ProductoEmprendedores.Any()
+                        ? string.Join(", ", producto.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))
+                        : "Sin emprendedores";
+                    worksheet.Cell(row, 5).Value = emprendedores;
+                    row++;
+                }
+
+                worksheet.Columns().AdjustToContents();
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    string fileName = $"Productos_{fechaInicio:yyyyMMdd}_a_{fechaFin:yyyyMMdd}.xlsx";
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+        }
+
+        // POST: Producto/GenerarReportePDF
+        [HttpPost]
+        public async Task<IActionResult> GenerarReportePDF(DateTime fechaInicio, DateTime fechaFin)
+        {
+            DateTime fechaInicioUtc = DateTime.SpecifyKind(fechaInicio.Date, DateTimeKind.Utc);
+            DateTime fechaFinUtc = DateTime.SpecifyKind(fechaFin.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
+            var productos = await _context.Productos
+                .Include(p => p.TipoProducto)
+                .Include(p => p.ProductoEmprendedores)
+                .ThenInclude(pe => pe.Emprendedor)
+                .Where(p => p.IdProducto > 0)
+                .ToListAsync();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+                PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                document.Open();
+
+                Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLUE);
+                Paragraph title = new Paragraph($"Reporte de Productos", titleFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 20
+                };
+                document.Add(title);
+
+                PdfPTable table = new PdfPTable(5) { WidthPercentage = 100 };
+                table.SetWidths(new float[] { 0.5f, 1.5f, 2f, 1.5f, 2f });
+
+                Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
+                BaseColor headerBackground = new BaseColor(51, 122, 183);
+
+                string[] headers = { "ID", "Nombre", "Descripción", "Tipo de Producto", "Emprendedores" };
+                foreach (var header in headers)
+                {
+                    AddCellToTable(table, header, headerFont, headerBackground);
+                }
+
+                Font dataFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.BLACK);
+                BaseColor evenRowColor = new BaseColor(240, 240, 240);
+                BaseColor oddRowColor = BaseColor.WHITE;
+
+                int rowNum = 0;
+                foreach (var producto in productos)
+                {
+                    BaseColor rowColor = (rowNum % 2 == 0) ? evenRowColor : oddRowColor;
+                    rowNum++;
+
+                    AddCellToTable(table, producto.IdProducto.ToString(), dataFont, rowColor);
+                    AddCellToTable(table, producto.Nombre_Producto ?? "N/A", dataFont, rowColor);
+                    AddCellToTable(table, producto.Descripcion ?? "N/A", dataFont, rowColor);
+                    AddCellToTable(table, producto.TipoProducto?.NombreTipo ?? "Sin tipo", dataFont, rowColor);
+
+                    string emprendedores = producto.ProductoEmprendedores != null && producto.ProductoEmprendedores.Any()
+                        ? string.Join(", ", producto.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))
+                        : "Sin emprendedores";
+                    AddCellToTable(table, emprendedores, dataFont, rowColor);
+                }
+
+                document.Add(table);
+                document.Close();
+                writer.Close();
+
+                string fileName = $"Productos_{fechaInicio:yyyyMMdd}_a_{fechaFin:yyyyMMdd}.pdf";
+                return File(memoryStream.ToArray(), "application/pdf", fileName);
+            }
+        }
+
+        private void AddCellToTable(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5
+            };
+            table.AddCell(cell);
+        }
+
+
     }
 }
 
