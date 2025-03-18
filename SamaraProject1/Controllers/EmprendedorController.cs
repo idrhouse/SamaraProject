@@ -8,6 +8,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel; // Para generar Excel
+using iTextSharp.text; // Para generar PDF
+using iTextSharp.text.pdf;
+using System.Collections.Generic;
 
 namespace SamaraProject1.Controllers
 {
@@ -83,6 +87,9 @@ namespace SamaraProject1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Emprendedor emprendedor, IFormFile? imagen)
         {
+            // Asegurar que la fecha de creación esté en UTC
+            emprendedor.FechaCreacion = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Categorias = _context.Categorias
@@ -179,12 +186,14 @@ namespace SamaraProject1.Controllers
             }
 
             // Convierte la lista de categorías en una lista de SelectListItem
-            var categorias = _context.Categorias.ToList();
+            var categorias = await _context.Categorias.ToListAsync();
             var categoriasSelectList = categorias.Select(c => new SelectListItem
             {
                 Value = c.IdCategoria.ToString(),
-                Text = c.NombreCategoria
+                Text = c.NombreCategoria,
+                Selected = (c.IdCategoria == emprendedor.IdCategoria)
             }).ToList();
+
             ViewBag.Categorias = categoriasSelectList;
 
             return View(emprendedor);
@@ -204,11 +213,12 @@ namespace SamaraProject1.Controllers
             if (!ModelState.IsValid)
             {
                 // Recargar las categorías en el ViewBag si el modelo no es válido
-                var categorias = _context.Categorias.ToList();
+                var categorias = await _context.Categorias.ToListAsync();
                 var categoriasSelectList = categorias.Select(c => new SelectListItem
                 {
                     Value = c.IdCategoria.ToString(),
-                    Text = c.NombreCategoria
+                    Text = c.NombreCategoria,
+                    Selected = (c.IdCategoria == emprendedor.IdCategoria)
                 }).ToList();
                 ViewBag.Categorias = categoriasSelectList;
 
@@ -222,7 +232,15 @@ namespace SamaraProject1.Controllers
             if (categoriaExistente == null)
             {
                 ModelState.AddModelError("IdCategoria", "La categoría seleccionada no es válida.");
-                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                // Corregido: Convertir a SelectListItem
+                var categorias = await _context.Categorias.ToListAsync();
+                var categoriasSelectList = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria,
+                    Selected = (c.IdCategoria == emprendedor.IdCategoria)
+                }).ToList();
+                ViewBag.Categorias = categoriasSelectList;
                 return View(emprendedor);
             }
 
@@ -231,6 +249,13 @@ namespace SamaraProject1.Controllers
             if (emprendedorExistente == null)
             {
                 return NotFound();
+            }
+
+            // Mantener la fecha de creación original pero asegurarse de que esté en UTC
+            DateTime fechaCreacionOriginal = emprendedorExistente.FechaCreacion;
+            if (fechaCreacionOriginal.Kind != DateTimeKind.Utc)
+            {
+                fechaCreacionOriginal = DateTime.SpecifyKind(fechaCreacionOriginal, DateTimeKind.Utc);
             }
 
             // Manejo de la imagen
@@ -244,7 +269,17 @@ namespace SamaraProject1.Controllers
             }
             else
             {
-                emprendedorExistente.ImagenDatos = emprendedor.ImagenDatos;
+                // Mantener la imagen existente - obtenerla de la base de datos
+                var emprendedorConImagen = await _context.Emprendedores
+                    .AsNoTracking()
+                    .Where(e => e.IdEmprendedor == id)
+                    .Select(e => new { e.ImagenDatos })
+                    .FirstOrDefaultAsync();
+
+                if (emprendedorConImagen != null)
+                {
+                    emprendedorExistente.ImagenDatos = emprendedorConImagen.ImagenDatos;
+                }
             }
 
             // Actualizar los datos del emprendedor existente
@@ -256,6 +291,7 @@ namespace SamaraProject1.Controllers
             emprendedorExistente.Telefono = emprendedor.Telefono;
             emprendedorExistente.IdCategoria = emprendedor.IdCategoria;
             emprendedorExistente.Categoria = categoriaExistente; // Asignar la categoría
+            emprendedorExistente.FechaCreacion = fechaCreacionOriginal; // Restaurar la fecha de creación original en UTC
 
             try
             {
@@ -265,9 +301,26 @@ namespace SamaraProject1.Controllers
             }
             catch (Exception ex)
             {
+                // Obtener el mensaje de la excepción interna si existe
+                string errorMessage = ex.Message;
+                Exception innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    errorMessage += " - " + innerException.Message;
+                    innerException = innerException.InnerException;
+                }
+
                 // Manejar errores de base de datos
-                ModelState.AddModelError("", "Ocurrió un error al actualizar el emprendedor: " + ex.Message);
-                ViewBag.Categorias = await _context.Categorias.ToListAsync();
+                ModelState.AddModelError("", "Ocurrió un error al actualizar el emprendedor: " + errorMessage);
+                // Corregido: Convertir a SelectListItem
+                var categorias = await _context.Categorias.ToListAsync();
+                var categoriasSelectList = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria,
+                    Selected = (c.IdCategoria == emprendedor.IdCategoria)
+                }).ToList();
+                ViewBag.Categorias = categoriasSelectList;
                 return View(emprendedor);
             }
         }
@@ -347,10 +400,14 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> GenerarReporteExcel(DateTime fechaInicio, DateTime fechaFin)
         {
             // Obtener emprendedores filtrados por fecha de creación
+            // Convertir fechas a UTC para la consulta
+            DateTime fechaInicioUtc = DateTime.SpecifyKind(fechaInicio.Date, DateTimeKind.Utc);
+            DateTime fechaFinUtc = DateTime.SpecifyKind(fechaFin.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
             var emprendedores = await _context.Emprendedores
                 .Include(e => e.Categoria)
                 .Include(e => e.Stands)
-                .Where(e => e.FechaCreacion >= fechaInicio && e.FechaCreacion <= fechaFin)
+                .Where(e => e.FechaCreacion >= fechaInicioUtc && e.FechaCreacion <= fechaFinUtc)
                 .ToListAsync();
 
             using (var workbook = new XLWorkbook())
@@ -412,10 +469,14 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> GenerarReportePDF(DateTime fechaInicio, DateTime fechaFin)
         {
             // Obtener emprendedores filtrados por fecha de creación
+            // Convertir fechas a UTC para la consulta
+            DateTime fechaInicioUtc = DateTime.SpecifyKind(fechaInicio.Date, DateTimeKind.Utc);
+            DateTime fechaFinUtc = DateTime.SpecifyKind(fechaFin.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
             var emprendedores = await _context.Emprendedores
                 .Include(e => e.Categoria)
                 .Include(e => e.Stands)
-                .Where(e => e.FechaCreacion >= fechaInicio && e.FechaCreacion <= fechaFin)
+                .Where(e => e.FechaCreacion >= fechaInicioUtc && e.FechaCreacion <= fechaFinUtc)
                 .ToListAsync();
 
             using (var memoryStream = new MemoryStream())

@@ -38,8 +38,16 @@ namespace SamaraProject1.Models
         [Display(Name = "Imagen del Emprendedor")]
         public byte[]? ImagenDatos { get; set; }
 
-        // Fecha de creación para filtrar reportes
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        // Fecha de creación para filtrar reportes - Siempre en UTC
+        private DateTime _fechaCreacion = DateTime.UtcNow;
+
+        public DateTime FechaCreacion
+        {
+            get => _fechaCreacion;
+            set => _fechaCreacion = value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(value, DateTimeKind.Utc)
+                : value.ToUniversalTime();
+        }
 
         public int IdCategoria { get; set; }
         public virtual Categoria? Categoria { get; set; }
@@ -51,3 +59,4 @@ namespace SamaraProject1.Models
         public virtual ICollection<ProductoEmprendedor>? ProductoEmprendedores { get; set; }
     }
 }
+
