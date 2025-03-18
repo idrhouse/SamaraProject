@@ -109,6 +109,9 @@ namespace SamaraProject1.Migrations
                         .IsUnicode(false)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("IdCategoria")
                         .HasColumnType("integer");
 
