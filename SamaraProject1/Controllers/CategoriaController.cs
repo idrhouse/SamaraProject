@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SamaraProject1.Models;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
+using SamaraProject1.Models; // Replace YourProjectName with your actual project name
 
-namespace SamaraProject1.Controllers
+namespace SamaraProject1.Controllers // Replace YourProjectName with your actual project name
 {
     public class CategoriaController : Controller
     {
@@ -19,7 +19,25 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> Lista()
         {
             return View(await _context.Categorias.ToListAsync());
-        }       
+        }
+
+        // GET: Categoria/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var categoria = await _context.Categorias
+                .FirstOrDefaultAsync(m => m.IdCategoria == id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            return View(categoria);
+        }
 
         // GET: Categoria/Create
         public IActionResult Create()
@@ -28,6 +46,8 @@ namespace SamaraProject1.Controllers
         }
 
         // POST: Categoria/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdCategoria,NombreCategoria")] Categoria categoria)
@@ -36,6 +56,7 @@ namespace SamaraProject1.Controllers
             {
                 _context.Add(categoria);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Categoría creada correctamente.";
                 return RedirectToAction(nameof(Lista));
             }
             return View(categoria);
@@ -50,16 +71,16 @@ namespace SamaraProject1.Controllers
             }
 
             var categoria = await _context.Categorias.FindAsync(id);
-
             if (categoria == null)
             {
                 return NotFound();
             }
-
             return View(categoria);
         }
 
         // POST: Categoria/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdCategoria,NombreCategoria")] Categoria categoria)
@@ -75,6 +96,7 @@ namespace SamaraProject1.Controllers
                 {
                     _context.Update(categoria);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Categoría actualizada correctamente.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -102,7 +124,6 @@ namespace SamaraProject1.Controllers
 
             var categoria = await _context.Categorias
                 .FirstOrDefaultAsync(m => m.IdCategoria == id);
-
             if (categoria == null)
             {
                 return NotFound();
@@ -117,9 +138,33 @@ namespace SamaraProject1.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var categoria = await _context.Categorias.FindAsync(id);
-            _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Lista));
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar si hay emprendedores asociados a esta categoría
+            bool tieneEmprendedores = await _context.Emprendedores.AnyAsync(e => e.IdCategoria == id);
+
+            if (tieneEmprendedores)
+            {
+                // Si hay emprendedores asociados, mostrar un mensaje de error
+                TempData["Error"] = "No se puede eliminar la categoría porque hay emprendedores asociados a ella. Reasigne los emprendedores a otra categoría antes de eliminar esta.";
+                return RedirectToAction(nameof(Lista));
+            }
+
+            try
+            {
+                _context.Categorias.Remove(categoria);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Categoría eliminada correctamente.";
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al eliminar la categoría: " + ex.Message;
+                return RedirectToAction(nameof(Lista));
+            }
         }
 
         private bool CategoriaExists(int id)
@@ -128,3 +173,4 @@ namespace SamaraProject1.Controllers
         }
     }
 }
+
