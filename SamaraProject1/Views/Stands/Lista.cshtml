@@ -17,18 +17,20 @@
                     Stands
                 </span>
             </h1>
-            <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center sm:justify-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-                Nuevo Stand
-            </a>
-            <button id="btnReportes" class="inline-flex items-center px-4 py-2 border border-green-500 text-green-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-green-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full sm:w-auto justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
-                </svg>
-                Generar Reportes
-            </button>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Nuevo Stand
+                </a>
+                <button id="btnReportes" class="inline-flex items-center px-4 py-2 border border-green-500 text-green-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-green-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full sm:w-auto justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
+                    </svg>
+                    Generar Reportes
+                </button>
+            </div>
         </div>
 
         <!-- Modal para generar reportes -->
@@ -99,18 +101,25 @@
                                     Estado: @(item.Disponible ? "Disponible" : "No disponible")
                                 </p>
                             </div>
-                            <div class="flex flex-wrap gap-2 justify-start sm:justify-end">
-                                <a href="@Url.Action("QuitarEmprendedor", "Stands", new { id = item.IdStand })" class="inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 text-xs sm:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Quitar Emprendedor
+                            <div class="flex flex-row gap-2 justify-end">
+                                <a href="@Url.Action("QuitarEmprendedor", "Stands", new { id = item.IdStand })"
+                                   class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 17a6 6 0 00-12 0h12z" />
+                                        <path fill-rule="evenodd" d="M12.414 5.586a1 1 0 011.414 1.414L12.414 8.414l1.414 1.414a1 1 0 01-1.414 1.414L11 9.828l-1.414 1.414a1 1 0 01-1.414-1.414l1.414-1.414-1.414-1.414a1 1 0 011.414-1.414L11 7.172l1.414-1.586z" clip-rule="evenodd" />
+                                    </svg>
+                                    Quitar
                                 </a>
-                                <a href="@Url.Action("Editar", "Stands", new { id = item.IdStand })" class="inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <a href="@Url.Action("Editar", "Stands", new { id = item.IdStand })"
+                                   class="inline-flex items-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
                                     Editar
                                 </a>
-                                <a href="@Url.Action("Eliminar", "Stands", new { id = item.IdStand })" class="inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 sm:mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <a href="@Url.Action("Eliminar", "Stands", new { id = item.IdStand })"
+                                   class="inline-flex items-center px-3 py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                     </svg>
                                     Eliminar
@@ -210,3 +219,4 @@
         });
     </script>
 }
+
