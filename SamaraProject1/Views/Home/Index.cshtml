@@ -249,10 +249,6 @@
 
 
 @section Scripts {
-
-    <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-
-
     <!-- React and ReactDOM -->
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
@@ -272,9 +268,10 @@
     <!-- Donation component -->
     <script src="/js/DonationComponent.js"></script>
 
-
+    <!-- Carousels and other scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Código existente para los carruseles
             const featuredCarousel = document.getElementById('featured-carousel');
             const featuredSlides = document.getElementById('featured-slides');
             const currentProductName = document.getElementById('current-product-name');
@@ -507,4 +504,5 @@
             });
         });
     </script>
+}
 }

@@ -151,3 +151,24 @@ const CalendarioEventos = () => {
 // Exportar el componente globalmente
 window.CalendarioEventos = CalendarioEventos;
 
+// Renderizar el componente cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarioContainer = document.getElementById('calendario-eventos');
+    if (calendarioContainer && typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+        try {
+            ReactDOM.render(
+                React.createElement(CalendarioEventos),
+                calendarioContainer
+            );
+            console.log('Calendario de eventos renderizado correctamente');
+        } catch (error) {
+            console.error('Error al renderizar el calendario de eventos:', error);
+        }
+    } else {
+        console.error('No se pudo renderizar el calendario: ', {
+            calendarioContainer: !!calendarioContainer,
+            React: typeof React,
+            ReactDOM: typeof ReactDOM
+        });
+    }
+});
