@@ -24,6 +24,7 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<TipoProducto> TipoProducto { get; set; }
     public virtual DbSet<ProductoEmprendedor> ProductoEmprendedores { get; set; }
     public virtual DbSet<Categoria> Categorias { get; set; }
+    public virtual DbSet<CarouselImage> CarouselImages { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -143,7 +144,7 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.Fecha)
-                .HasColumnType("timestamp with time zone") // Correcto
+                .HasColumnType("timestamp with time zone")
                 .IsRequired();
             entity.Property(e => e.HoraInicio)
                 .HasColumnType("time")
@@ -157,9 +158,36 @@ public partial class SamaraMarketContext : DbContext
 
         modelBuilder.Entity<Categoria>(entity =>
         {
-            entity.HasKey(c => c.IdCategoria); // Define IdCategoria como clave primaria
-            entity.Property(c => c.IdCategoria).ValueGeneratedOnAdd(); // Autoincremental
+            entity.HasKey(c => c.IdCategoria);
+            entity.Property(c => c.IdCategoria).ValueGeneratedOnAdd();
             entity.Property(c => c.NombreCategoria).IsRequired().HasMaxLength(100);
+        });
+
+        // Configuración para CarouselImage
+        modelBuilder.Entity<CarouselImage>(entity =>
+        {
+            entity.HasKey(e => e.IdCarouselImage);
+            entity.ToTable("CarouselImage");
+
+            entity.Property(e => e.IdCarouselImage)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.Url)
+                .IsRequired()
+                .HasMaxLength(255)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Alt)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp with time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("timestamp with time zone")
+                .IsRequired(false);
         });
 
         // Relación 1 a muchos: Producto - TipoProducto
@@ -192,11 +220,8 @@ public partial class SamaraMarketContext : DbContext
             .HasForeignKey(e => e.IdCategoria)
             .OnDelete(DeleteBehavior.Restrict);
 
-
-
         OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
-

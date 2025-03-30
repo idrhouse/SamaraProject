@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using SamaraProject1.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IEmprendedorService, EmprendedorService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IStandService, StandService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<ICarouselService, CarouselService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>

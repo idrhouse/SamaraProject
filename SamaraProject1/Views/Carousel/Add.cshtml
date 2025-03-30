@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Agregar Imagen al Carrusel - Feria Sámara Market";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+        <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-6 bg-gradient-to-r from-blue-500 to-indigo-600">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white">Agregar Imagen al Carrusel</h1>
+                <a href="/Carousel/Administrar" class="inline-flex items-center px-3 py-2 border border-white text-white bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-white hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                    <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Regresar
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+            @if (TempData["Error"] != null)
+            {
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 sm:p-4 rounded-r-lg text-sm sm:text-base" role="alert">
+                    <p class="font-bold">Error</p>
+                    <p>@TempData["Error"]</p>
+                </div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 sm:p-4 rounded-r-lg text-sm sm:text-base" role="alert">
+                    <p class="font-bold">Éxito</p>
+                    <p>@TempData["Success"]</p>
+                </div>
+            }
+
+            <form asp-controller="Carousel" asp-action="Add" method="post" enctype="multipart/form-data" class="space-y-4 sm:space-y-6">
+                @Html.AntiForgeryToken()
+
+                <div class="space-y-2">
+                    <label for="alt" class="block text-sm font-medium text-gray-700">Texto Alternativo</label>
+                    <input type="text" id="alt" name="alt"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                           placeholder="Descripción de la imagen (opcional)">
+                    <p class="text-xs text-gray-500">Este texto se mostrará si la imagen no puede cargarse y es importante para la accesibilidad.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="image" class="block text-sm font-medium text-gray-700">Imagen del Carrusel</label>
+                    <div id="drop-area" class="mt-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-6 border-2 border-gray-300 border-dashed rounded-md hover:bg-gray-50 transition-colors duration-200">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <span>Subir una imagen</span>
+                                    <input id="image" name="image" type="file" class="sr-only" required accept="image/*">
+                                </label>
+                                <p class="pl-1">o arrastrar y soltar</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 5MB</p>
+                        </div>
+
+                        <!-- Contenedor para la previsualización de la imagen -->
+                        <div id="image-preview" class="mt-4 hidden">
+                            <img id="preview-img" src="#" alt="Vista previa" class="max-h-48 rounded-lg shadow-md">
+                            <button type="button" id="remove-image" class="mt-2 inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                Eliminar imagen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-4 sm:pt-6">
+                    <a href="/Carousel/Administrar" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" />
+                        </svg>
+                        Subir Imagen
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('image');
+            const imagePreview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const removeButton = document.getElementById('remove-image');
+
+            // Función para mostrar la previsualización de la imagen
+            function showPreview(file) {
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    }
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Evento para cuando se selecciona un archivo mediante el input
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    showPreview(this.files[0]);
+                }
+            });
+
+            // Eventos para arrastrar y soltar
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('border-blue-500', 'bg-blue-50');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('border-blue-500', 'bg-blue-50');
+            }
+
+            // Manejar el evento de soltar archivos
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files && files.length) {
+                    fileInput.files = files;
+                    showPreview(files[0]);
+                }
+            }
+
+            // Botón para eliminar la imagen seleccionada
+            removeButton.addEventListener('click', function() {
+                fileInput.value = '';
+                previewImg.src = '#';
+                imagePreview.classList.add('hidden');
+            });
+        });
+    </script>
+}
