@@ -28,6 +28,63 @@
             </div>
         </div>
 
+        <!-- Barra de búsqueda y filtros -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <!-- Barra de búsqueda -->
+                <div class="flex-grow">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="Buscar productos..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <!-- Filtro por tipo de producto -->
+                    <div class="w-full sm:w-auto">
+                        <select id="tipoFilter" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Todos los tipos</option>
+                            @{
+                                var tiposProducto = Model.Select(p => p.TipoProducto?.NombreTipo).Where(t => t != null).Distinct().OrderBy(t => t);
+                                foreach (var tipo in tiposProducto)
+                                {
+                                    <option value="@tipo">@tipo</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Filtro por emprendedor -->
+                    <div class="w-full sm:w-auto">
+                        <select id="emprendedorFilter" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Todos los emprendedores</option>
+                            @{
+                                var emprendedores = Model.SelectMany(p => p.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor))
+                                                        .Distinct().OrderBy(e => e);
+                                foreach (var emprendedor in emprendedores)
+                                {
+                                    <option value="@emprendedor">@emprendedor</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Botón para limpiar filtros -->
+                    <button id="clearFilters" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal para generar reportes -->
         <div id="reporteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
             <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-md w-full mx-4">
@@ -69,10 +126,14 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+        <div id="productosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             @foreach (var item in Model)
             {
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+                <div class="producto-card bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl" 
+                     data-nombre="@item.Nombre_Producto.ToLower()" 
+                     data-descripcion="@(item.Descripcion?.ToLower() ?? "")" 
+                     data-tipo="@(item.TipoProducto?.NombreTipo?.ToLower() ?? "")"
+                     data-emprendedores="@string.Join(",", item.ProductoEmprendedores.Select(pe => pe.Emprendedor.NombreEmprendedor.ToLower()))">
                     <div class="relative aspect-w-16 aspect-h-9">
                         @if (item.ImagenDatos != null)
                         {
@@ -135,6 +196,15 @@
                 </div>
             }
         </div>
+
+        <!-- Mensaje cuando no hay resultados -->
+        <div id="noResults" class="hidden text-center py-12">
+            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-4 text-lg font-medium text-gray-900">No se encontraron productos</h3>
+            <p class="mt-1 text-sm text-gray-500">Intenta con otros términos de búsqueda o filtros.</p>
+        </div>
     </div>
 </div>
 
@@ -152,6 +222,7 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Código existente para el modal de reportes
             const modal = document.getElementById('reporteModal');
             const btnReportes = document.getElementById('btnReportes');
             const closeModal = document.getElementById('closeModal');
@@ -221,7 +292,72 @@
 
                 return true;
             }
+
+            // Nuevo código para la búsqueda y filtros
+            const searchInput = document.getElementById('searchInput');
+            const tipoFilter = document.getElementById('tipoFilter');
+            const emprendedorFilter = document.getElementById('emprendedorFilter');
+            const clearFilters = document.getElementById('clearFilters');
+            const productoCards = document.querySelectorAll('.producto-card');
+            const noResults = document.getElementById('noResults');
+            const productosContainer = document.getElementById('productosContainer');
+
+            // Función para filtrar productos
+            function filtrarProductos() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const tipoSeleccionado = tipoFilter.value.toLowerCase();
+                const emprendedorSeleccionado = emprendedorFilter.value.toLowerCase();
+                
+                let productosVisibles = 0;
+
+                productoCards.forEach(card => {
+                    const nombre = card.getAttribute('data-nombre');
+                    const descripcion = card.getAttribute('data-descripcion');
+                    const tipo = card.getAttribute('data-tipo');
+                    const emprendedores = card.getAttribute('data-emprendedores');
+                    
+                    // Verificar si el producto cumple con todos los criterios de filtro
+                    const cumpleBusqueda = searchTerm === '' || 
+                                          nombre.includes(searchTerm) || 
+                                          descripcion.includes(searchTerm);
+                    
+                    const cumpleTipo = tipoSeleccionado === '' || 
+                                      tipo === tipoSeleccionado;
+                    
+                    const cumpleEmprendedor = emprendedorSeleccionado === '' || 
+                                             emprendedores.includes(emprendedorSeleccionado);
+                    
+                    // Mostrar u ocultar la tarjeta según los filtros
+                    if (cumpleBusqueda && cumpleTipo && cumpleEmprendedor) {
+                        card.classList.remove('hidden');
+                        productosVisibles++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Mostrar mensaje de "No se encontraron productos" si no hay resultados
+                if (productosVisibles === 0) {
+                    productosContainer.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                } else {
+                    productosContainer.classList.remove('hidden');
+                    noResults.classList.add('hidden');
+                }
+            }
+
+            // Eventos para los filtros
+            searchInput.addEventListener('input', filtrarProductos);
+            tipoFilter.addEventListener('change', filtrarProductos);
+            emprendedorFilter.addEventListener('change', filtrarProductos);
+
+            // Limpiar filtros
+            clearFilters.addEventListener('click', function() {
+                searchInput.value = '';
+                tipoFilter.value = '';
+                emprendedorFilter.value = '';
+                filtrarProductos();
+            });
         });
     </script>
 }
-
