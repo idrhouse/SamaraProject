@@ -9,35 +9,57 @@
             <div class="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:w-full lg:max-w-2xl lg:pb-28 xl:pb-32">
                 <main class="mx-auto mt-10 max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                     <div class="sm:text-center lg:text-left">
-                        <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+                        <h1 class="text-3xl font-light tracking-wide text-gray-800 sm:text-4xl md:text-5xl">
                             <span class="block">Bienvenidos a</span>
-                            <span class="block text-blue-600">Feria Sámara Market</span>
+                            <span class="block mt-1 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent font-medium">
+                                Feria Sámara Market
+                            </span>
                         </h1>
-                        <p class="mt-3 text-sm text-gray-600 sm:text-base md:text-lg lg:pr-12 lg:max-w-lg leading-relaxed">
+
+                        <p class="mt-5 text-sm text-gray-600 sm:text-base md:text-lg lg:pr-16 lg:max-w-lg leading-relaxed font-light">
                             Descubre productos únicos de alta calidad hechos en Costa Rica. Conoce artesanos talentosos,
                             agricultores y productores locales. Apoya el comercio local y vive una experiencia auténtica
                             llena de cultura en el mejor ambiente de playa.
                         </p>
-                        <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                            <div class="rounded-md shadow">
-                                <a href="@Url.Action("ListaPublica", "Producto")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg">
-                                    Productos
-                                </a>
-                            </div>
-                            <div class="mt-3 sm:mt-0 sm:ml-3">
-                                <a href="@Url.Action("ListaPublica", "Stands")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
-                                    Stands
-                                </a>
-                            </div>
-                            <div class="mt-3 sm:mt-0 sm:ml-3">
-                                <a href="@Url.Action("ListaPublica", "Emprendedor")" class="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-100 px-8 py-3 text-base font-medium text-blue-700 hover:bg-blue-200 md:py-4 md:px-10 md:text-lg">
-                                    Emprendedores
-                                </a>
-                            </div>
+
+                        <div class="mt-8 sm:mt-10 sm:flex sm:justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                            <a href="@Url.Action("ListaPublica", "Producto")"
+                               class="group flex items-center justify-center px-6 py-3 sm:py-3.5 rounded-full
+                          bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm sm:text-base
+                          font-medium tracking-wide shadow-md hover:shadow-lg transition-all duration-300
+                          transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2
+                          focus:ring-blue-400">
+                                <span>Explorar Productos</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300"
+                                     viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </a>
+
+                            <a href="@Url.Action("ListaPublica", "Stands")"
+                               class="flex items-center justify-center px-6 py-3 sm:py-3.5 rounded-full
+                          bg-white border border-gray-200 text-gray-700 text-sm sm:text-base
+                          font-medium tracking-wide shadow-sm hover:shadow hover:bg-gray-50
+                          hover:text-blue-600 hover:border-blue-200 transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
+                                Stands
+                            </a>
+
+                            <a href="@Url.Action("ListaPublica", "Emprendedor")"
+                               class="flex items-center justify-center px-6 py-3 sm:py-3.5 rounded-full
+                          bg-white border border-gray-200 text-gray-700 text-sm sm:text-base
+                          font-medium tracking-wide shadow-sm hover:shadow hover:bg-gray-50
+                          hover:text-blue-600 hover:border-blue-200 transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
+                                Emprendedores
+                            </a>
                         </div>
                     </div>
                 </main>
             </div>
+
+
         </div>
         <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 relative">
             <!-- Carousel -->
@@ -147,50 +169,97 @@
 
 
 
-    <!-- YouTube Video Section -->
-    <div class="bg-gray-100 py-16 sm:py-24 mb-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Descubre Feria Sámara Market</h2>
-            <div class="max-w-5xl mx-auto">
-                <div class="aspect-w-16 aspect-h-9 h-[600px] sm:h-[600px] md:h-[600px] lg:h-[600px]">
-                    <iframe src="https://www.youtube.com/embed/25V7mPgLubI"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+<!-- YouTube Video Section - Elegante y Minimalista -->
+<section class="py-16 sm:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Encabezado elegante -->
+        <div class="text-center mb-10">
+            <h2 class="text-2xl sm:text-3xl tracking-wide text-gray-800">
+                <span class="font-light">DESCUBRE</span> <span class="font-medium">FERIA SÁMARA MARKET</span>
+            </h2>
+            <div class="w-24 h-0.5 bg-blue-400 mx-auto mt-4 mb-10"></div>
+        </div>
+
+        <!-- Contenedor del video - Simplificado para mejor compatibilidad -->
+        <div class="max-w-4xl mx-auto">
+            <div class="relative rounded-lg overflow-hidden shadow-lg">
+                <!-- Proporción 16:9 mantenida con aspect-ratio -->
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                    <iframe src="https://www.youtube.com/embed/25V7mPgLubI?rel=0"
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
                             allowfullscreen
-                            class="w-full h-full rounded-xl shadow-2xl"></iframe>
+                            loading="lazy"
+                            title="Video de Feria Sámara Market">
+                    </iframe>
                 </div>
-                <p class="mt-6 text-center text-lg text-gray-600">
-                    Explora nuestra feria y conoce la experiencia única que ofrecemos en Playa Sámara.
-                </p>
             </div>
+
+            <!-- Descripción -->
+            <p class="mt-8 text-center text-base text-gray-600 max-w-2xl mx-auto">
+                Explora nuestra feria y conoce la experiencia única que ofrecemos en el corazón de Playa Sámara.
+            </p>
         </div>
     </div>
+</section>
 
-    <!-- Carrousel productos component -->
-    <div class="bg-white py-16">
-        <h2 class="text-center text-2xl font-bold mb-4">Productos Destacados</h2>
-        <p id="current-product-name" class="text-center text-lg text-gray-700 mb-8"></p>
+
+<!-- Carrusel de Productos Destacados - Elegante y Minimalista -->
+<section class="py-16 sm:py-20 bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h2 class="text-xl sm:text-2xl font-extralight tracking-widest text-gray-700 uppercase">
+                Productos <span class="font-normal text-gray-900">Destacados</span>
+            </h2>
+            <div class="w-16 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mt-3 mb-4"></div>
+            <p id="current-product-name" class="text-sm sm:text-base text-gray-500 font-light max-w-lg mx-auto italic"></p>
+        </div>
+
+
         <div class="relative" id="featured-carousel">
-            <div id="featured-slides" class="overflow-hidden relative w-full h-64">
+            <!-- Contenedor principal del carrusel -->
+            <div id="featured-slides" class="relative w-full overflow-hidden rounded-lg shadow-sm" style="height: 400px;">
                 <!-- Las imágenes se cargarán dinámicamente aquí -->
             </div>
-            <!-- Botones de navegación -->
-            <button id="prevFeatured" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300">
-                &#8592;
+
+            <!-- Botones de navegación elegantes -->
+            <button id="prevFeatured" class="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm shadow-sm rounded-full p-2.5 sm:p-3 hover:bg-white hover:shadow transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span class="sr-only">Anterior</span>
             </button>
-            <button id="nextFeatured" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300">
-                &#8594;
+
+            <button id="nextFeatured" class="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm shadow-sm rounded-full p-2.5 sm:p-3 hover:bg-white hover:shadow transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="sr-only">Siguiente</span>
             </button>
+
+            <!-- Indicadores de posición (dots) - Se generarán dinámicamente -->
+            <div class="flex justify-center mt-6" id="carousel-indicators"></div>
         </div>
     </div>
+</section>
 
-<!-- Calendario de Eventos Section -->
-<div class="py-12 bg-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Próximos Eventos</h2>
-        <div id="calendario-eventos" class="bg-white shadow-xl rounded-lg overflow-hidden"></div>
+<section class="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="text-xl sm:text-2xl font-extralight tracking-widest text-gray-700 uppercase">
+                Próximos <span class="font-normal text-gray-900">Eventos</span>
+            </h2>
+            <div class="w-16 h-px bg-gradient-to-r from-transparent via-indigo-400 to-transparent mx-auto mt-3 mb-4"></div>
+            <p class="text-sm sm:text-base text-gray-500 font-light max-w-lg mx-auto">
+                Descubre y participa en nuestros eventos especiales
+            </p>
+        </div>
+
+        <div id="calendario-eventos" class="bg-white/90 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 rounded-xl overflow-hidden"></div>
+
     </div>
-</div>
+</section>
+
+
 
 <!-- Modal para detalles del evento -->
 <div id="eventoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
@@ -290,6 +359,7 @@
             const currentProductName = document.getElementById('current-product-name');
             const prevButton = document.getElementById('prevFeatured');
             const nextButton = document.getElementById('nextFeatured');
+            const indicatorsContainer = document.getElementById('carousel-indicators');
 
             let featuredIndex = 0;
             let featuredProducts = [];
@@ -301,10 +371,26 @@
                     const response = await fetch('/FeaturedProducts'); // Nueva ruta del controlador
                     featuredProducts = await response.json();
                     renderSlides();
+                    createIndicators();
                     updateProductName();
+                    updateIndicators();
                     startAutoAdvance();
                 } catch (error) {
                     console.error('Error al cargar los productos destacados:', error);
+                    // Mostrar mensaje de error elegante
+                    featuredSlides.innerHTML = `
+                        <div class="flex items-center justify-center h-full bg-gray-50">
+                            <div class="text-center p-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <p class="text-gray-600">No se pudieron cargar los productos destacados.</p>
+                                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" onclick="loadFeaturedProducts()">
+                                    Reintentar
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 }
             }
 
@@ -312,9 +398,51 @@
                 featuredSlides.innerHTML = '';
                 featuredProducts.forEach((product, index) => {
                     const slide = document.createElement('div');
-                    slide.className = `absolute inset-0 w-full h-full transition-opacity duration-500 ${index === featuredIndex ? 'opacity-100' : 'opacity-0'}`;
-                    slide.innerHTML = `<img src="${product.imageUrl}" alt="${product.name}" class="object-cover w-full h-full" />`;
+                    slide.className = `absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${index === featuredIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+
+                    // Contenedor para la imagen con efecto de zoom suave
+                    slide.innerHTML = `
+                        <div class="relative w-full h-full overflow-hidden group">
+                            <img src="${product.imageUrl}" alt="${product.name}"
+                                 class="object-cover w-full h-full transform transition-transform duration-7000 group-hover:scale-105"
+                                 onerror="this.src='/placeholder.jpg'; this.onerror=null;">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
+                                <h3 class="text-xl sm:text-2xl font-medium">${product.name}</h3>
+                                ${product.description ? `<p class="mt-2 text-sm sm:text-base text-white/80 line-clamp-2">${product.description}</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+
                     featuredSlides.appendChild(slide);
+                });
+            }
+
+            function createIndicators() {
+                indicatorsContainer.innerHTML = '';
+                featuredProducts.forEach((_, index) => {
+                    const indicator = document.createElement('button');
+                    indicator.className = `h-2 w-2 rounded-full mx-1 focus:outline-none transition-all duration-300 ${index === featuredIndex ? 'bg-blue-500 w-6' : 'bg-gray-300'}`;
+                    indicator.setAttribute('aria-label', `Ver producto ${index + 1}`);
+                    indicator.onclick = () => {
+                        stopAutoAdvance();
+                        showSlide(index);
+                    };
+
+                    indicatorsContainer.appendChild(indicator);
+                });
+            }
+
+            function updateIndicators() {
+                const indicators = indicatorsContainer.querySelectorAll('button');
+                indicators.forEach((indicator, index) => {
+                    if (index === featuredIndex) {
+                        indicator.classList.remove('bg-gray-300', 'w-2');
+                        indicator.classList.add('bg-blue-500', 'w-6');
+                    } else {
+                        indicator.classList.remove('bg-blue-500', 'w-6');
+                        indicator.classList.add('bg-gray-300', 'w-2');
+                    }
                 });
             }
 
@@ -330,6 +458,7 @@
                 featuredIndex = (index + featuredProducts.length) % featuredProducts.length;
                 renderSlides();
                 updateProductName();
+                updateIndicators();
             }
 
             function nextSlide() {
@@ -352,6 +481,10 @@
                 }
             }
 
+            // Pausar autoavance cuando el mouse está sobre el carrusel
+            featuredCarousel.addEventListener('mouseenter', stopAutoAdvance);
+            featuredCarousel.addEventListener('mouseleave', startAutoAdvance);
+
             prevButton.addEventListener('click', () => {
                 stopAutoAdvance(); // Detener autoavance temporalmente cuando el usuario interactúa
                 prevSlide();
@@ -362,6 +495,7 @@
                 nextSlide();
             });
 
+            // Iniciar carga de productos
             loadFeaturedProducts();
         });
     </script>

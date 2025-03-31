@@ -1,20 +1,51 @@
 ﻿const UbicacionSection = () => {
-    return React.createElement("section", {
-        className: "py-12 bg-gradient-to-b from-white to-gray-50"
-    }, React.createElement("div", {
-        className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-    }, [
-        React.createElement("div", {
-            key: "header",
-            className: "text-center mb-8"
-        }, [
-            React.createElement("h2", {
-                className: "text-3xl font-bold text-gray-900"
-            }, "Nuestra Ubicación"),
-            React.createElement("p", {
-                className: "mt-4 text-xl text-gray-600"
-            }, "Visítanos en Playa Sámara")
-        ]),
+    return React.createElement(
+        "section",
+        {
+            className: "py-16 bg-gradient-to-b from-gray-50 to-white",
+        },
+        React.createElement(
+            "div",
+            {
+                className: "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8",
+            },
+            [
+                // Encabezado elegante
+                React.createElement(
+                    "div",
+                    {
+                        key: "header",
+                        className: "text-center mb-10",
+                    },
+                    [
+                        React.createElement(
+                            "h2",
+                            {
+                                className: "text-xl sm:text-2xl font-extralight tracking-widest text-gray-700 uppercase",
+                            },
+                            [
+                                "Nuestra ",
+                                React.createElement(
+                                    "span",
+                                    {
+                                        className: "font-normal text-gray-900",
+                                    },
+                                    "Ubicación",
+                                ),
+                            ],
+                        ),
+                        React.createElement("div", {
+                            className: "w-16 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mt-3 mb-4",
+                        }),
+                        React.createElement(
+                            "p",
+                            {
+                                className: "text-sm sm:text-base text-gray-500 font-light max-w-lg mx-auto",
+                            },
+                            "Visítanos en el corazón de Playa Sámara",
+                        ),
+                    ],
+                ),
         React.createElement("div", {
             key: "content",
             className: "bg-white rounded-lg shadow-lg overflow-hidden max-w-5xl mx-auto"
