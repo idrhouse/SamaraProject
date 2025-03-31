@@ -36,31 +36,11 @@
                             <div class="bg-white rounded-lg p-4 text-center">
                                 <p class="text-2xl font-bold text-blue-600">${this.sinpeNumber}</p>
                                 <p class="text-sm text-gray-500 mt-2">Asociación Samara Viva</p>
-                            </div>
-                            <div class="mt-6 space-y-2">
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">1.</span> Abre la app de tu banco
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">2.</span> Selecciona la opción SINPE Móvil
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">3.</span> Ingresa el número ${this.sinpeNumber}
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">4.</span> Ingresa el monto que deseas donar
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">5.</span> En el concepto, escribe "Donación"
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    <span class="font-semibold">6.</span> Confirma la transacción
-                                </p>
-                            </div>
+                            
                         </div>
                         
                         <div class="mt-10 text-center">
-                            <p class="text-gray-500">Todas las donaciones son utilizadas para el desarrollo de la comunidad de Sámara.</p>
+                            <p class="text-gray-500">Todas las donaciones son utilizadas para el desarrollo de la feria, mejorar las instalaciones y ayudar a los emprendedores.</p>
                         </div>
                     </div>
                 </div>
