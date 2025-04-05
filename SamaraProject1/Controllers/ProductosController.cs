@@ -44,37 +44,46 @@ namespace SamaraProject1.Controllers
             return View(productos);
         }
 
+        // Método mejorado para obtener emprendedores por categoría (para AJAX)
+        [HttpGet]
         public async Task<IActionResult> ObtenerEmprendedoresPorCategoria(int idCategoria)
         {
+            if (idCategoria <= 0)
+            {
+                return Json(new List<object>());
+            }
+
             var emprendedores = await _context.Emprendedores
                 .Where(e => e.IdCategoria == idCategoria)
-                .Select(e => new { e.IdEmprendedor, e.NombreEmprendedor })
+                .Select(e => new {
+                    idEmprendedor = e.IdEmprendedor,
+                    nombreEmprendedor = $"{e.NombreEmprendedor} {e.Apellidos} - {e.NombreNegocio}"
+                })
                 .ToListAsync();
 
             return Json(emprendedores);
         }
 
+        // GET: Producto/Crear
         public async Task<IActionResult> Crear(int? idCategoria)
         {
-            var emprendedores = await _context.Emprendedores
-                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
-                .ToListAsync();
+            // Cargar tipos de productos y categorías
             var tipoProductos = await _context.TipoProducto.ToListAsync();
             var categorias = await _context.Categorias.ToListAsync();
-
-            if (!emprendedores.Any())
-            {
-                ModelState.AddModelError("", "No hay emprendedores registrados.");
-            }
 
             if (!tipoProductos.Any())
             {
                 ModelState.AddModelError("", "No hay tipos de productos registrados.");
             }
 
+            // Cargar emprendedores inicialmente (todos o filtrados por categoría si se proporciona)
+            var emprendedores = await _context.Emprendedores
+                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
+                .ToListAsync();
+
             ViewBag.Emprendedores = emprendedores;
             ViewBag.TipoProductos = tipoProductos;
-            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria");
+            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria", idCategoria);
 
             return View();
         }
@@ -95,44 +104,72 @@ namespace SamaraProject1.Controllers
             return File(productos.ImagenDatos, "image/jpeg");
         }
 
+        // POST: Producto/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Producto producto, int[] SelectedEmprendedores, IFormFile? imagen)
         {
             if (ModelState.IsValid)
             {
-                if (imagen != null && imagen.Length > 0)
+                try
                 {
-                    using (var memoryStream = new MemoryStream())
+                    // Manejo de la imagen
+                    if (imagen != null && imagen.Length > 0)
                     {
-                        await imagen.CopyToAsync(memoryStream);
-                        producto.ImagenDatos = memoryStream.ToArray();
-                    }
-                }
-
-                _context.Add(producto);
-                await _context.SaveChangesAsync();
-
-                if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
-                {
-                    foreach (var idEmprendedor in SelectedEmprendedores)
-                    {
-                        var productoEmprendedor = new ProductoEmprendedor
+                        using (var memoryStream = new MemoryStream())
                         {
-                            IdProducto = producto.IdProducto,
-                            IdEmprendedor = idEmprendedor
-                        };
-                        _context.Add(productoEmprendedor);
+                            await imagen.CopyToAsync(memoryStream);
+                            producto.ImagenDatos = memoryStream.ToArray();
+                        }
                     }
-                    await _context.SaveChangesAsync();
-                }
 
-                TempData["Message"] = "Producto creado exitosamente.";
-                return RedirectToAction(nameof(Lista));
+                    // Guardar el producto
+                    _context.Add(producto);
+                    await _context.SaveChangesAsync();
+
+                    // Asociar emprendedores al producto
+                    if (SelectedEmprendedores != null && SelectedEmprendedores.Any())
+                    {
+                        foreach (var idEmprendedor in SelectedEmprendedores)
+                        {
+                            var productoEmprendedor = new ProductoEmprendedor
+                            {
+                                IdProducto = producto.IdProducto,
+                                IdEmprendedor = idEmprendedor
+                            };
+                            _context.Add(productoEmprendedor);
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+
+                    TempData["Message"] = "Producto creado exitosamente.";
+                    return RedirectToAction(nameof(Lista));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Ocurrió un error al guardar el producto: " + ex.Message);
+                }
             }
 
-            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
-            ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
+            // Si llegamos aquí, algo falló, volvemos a cargar los datos para el formulario
+            var tipoProductos = await _context.TipoProducto.ToListAsync();
+            var categorias = await _context.Categorias.ToListAsync();
+
+            // Cargar emprendedores basados en la categoría seleccionada (si hay alguna)
+            int? idCategoria = null;
+            if (Request.Form.ContainsKey("IdCategoria") && int.TryParse(Request.Form["IdCategoria"], out int parsedId))
+            {
+                idCategoria = parsedId;
+            }
+
+            var emprendedores = await _context.Emprendedores
+                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
+                .ToListAsync();
+
+            ViewBag.Emprendedores = emprendedores;
+            ViewBag.TipoProductos = tipoProductos;
+            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria", idCategoria);
+
             return View(producto);
         }
 
@@ -153,7 +190,24 @@ namespace SamaraProject1.Controllers
                 return NotFound();
             }
 
-            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
+            // Obtener la categoría del primer emprendedor asociado (si hay alguno)
+            int? idCategoria = null;
+            if (producto.ProductoEmprendedores != null && producto.ProductoEmprendedores.Any())
+            {
+                var primerEmprendedor = await _context.Emprendedores
+                    .FirstOrDefaultAsync(e => e.IdEmprendedor == producto.ProductoEmprendedores.First().IdEmprendedor);
+
+                if (primerEmprendedor != null)
+                {
+                    idCategoria = primerEmprendedor.IdCategoria;
+                }
+            }
+
+            var categorias = await _context.Categorias.ToListAsync();
+            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria", idCategoria);
+            ViewBag.Emprendedores = await _context.Emprendedores
+                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
+                .ToListAsync();
             ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
             ViewBag.SelectedEmprendedores = producto.ProductoEmprendedores?.Select(pe => pe.IdEmprendedor).ToList() ?? new List<int>();
 
@@ -225,9 +279,24 @@ namespace SamaraProject1.Controllers
                         throw;
                     }
                 }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Ocurrió un error al actualizar el producto: " + ex.Message);
+                }
             }
 
-            ViewBag.Emprendedores = await _context.Emprendedores.ToListAsync();
+            // Si llegamos aquí, algo falló, volvemos a cargar los datos para el formulario
+            int? idCategoria = null;
+            if (Request.Form.ContainsKey("IdCategoria") && int.TryParse(Request.Form["IdCategoria"], out int parsedId))
+            {
+                idCategoria = parsedId;
+            }
+
+            var categorias = await _context.Categorias.ToListAsync();
+            ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria", idCategoria);
+            ViewBag.Emprendedores = await _context.Emprendedores
+                .Where(e => idCategoria == null || e.IdCategoria == idCategoria)
+                .ToListAsync();
             ViewBag.TipoProductos = await _context.TipoProducto.ToListAsync();
             ViewBag.SelectedEmprendedores = SelectedEmprendedores;
 
@@ -417,8 +486,5 @@ namespace SamaraProject1.Controllers
             };
             table.AddCell(cell);
         }
-
-
     }
 }
-

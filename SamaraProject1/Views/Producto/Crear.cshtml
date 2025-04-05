@@ -103,58 +103,115 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        // Función para cargar emprendedores por categoría (existente)
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar el evento de cambio para el select de categorías
+        var categoriaSelect = document.getElementById("IdCategoria");
+        if (categoriaSelect) {
+            categoriaSelect.addEventListener('change', cargarEmprendedores);
+
+            // Ejecutar cargarEmprendedores al inicio si ya hay una categoría seleccionada
+            if (categoriaSelect.value) {
+                cargarEmprendedores();
+            }
+        }
+
+        // Función para cargar emprendedores por categoría
         function cargarEmprendedores() {
             var idCategoria = document.getElementById("IdCategoria").value;
+            var emprendedoresSelect = document.getElementById("Emprendedores");
+
+            // Limpiar opciones actuales
+            emprendedoresSelect.innerHTML = "";
+
+            if (!idCategoria) {
+                // Si no hay categoría seleccionada, mostrar mensaje
+                var defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.text = "-- Seleccione una categoría primero --";
+                emprendedoresSelect.appendChild(defaultOption);
+                return;
+            }
+
+            // Mostrar mensaje de carga
+            var loadingOption = document.createElement("option");
+            loadingOption.value = "";
+            loadingOption.text = "Cargando emprendedores...";
+            emprendedoresSelect.appendChild(loadingOption);
+
+            // Construir la URL con el ID de categoría
             var url = '@Url.Action("ObtenerEmprendedoresPorCategoria", "Producto")' + '?idCategoria=' + idCategoria;
 
             fetch(url)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    var select = document.getElementById("Emprendedores");
-                    select.innerHTML = "";
+                    console.log("Datos recibidos:", data);
 
-                    data.forEach(function (emprendedor) {
-                        var option = document.createElement("option");
-                        option.value = emprendedor.idEmprendedor;
-                        option.text = emprendedor.nombreEmprendedor;
-                        select.appendChild(option);
-                    });
+                    // Limpiar opciones de carga
+                    emprendedoresSelect.innerHTML = "";
+
+                    // Agregar emprendedores recibidos
+                    if (data && data.length > 0) {
+                        data.forEach(function(emprendedor) {
+                            var option = document.createElement("option");
+                            option.value = emprendedor.idEmprendedor;
+                            option.text = emprendedor.nombreEmprendedor;
+                            emprendedoresSelect.appendChild(option);
+                        });
+                    } else {
+                        var noOption = document.createElement("option");
+                        noOption.value = "";
+                        noOption.text = "No hay emprendedores en esta categoría";
+                        emprendedoresSelect.appendChild(noOption);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar emprendedores:", error);
+                    emprendedoresSelect.innerHTML = "";
+                    var errorOption = document.createElement("option");
+                    errorOption.value = "";
+                    errorOption.text = "Error al cargar emprendedores";
+                    emprendedoresSelect.appendChild(errorOption);
                 });
         }
 
         // Código para la previsualización de imágenes y arrastrar y soltar
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropArea = document.getElementById('drop-area');
-            const fileInput = document.getElementById('imagen');
-            const imagePreview = document.getElementById('image-preview');
-            const previewImg = document.getElementById('preview-img');
-            const removeButton = document.getElementById('remove-image');
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('imagen');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const removeButton = document.getElementById('remove-image');
 
-            // Función para mostrar la previsualización de la imagen
-            function showPreview(file) {
-                if (file) {
-                    const reader = new FileReader();
+        // Función para mostrar la previsualización de la imagen
+        function showPreview(file) {
+            if (file) {
+                const reader = new FileReader();
 
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    }
-
-                    reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
                 }
-            }
 
-            // Evento para cuando se selecciona un archivo mediante el input
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Evento para cuando se selecciona un archivo mediante el input
+        if (fileInput) {
             fileInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
                     showPreview(this.files[0]);
                 }
             });
+        }
 
-            // Eventos para arrastrar y soltar
+        // Eventos para arrastrar y soltar
+        if (dropArea) {
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 dropArea.addEventListener(eventName, preventDefaults, false);
             });
@@ -192,14 +249,17 @@
                     showPreview(files[0]);
                 }
             }
+        }
 
-            // Botón para eliminar la imagen seleccionada
+        // Botón para eliminar la imagen seleccionada
+        if (removeButton) {
             removeButton.addEventListener('click', function() {
                 fileInput.value = '';
                 previewImg.src = '#';
                 imagePreview.classList.add('hidden');
             });
-        });
-    </script>
+        }
+    });
+</script>
 }
 
