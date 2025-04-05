@@ -31,6 +31,13 @@ namespace SamaraProject1.Models
         [RegularExpression(@"^\d+$", ErrorMessage = "El teléfono solo debe contener números.")]
         public string? Telefono { get; set; }
 
+        // Validación: Cédula debe ser única y tener formato válido
+        [Required(ErrorMessage = "El número de cédula es obligatorio.")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "El número de cédula debe tener entre 5 y 20 caracteres.")]
+        [RegularExpression(@"^[0-9\-]+$", ErrorMessage = "La cédula solo debe contener números y guiones.")]
+        [Display(Name = "Número de Cédula")]
+        public string Cedula { get; set; }
+
         // Validación: Correo debe ser único (no nulo si se ingresa) y debe cumplir con el formato estándar de correo
         [EmailAddress(ErrorMessage = "Correo electrónico no válido.")]
         public string? Correo { get; set; }

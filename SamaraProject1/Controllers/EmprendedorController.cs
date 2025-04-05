@@ -103,6 +103,23 @@ namespace SamaraProject1.Controllers
                 return View(emprendedor);
             }
 
+            // Validar si la cédula ya existe
+            var cedulaExistente = await _context.Emprendedores
+                .FirstOrDefaultAsync(e => e.Cedula == emprendedor.Cedula);
+
+            if (cedulaExistente != null)
+            {
+                ModelState.AddModelError("Cedula", "Ya existe un emprendedor con esta cédula.");
+                ViewBag.Categorias = _context.Categorias
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdCategoria.ToString(),
+                        Text = c.NombreCategoria
+                    })
+                    .ToList();
+                return View(emprendedor);
+            }
+
             // Validar si la categoría existe
             var categoriaExistente = await _context.Categorias
                 .FirstOrDefaultAsync(c => c.IdCategoria == emprendedor.IdCategoria);
@@ -225,6 +242,24 @@ namespace SamaraProject1.Controllers
                 return View(emprendedor);
             }
 
+            // Validar si la cédula ya existe en otro emprendedor
+            var cedulaExistente = await _context.Emprendedores
+                .FirstOrDefaultAsync(e => e.Cedula == emprendedor.Cedula && e.IdEmprendedor != id);
+
+            if (cedulaExistente != null)
+            {
+                ModelState.AddModelError("Cedula", "Ya existe otro emprendedor con esta cédula.");
+                var categorias = await _context.Categorias.ToListAsync();
+                var categoriasSelectList = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria,
+                    Selected = (c.IdCategoria == emprendedor.IdCategoria)
+                }).ToList();
+                ViewBag.Categorias = categoriasSelectList;
+                return View(emprendedor);
+            }
+
             // Validar si la categoría existe
             var categoriaExistente = await _context.Categorias
                 .FirstOrDefaultAsync(c => c.IdCategoria == emprendedor.IdCategoria);
@@ -290,6 +325,7 @@ namespace SamaraProject1.Controllers
             emprendedorExistente.NombreNegocio = emprendedor.NombreNegocio;
             emprendedorExistente.Telefono = emprendedor.Telefono;
             emprendedorExistente.IdCategoria = emprendedor.IdCategoria;
+            emprendedorExistente.Cedula = emprendedor.Cedula; // Actualizar la cédula
             emprendedorExistente.Categoria = categoriaExistente; // Asignar la categoría
             emprendedorExistente.FechaCreacion = fechaCreacionOriginal; // Restaurar la fecha de creación original en UTC
 
@@ -416,13 +452,14 @@ namespace SamaraProject1.Controllers
 
                 // Encabezados
                 worksheet.Cell(1, 1).Value = "ID";
-                worksheet.Cell(1, 2).Value = "Nombre";
-                worksheet.Cell(1, 3).Value = "Apellidos";
-                worksheet.Cell(1, 4).Value = "Negocio";
-                worksheet.Cell(1, 5).Value = "Teléfono";
-                worksheet.Cell(1, 6).Value = "Correo";
-                worksheet.Cell(1, 7).Value = "Categoría";
-                worksheet.Cell(1, 8).Value = "Stands";
+                worksheet.Cell(1, 2).Value = "Cédula"; // Nuevo encabezado
+                worksheet.Cell(1, 3).Value = "Nombre";
+                worksheet.Cell(1, 4).Value = "Apellidos";
+                worksheet.Cell(1, 5).Value = "Negocio";
+                worksheet.Cell(1, 6).Value = "Teléfono";
+                worksheet.Cell(1, 7).Value = "Correo";
+                worksheet.Cell(1, 8).Value = "Categoría";
+                worksheet.Cell(1, 9).Value = "Stands";
 
                 // Estilo para encabezados
                 var headerRow = worksheet.Row(1);
@@ -434,17 +471,18 @@ namespace SamaraProject1.Controllers
                 foreach (var emprendedor in emprendedores)
                 {
                     worksheet.Cell(row, 1).Value = emprendedor.IdEmprendedor;
-                    worksheet.Cell(row, 2).Value = emprendedor.NombreEmprendedor;
-                    worksheet.Cell(row, 3).Value = emprendedor.Apellidos;
-                    worksheet.Cell(row, 4).Value = emprendedor.NombreNegocio;
-                    worksheet.Cell(row, 5).Value = emprendedor.Telefono;
-                    worksheet.Cell(row, 6).Value = emprendedor.Correo;
-                    worksheet.Cell(row, 7).Value = emprendedor.Categoria?.NombreCategoria ?? "Sin categoría";
+                    worksheet.Cell(row, 2).Value = emprendedor.Cedula; // Nuevo campo
+                    worksheet.Cell(row, 3).Value = emprendedor.NombreEmprendedor;
+                    worksheet.Cell(row, 4).Value = emprendedor.Apellidos;
+                    worksheet.Cell(row, 5).Value = emprendedor.NombreNegocio;
+                    worksheet.Cell(row, 6).Value = emprendedor.Telefono;
+                    worksheet.Cell(row, 7).Value = emprendedor.Correo;
+                    worksheet.Cell(row, 8).Value = emprendedor.Categoria?.NombreCategoria ?? "Sin categoría";
 
                     string stands = emprendedor.Stands != null && emprendedor.Stands.Any()
                         ? string.Join(", ", emprendedor.Stands.Select(s => s.Numero_Stand))
                         : "Sin asignar";
-                    worksheet.Cell(row, 8).Value = stands;
+                    worksheet.Cell(row, 9).Value = stands;
 
                     row++;
                 }
@@ -493,9 +531,9 @@ namespace SamaraProject1.Controllers
                 document.Add(title);
 
                 // Crear tabla
-                PdfPTable table = new PdfPTable(7);
+                PdfPTable table = new PdfPTable(8); // Aumentar a 8 columnas
                 table.WidthPercentage = 100;
-                table.SetWidths(new float[] { 0.5f, 1.5f, 1.5f, 1.5f, 1f, 1.5f, 1.5f });
+                table.SetWidths(new float[] { 0.5f, 1f, 1.5f, 1.5f, 1.5f, 1f, 1.5f, 1.5f }); // Ajustar anchos
 
                 // Estilo para encabezados
                 Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
@@ -503,6 +541,7 @@ namespace SamaraProject1.Controllers
 
                 // Encabezados
                 AddCellToTable(table, "ID", headerFont, headerBackground);
+                AddCellToTable(table, "Cédula", headerFont, headerBackground); // Nuevo encabezado
                 AddCellToTable(table, "Nombre", headerFont, headerBackground);
                 AddCellToTable(table, "Apellidos", headerFont, headerBackground);
                 AddCellToTable(table, "Negocio", headerFont, headerBackground);
@@ -523,6 +562,7 @@ namespace SamaraProject1.Controllers
                     rowNum++;
 
                     AddCellToTable(table, emprendedor.IdEmprendedor.ToString(), dataFont, rowColor);
+                    AddCellToTable(table, emprendedor.Cedula, dataFont, rowColor); // Nuevo campo
                     AddCellToTable(table, emprendedor.NombreEmprendedor, dataFont, rowColor);
                     AddCellToTable(table, emprendedor.Apellidos, dataFont, rowColor);
                     AddCellToTable(table, emprendedor.NombreNegocio, dataFont, rowColor);
@@ -565,4 +605,3 @@ namespace SamaraProject1.Controllers
         }
     }
 }
-
