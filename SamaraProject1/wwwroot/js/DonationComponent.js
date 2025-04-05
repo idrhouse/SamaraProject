@@ -1,6 +1,6 @@
 ﻿class DonationComponent {
     constructor() {
-        this.sinpeNumber = "8888-8888" // Reemplaza esto con el número SINPE Móvil real
+        this.sinpeNumber = "88630334" // Reemplaza esto con el número SINPE Móvil real
     }
 
     render() {
@@ -40,7 +40,7 @@
                         </div>
                         
                         <div class="mt-10 text-center">
-                            <p class="text-gray-500">Todas las donaciones son utilizadas para el desarrollo de la feria, mejorar las instalaciones y ayudar a los emprendedores.</p>
+                            <p class="text-gray-500">Tu donación es una inversión en el crecimiento de nuestra feria y en el sueño de muchos emprendedores locales. Cada aporte se utiliza para mejorar las instalaciones, crear un espacio más cómodo y seguro para todos, y brindar más oportunidades a quienes luchan por sacar adelante sus negocios. Con tu ayuda, fortalecemos el comercio local, impulsamos la economía comunitaria y construimos juntos un lugar donde la creatividad, la cultura y el esfuerzo tienen un verdadero hogar.</p>
                         </div>
                     </div>
                 </div>
