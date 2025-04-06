@@ -69,7 +69,7 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.DescripcionNegocio)
-                .HasMaxLength(200)
+                .HasMaxLength(1000)
                 .IsUnicode(false);
             entity.Property(e => e.Telefono)
                 .HasMaxLength(50)

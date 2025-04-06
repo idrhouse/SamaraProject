@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SamaraProject1.Models;
@@ -11,9 +12,11 @@ using SamaraProject1.Models;
 namespace SamaraProject1.Migrations
 {
     [DbContext(typeof(SamaraMarketContext))]
-    partial class SamaraMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20250406045945_descripcion")]
+    partial class descripcion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,9 +149,9 @@ namespace SamaraProject1.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("DescripcionNegocio")
-                        .HasMaxLength(1000)
+                        .HasMaxLength(200)
                         .IsUnicode(false)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone");

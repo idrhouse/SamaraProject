@@ -63,6 +63,30 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
+        // GET: Emprendedor/Detalles/5
+        [AllowAnonymous]
+        public async Task<IActionResult> Detalles(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var emprendedor = await _context.Emprendedores
+                .Include(e => e.Categoria)
+                .Include(e => e.Stands)
+                .Include(e => e.Productos)
+                    .ThenInclude(p => p.TipoProducto)
+                .FirstOrDefaultAsync(m => m.IdEmprendedor == id);
+
+            if (emprendedor == null)
+            {
+                return NotFound();
+            }
+
+            return View(emprendedor);
+        }
+
         //Obtener Imagen
         [HttpGet]
         [AllowAnonymous]

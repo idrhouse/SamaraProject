@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿    using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace SamaraProject1.Models
@@ -23,7 +23,7 @@ namespace SamaraProject1.Models
         public string NombreNegocio { get; set; }
 
         // Validación: Descripción del negocio, opcional, pero si se ingresa, debe tener más de 3 caracteres
-        [StringLength(500, MinimumLength = 3, ErrorMessage = "La descripción del negocio debe tener al menos 3 caracteres.")]
+        [StringLength(1000, MinimumLength = 3, ErrorMessage = "La descripción del negocio debe tener al menos 3 caracteres.")]
         public string? DescripcionNegocio { get; set; }
 
         // Validación: Teléfono debe tener al menos 8 caracteres numéricos

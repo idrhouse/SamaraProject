@@ -28,12 +28,60 @@
             </div>
         </div>
 
+        <!-- Barra de búsqueda y filtros ultra compactos -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-md shadow-sm mb-6 overflow-hidden">
+            <div class="flex flex-wrap items-center">
+                <!-- Barra de búsqueda -->
+                <div class="relative flex-grow md:flex-grow-0 md:w-1/3 border-r border-gray-100">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Buscar..."
+                           class="w-full pl-8 pr-2 py-2 text-sm bg-transparent focus:outline-none text-gray-700 placeholder-gray-400">
+                </div>
+
+                <!-- Filtro por categoría -->
+                <div class="relative flex-grow md:flex-grow-0 md:w-1/4 border-r border-gray-100">
+                    <select id="categoriaFilter" class="w-full py-2 pl-2 pr-6 text-sm bg-transparent focus:outline-none appearance-none cursor-pointer text-gray-700">
+                        <option value="">Todas las categorías</option>
+                        @{
+                            var categorias = Model.Select(e => e.Categoria?.NombreCategoria).Where(c => c != null).Distinct().OrderBy(c => c);
+                            foreach (var categoria in categorias)
+                            {
+                                <option value="@categoria">@categoria</option>
+                            }
+                        }
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Botón para limpiar filtros -->
+                <button id="clearFilters" class="px-3 py-2 text-xs text-blue-600 hover:text-blue-800 focus:outline-none transition-colors duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Limpiar
+                </button>
+
+                <!-- Contador de resultados (integrado en la misma línea) -->
+                <div id="resultCount" class="text-xs text-gray-500 ml-auto pr-3">
+                    <span id="visibleCount">@Model.Count()</span>/@Model.Count()
+                </div>
+            </div>
+        </div>
+
         <!-- Modal para generar reportes -->
-        <div id="reporteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-md w-full mx-4">
+        <div id="reporteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden backdrop-blur-sm transition-all duration-300">
+            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-800">Generar Reporte de Emprendedores</h2>
-                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -43,22 +91,22 @@
                 <div class="space-y-4">
                     <div>
                         <label for="fechaInicio" class="block text-sm font-medium text-gray-700">Fecha Inicio</label>
-                        <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
                     </div>
 
                     <div>
                         <label for="fechaFin" class="block text-sm font-medium text-gray-700">Fecha Fin</label>
-                        <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                        <button id="btnExcel" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">
+                        <button id="btnExcel" class="inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full transition-all duration-200 transform hover:-translate-y-0.5">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v1H3V4zm1 2h12v10a1 1 0 01-1 1H5a1 1 0 01-1-1V6zm6 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                             </svg>
                             Excel
                         </button>
-                        <button id="btnPDF" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-full">
+                        <button id="btnPDF" class="inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-full transition-all duration-200 transform hover:-translate-y-0.5">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
                             </svg>
@@ -69,10 +117,14 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+        <div id="emprendedoresContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             @foreach (var item in Model)
             {
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl flex flex-col">
+                <div class="emprendedor-card bg-white rounded-2xl shadow-xl overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl flex flex-col"
+                     data-nombre="@item.NombreEmprendedor.ToLower() @item.Apellidos.ToLower()"
+                     data-negocio="@(item.NombreNegocio?.ToLower() ?? "")"
+                     data-descripcion="@(item.DescripcionNegocio?.ToLower() ?? "")"
+                     data-categoria="@(item.Categoria?.NombreCategoria?.ToLower() ?? "")">
                     <div class="relative w-full pb-[75%]">
                         <!-- 4:3 aspect ratio -->
                         <img src="@Url.Action("ObtenerImagen", "Emprendedor", new { id = item.IdEmprendedor })"
@@ -95,7 +147,7 @@
                                 <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                                 </svg>
-                                <span class="truncate">@item.Categoria.NombreCategoria</span>
+                                <span class="truncate">@item.Categoria?.NombreCategoria</span>
                             </div>
                             <div class="flex items-center text-xs sm:text-sm text-gray-500">
                                 <svg class="flex-shrink-0 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -111,14 +163,24 @@
                             </div>
                         </div>
                         <p class="text-xs sm:text-sm text-gray-600 line-clamp-3">@item.DescripcionNegocio</p>
-                        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4">
-                            <a href="@Url.Action("Editar", "Emprendedor", new { id = item.IdEmprendedor })" class="inline-flex items-center justify-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto">
+                        <div class="flex flex-row justify-end gap-2 pt-4">
+                            <a href="@Url.Action("Detalles", "Emprendedor", new { id = item.IdEmprendedor })"
+                               class="inline-flex items-center justify-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
+                                Detalles
+                            </a>
+                            <a href="@Url.Action("Editar", "Emprendedor", new { id = item.IdEmprendedor })"
+                               class="inline-flex items-center justify-center px-3 py-2 border border-yellow-500 text-yellow-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-yellow-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                 </svg>
                                 Editar
                             </a>
-                            <a href="@Url.Action("Eliminar", "Emprendedor", new { id = item.IdEmprendedor })" class="inline-flex items-center justify-center px-3 py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-full sm:w-auto">
+                            <a href="@Url.Action("Eliminar", "Emprendedor", new { id = item.IdEmprendedor })"
+                               class="inline-flex items-center justify-center px-3 py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                 </svg>
@@ -128,6 +190,18 @@
                     </div>
                 </div>
             }
+        </div>
+
+        <!-- Mensaje cuando no hay resultados -->
+        <div id="noResults" class="hidden text-center py-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm transition-all duration-300">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-2 text-base font-medium text-gray-900">No se encontraron emprendedores</h3>
+            <p class="mt-1 text-xs text-gray-500">Intenta con otros términos o filtros</p>
+            <button id="resetFilters" class="mt-2 text-xs text-blue-600 hover:text-blue-800 focus:outline-none transition-colors duration-200">
+                Restablecer filtros
+            </button>
         </div>
     </div>
 </div>
@@ -146,6 +220,7 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Código para el modal de reportes
             const modal = document.getElementById('reporteModal');
             const btnReportes = document.getElementById('btnReportes');
             const closeModal = document.getElementById('closeModal');
@@ -166,17 +241,32 @@
             // Mostrar modal
             btnReportes.addEventListener('click', function() {
                 modal.classList.remove('hidden');
+                // Añadir animación de entrada
+                setTimeout(() => {
+                    modal.querySelector('div').classList.add('scale-100');
+                    modal.querySelector('div').classList.remove('scale-95');
+                }, 10);
             });
 
             // Cerrar modal
             closeModal.addEventListener('click', function() {
-                modal.classList.add('hidden');
+                // Añadir animación de salida
+                modal.querySelector('div').classList.add('scale-95');
+                modal.querySelector('div').classList.remove('scale-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
             });
 
             // Cerrar modal al hacer clic fuera
             window.addEventListener('click', function(event) {
                 if (event.target === modal) {
-                    modal.classList.add('hidden');
+                    // Añadir animación de salida
+                    modal.querySelector('div').classList.add('scale-95');
+                    modal.querySelector('div').classList.remove('scale-100');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
                 }
             });
 
@@ -215,7 +305,79 @@
 
                 return true;
             }
+
+            // Código para la búsqueda y filtros
+            const searchInput = document.getElementById('searchInput');
+            const categoriaFilter = document.getElementById('categoriaFilter');
+            const clearFilters = document.getElementById('clearFilters');
+            const resetFilters = document.getElementById('resetFilters');
+            const emprendedorCards = document.querySelectorAll('.emprendedor-card');
+            const noResults = document.getElementById('noResults');
+            const emprendedoresContainer = document.getElementById('emprendedoresContainer');
+            const visibleCount = document.getElementById('visibleCount');
+
+            // Función para filtrar emprendedores
+            function filtrarEmprendedores() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const categoriaSeleccionada = categoriaFilter.value.toLowerCase();
+
+                let emprendedoresVisibles = 0;
+
+                emprendedorCards.forEach(card => {
+                    const nombre = card.getAttribute('data-nombre');
+                    const negocio = card.getAttribute('data-negocio');
+                    const descripcion = card.getAttribute('data-descripcion');
+                    const categoria = card.getAttribute('data-categoria');
+
+                    // Verificar si el emprendedor cumple con todos los criterios de filtro
+                    const cumpleBusqueda = searchTerm === '' ||
+                                          nombre.includes(searchTerm) ||
+                                          negocio.includes(searchTerm) ||
+                                          descripcion.includes(searchTerm);
+
+                    const cumpleCategoria = categoriaSeleccionada === '' ||
+                                           categoria === categoriaSeleccionada;
+
+                    // Mostrar u ocultar la tarjeta según los filtros
+                    if (cumpleBusqueda && cumpleCategoria) {
+                        card.classList.remove('hidden');
+                        emprendedoresVisibles++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Actualizar contador de resultados
+                visibleCount.textContent = emprendedoresVisibles;
+
+                // Mostrar mensaje de "No se encontraron emprendedores" si no hay resultados
+                if (emprendedoresVisibles === 0) {
+                    emprendedoresContainer.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                } else {
+                    emprendedoresContainer.classList.remove('hidden');
+                    noResults.classList.add('hidden');
+                }
+            }
+
+            // Eventos para los filtros
+            searchInput.addEventListener('input', filtrarEmprendedores);
+            categoriaFilter.addEventListener('change', filtrarEmprendedores);
+
+            // Limpiar filtros
+            function limpiarFiltros() {
+                searchInput.value = '';
+                categoriaFilter.value = '';
+                filtrarEmprendedores();
+            }
+
+            clearFilters.addEventListener('click', limpiarFiltros);
+            resetFilters.addEventListener('click', limpiarFiltros);
+
+            // Añadir efecto de enfoque a la barra de búsqueda al cargar la página
+            setTimeout(() => {
+                searchInput.focus();
+            }, 500);
         });
     </script>
 }
-
