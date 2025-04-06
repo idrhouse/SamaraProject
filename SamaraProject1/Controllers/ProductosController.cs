@@ -104,6 +104,33 @@ namespace SamaraProject1.Controllers
             return File(productos.ImagenDatos, "image/jpeg");
         }
 
+        // GET: Producto/Detalles/5
+        [AllowAnonymous]
+        public async Task<IActionResult> Detalles(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producto = await _context.Productos
+                .Include(p => p.TipoProducto)
+                .Include(p => p.ProductoEmprendedores)
+                    .ThenInclude(pe => pe.Emprendedor)
+                        .ThenInclude(e => e.Stands)
+                .Include(p => p.ProductoEmprendedores)
+                    .ThenInclude(pe => pe.Emprendedor)
+                        .ThenInclude(e => e.Categoria)
+                .FirstOrDefaultAsync(m => m.IdProducto == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return View(producto);
+        }
+
         // POST: Producto/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
