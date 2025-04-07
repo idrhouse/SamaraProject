@@ -25,7 +25,7 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<ProductoEmprendedor> ProductoEmprendedores { get; set; }
     public virtual DbSet<Categoria> Categorias { get; set; }
     public virtual DbSet<CarouselImage> CarouselImages { get; set; }
-
+    public virtual DbSet<Testimonio> Testimonios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -220,8 +220,33 @@ public partial class SamaraMarketContext : DbContext
             .HasForeignKey(e => e.IdCategoria)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Testimonio>(entity =>
+        {
+            entity.HasKey(e => e.IdTestimonio);
+            entity.ToTable("Testimonio");
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Correo)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Contenido)
+                .HasMaxLength(1000)
+                .IsUnicode(false);
+            entity.Property(e => e.ProductoFavorito)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .IsRequired(false);
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnType("timestamp with time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
+
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

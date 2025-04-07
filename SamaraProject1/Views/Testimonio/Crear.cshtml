@@ -1,0 +1,112 @@
+﻿@model SamaraProject1.Models.Testimonio
+
+@{
+    ViewData["Title"] = "Compartir tu Experiencia - Feria Sámara Market";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+            <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Volver
+            </a>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 bg-gradient-to-r from-blue-500 to-indigo-600">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white text-center sm:text-left">Comparte tu Experiencia</h2>
+                <p class="mt-2 text-blue-100 text-sm sm:text-base">Cuéntanos sobre tu visita a la Feria Sámara Market</p>
+            </div>
+
+            <div class="px-4 sm:px-6 md:px-8 py-6 sm:py-8">
+                <form asp-action="Crear" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="col-span-1">
+                            <label asp-for="Nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                            <input asp-for="Nombre" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Tu nombre">
+                            <span asp-validation-for="Nombre" class="text-red-500 text-xs mt-1"></span>
+                        </div>
+
+                        <div class="col-span-1">
+                            <label asp-for="Correo" class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+                            <input asp-for="Correo" type="email" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="tu@email.com">
+                            <span asp-validation-for="Correo" class="text-red-500 text-xs mt-1"></span>
+                        </div>
+
+                        <div class="col-span-2">
+                            <label asp-for="Contenido" class="block text-sm font-medium text-gray-700 mb-1">Tu experiencia</label>
+                            <textarea asp-for="Contenido" rows="5" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Cuéntanos sobre tu experiencia en la feria..."></textarea>
+                            <span asp-validation-for="Contenido" class="text-red-500 text-xs mt-1"></span>
+                        </div>
+
+                        <div class="col-span-2">
+                            <label asp-for="ProductoFavorito" class="block text-sm font-medium text-gray-700 mb-1">Producto o servicio favorito (opcional)</label>
+                            <input asp-for="ProductoFavorito" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="¿Qué producto o servicio te gustó más?">
+                            <span asp-validation-for="ProductoFavorito" class="text-red-500 text-xs mt-1"></span>
+                        </div>
+
+                        <div class="col-span-2">
+                            <label asp-for="Calificacion" class="block text-sm font-medium text-gray-700 mb-2">Calificación general</label>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex">
+                                    <input type="radio" id="star5" asp-for="Calificacion" value="5" class="hidden peer" />
+                                    <label for="star5" class="cursor-pointer text-gray-300 peer-checked:text-yellow-400">
+                                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </label>
+
+                                    <input type="radio" id="star4" asp-for="Calificacion" value="4" class="hidden peer" />
+                                    <label for="star4" class="cursor-pointer text-gray-300 peer-checked:text-yellow-400">
+                                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </label>
+
+                                    <input type="radio" id="star3" asp-for="Calificacion" value="3" class="hidden peer" checked />
+                                    <label for="star3" class="cursor-pointer text-gray-300 peer-checked:text-yellow-400">
+                                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </label>
+
+                                    <input type="radio" id="star2" asp-for="Calificacion" value="2" class="hidden peer" />
+                                    <label for="star2" class="cursor-pointer text-gray-300 peer-checked:text-yellow-400">
+                                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </label>
+
+                                    <input type="radio" id="star1" asp-for="Calificacion" value="1" class="hidden peer" />
+                                    <label for="star1" class="cursor-pointer text-gray-300 peer-checked:text-yellow-400">
+                                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </label>  />
+                                    </svg>
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Calificacion" class="text-red-500 text-xs mt-1"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button type="submit" class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out">
+                            Enviar mi testimonio
+                        </button>
+                    </div>
+
+                    <div class="mt-4 text-center text-xs text-gray-500">
+                        <p>Tu testimonio será revisado antes de ser publicado. Gracias por compartir tu experiencia.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
