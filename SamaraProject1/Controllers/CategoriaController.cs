@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Threading.Tasks;
 using SamaraProject1.Models; // Replace YourProjectName with your actual project name
 
 namespace SamaraProject1.Controllers // Replace YourProjectName with your actual project name
 {
+    [Authorize]
     public class CategoriaController : Controller
     {
         private readonly SamaraMarketContext _context;
