@@ -39,7 +39,7 @@ namespace SamaraProject1.Controllers
                 .ToListAsync();
 
             return Json(testimonios);
-        }|
+        }
 
         // GET: Testimonio/Crear
         [AllowAnonymous]
