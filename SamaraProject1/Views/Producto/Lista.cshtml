@@ -28,19 +28,9 @@
             </div>
         </div>
 
-        <!-- Barra de búsqueda y filtros ultra compactos -->
+        <!-- Filtros por tipo y emprendedor -->
         <div class="bg-white/80 backdrop-blur-sm rounded-md shadow-sm mb-6 overflow-hidden">
-            <div class="flex flex-wrap items-center">
-                <!-- Barra de búsqueda -->
-                <div class="relative flex-grow md:flex-grow-0 md:w-1/3 border-r border-gray-100">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <input type="text" id="searchInput" placeholder="Buscar..."
-                           class="w-full pl-8 pr-2 py-2 text-sm bg-transparent focus:outline-none text-gray-700 placeholder-gray-400">
-                </div>
+            <div class="flex flex-wrap items-center gap-2 px-3 py-2">
 
                 <!-- Filtro por tipo -->
                 <div class="relative flex-grow md:flex-grow-0 md:w-1/4 border-r border-gray-100">
@@ -81,20 +71,20 @@
                     </div>
                 </div>
 
-                <!-- Botón para limpiar filtros -->
-                <button id="clearFilters" class="px-3 py-2 text-xs text-blue-600 hover:text-blue-800 focus:outline-none transition-colors duration-200 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                    Limpiar
-                </button>
-
-                <!-- Contador de resultados (integrado en la misma línea) -->
-                <div id="resultCount" class="text-xs text-gray-500 ml-auto pr-3">
-                    <span id="visibleCount">@Model.Count()</span>/@Model.Count()
+                <!-- Botón para limpiar filtros alineado a la derecha -->
+                <div class="ml-auto">
+                    <button id="clearFilters" class="px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 focus:outline-none transition-colors duration-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Limpiar
+                    </button>
                 </div>
+
             </div>
         </div>
+
+
 
         <!-- Modal para generar reportes -->
         <div id="reporteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden backdrop-blur-sm transition-all duration-300">
@@ -330,8 +320,6 @@
                 return true;
             }
 
-            // Nuevo código para la búsqueda y filtros
-            const searchInput = document.getElementById('searchInput');
             const tipoFilter = document.getElementById('tipoFilter');
             const emprendedorFilter = document.getElementById('emprendedorFilter');
             const clearFilters = document.getElementById('clearFilters');
@@ -341,33 +329,21 @@
             const productosContainer = document.getElementById('productosContainer');
             const visibleCount = document.getElementById('visibleCount');
 
-            // Función para filtrar productos
+            // 👉 Función para filtrar productos solo por tipo y emprendedor
             function filtrarProductos() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
                 const tipoSeleccionado = tipoFilter.value.toLowerCase();
                 const emprendedorSeleccionado = emprendedorFilter.value.toLowerCase();
 
                 let productosVisibles = 0;
 
                 productoCards.forEach(card => {
-                    const nombre = card.getAttribute('data-nombre');
-                    const descripcion = card.getAttribute('data-descripcion');
-                    const tipo = card.getAttribute('data-tipo');
-                    const emprendedores = card.getAttribute('data-emprendedores');
+                    const tipo = (card.getAttribute('data-tipo') || '').toLowerCase();
+                    const emprendedores = (card.getAttribute('data-emprendedores') || '').toLowerCase();
 
-                    // Verificar si el producto cumple con todos los criterios de filtro
-                    const cumpleBusqueda = searchTerm === '' ||
-                                          nombre.includes(searchTerm) ||
-                                          descripcion.includes(searchTerm);
+                    const cumpleTipo = !tipoSeleccionado || tipo === tipoSeleccionado;
+                    const cumpleEmprendedor = !emprendedorSeleccionado || emprendedores.includes(emprendedorSeleccionado);
 
-                    const cumpleTipo = tipoSeleccionado === '' ||
-                                      tipo === tipoSeleccionado;
-
-                    const cumpleEmprendedor = emprendedorSeleccionado === '' ||
-                                             emprendedores.includes(emprendedorSeleccionado);
-
-                    // Mostrar u ocultar la tarjeta según los filtros
-                    if (cumpleBusqueda && cumpleTipo && cumpleEmprendedor) {
+                    if (cumpleTipo && cumpleEmprendedor) {
                         card.classList.remove('hidden');
                         productosVisibles++;
                     } else {
@@ -375,10 +351,8 @@
                     }
                 });
 
-                // Actualizar contador de resultados
                 visibleCount.textContent = productosVisibles;
 
-                // Mostrar mensaje de "No se encontraron productos" si no hay resultados
                 if (productosVisibles === 0) {
                     productosContainer.classList.add('hidden');
                     noResults.classList.remove('hidden');
@@ -388,14 +362,12 @@
                 }
             }
 
-            // Eventos para los filtros
-            searchInput.addEventListener('input', filtrarProductos);
+            // 👉 Eventos conectados solo a los selectores
             tipoFilter.addEventListener('change', filtrarProductos);
             emprendedorFilter.addEventListener('change', filtrarProductos);
 
-            // Limpiar filtros
+            // 👉 Limpiar filtros
             function limpiarFiltros() {
-                searchInput.value = '';
                 tipoFilter.value = '';
                 emprendedorFilter.value = '';
                 filtrarProductos();
@@ -403,6 +375,7 @@
 
             clearFilters.addEventListener('click', limpiarFiltros);
             resetFilters.addEventListener('click', limpiarFiltros);
+
 
             // Añadir efecto de enfoque a la barra de búsqueda al cargar la página
             setTimeout(() => {

@@ -81,7 +81,14 @@ namespace SamaraProject1.Controllers
             properties);
             return RedirectToAction("Index", "Dashboard");
         }
- 
-            }
+
+        public async Task<IActionResult> CerrarSesion()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Acceso");
         }
+
+
+    }
+}
    

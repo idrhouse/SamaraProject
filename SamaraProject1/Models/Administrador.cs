@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace SamaraProject1.Models;
 
@@ -15,6 +17,8 @@ public partial class Administrador
 
     public string? Clave { get; set; }
 
+    [NotMapped]
+    [Compare("Clave", ErrorMessage = "Las contraseñas no coinciden.")]
     public string? ConfirmarClave { get; set; }
 
     public string? TokenRecuperacion { get; set; }
