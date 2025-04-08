@@ -20,7 +20,5 @@ namespace SamaraProject1.Recursos
             
             }
         }
-
-
     }
 }

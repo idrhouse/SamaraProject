@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SamaraProject1.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authentication;
 
 public class BaseController : Controller
 {
@@ -11,21 +13,35 @@ public class BaseController : Controller
         _samaraMarketContext = samaraMarketContext;
     }
 
-    protected async Task SetNombreAdministradorAsync()
+    protected async Task<bool> ValidarSesionUsuarioAsync()
     {
-        var usuarioId = User.Identity?.Name;
-        string nombreAdministrador = "Administrador";
+        var correo = User.Identity?.Name;
 
-        if (!string.IsNullOrEmpty(usuarioId))
-        {
-            var administrador = await _samaraMarketContext.Administrador.FirstOrDefaultAsync(a => a.Correo == usuarioId);
+        if (string.IsNullOrEmpty(correo))
+            return false;
 
-            if (administrador != null)
-            {
-                nombreAdministrador = administrador.NombreAdministrador;
-            }
-        }
-
-        ViewData["NombreAdministrador"] = nombreAdministrador;
+        var existe = await _samaraMarketContext.Administrador.AnyAsync(a => a.Correo == correo);
+        return existe;
     }
+
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        base.OnActionExecuting(context);
+
+        var correo = User.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(correo))
+        {
+            var existe = _samaraMarketContext.Administrador.Any(a => a.Correo == correo);
+
+            if (!existe)
+            {
+                context.Result = new RedirectToActionResult("CerrarSesion", "Acceso", null);
+            }
+
+        }
+    }
+
+
 }
+
