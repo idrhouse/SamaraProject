@@ -4,9 +4,9 @@
     ViewData["Title"] = "Editar Emprendedor";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-100 to-white py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-white py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
-        <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-6 bg-gradient-to-r from-blue-500 to-indigo-600">
+        <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-6 bg-gradient-to-r from-orange-400 to-orange-600">
             <h2 class="text-2xl sm:text-3xl font-extrabold text-white text-center">Editar Emprendedor</h2>
         </div>
 
@@ -17,52 +17,52 @@
             <!-- Campo de Cédula -->
             <div class="space-y-2">
                 <label asp-for="Cedula" class="block text-sm font-medium text-gray-700">Número de Cédula</label>
-                <input asp-for="Cedula" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Ingrese el número de cédula" />
+                <input asp-for="Cedula" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" placeholder="Ingrese el número de cédula" />
                 <span asp-validation-for="Cedula" class="text-xs text-red-500"></span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div class="space-y-2">
                     <label asp-for="NombreEmprendedor" class="block text-sm font-medium text-gray-700">Nombre Emprendedor</label>
-                    <input asp-for="NombreEmprendedor" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                    <input asp-for="NombreEmprendedor" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" />
                     <span asp-validation-for="NombreEmprendedor" class="text-xs text-red-500"></span>
                 </div>
 
                 <div class="space-y-2">
                     <label asp-for="Apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
-                    <input asp-for="Apellidos" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                    <input asp-for="Apellidos" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" />
                     <span asp-validation-for="Apellidos" class="text-xs text-red-500"></span>
                 </div>
             </div>
 
             <div class="space-y-2">
                 <label asp-for="NombreNegocio" class="block text-sm font-medium text-gray-700">Nombre del Negocio</label>
-                <input asp-for="NombreNegocio" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                <input asp-for="NombreNegocio" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" />
                 <span asp-validation-for="NombreNegocio" class="text-xs text-red-500"></span>
             </div>
 
             <div class="space-y-2">
                 <label asp-for="DescripcionNegocio" class="block text-sm font-medium text-gray-700">Descripción del Negocio</label>
-                <textarea asp-for="DescripcionNegocio" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
+                <textarea asp-for="DescripcionNegocio" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm"></textarea>
                 <span asp-validation-for="DescripcionNegocio" class="text-xs text-red-500"></span>
             </div>
 
             <div class="space-y-2">
                 <label asp-for="IdCategoria" class="block text-sm font-medium text-gray-700">Categoría</label>
-                <select asp-for="IdCategoria" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" asp-items="ViewBag.Categorias"></select>
+                <select asp-for="IdCategoria" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" asp-items="ViewBag.Categorias"></select>
                 <span asp-validation-for="IdCategoria" class="text-xs text-red-500"></span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div class="space-y-2">
                     <label asp-for="Telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                    <input asp-for="Telefono" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                    <input asp-for="Telefono" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" />
                     <span asp-validation-for="Telefono" class="text-xs text-red-500"></span>
                 </div>
 
                 <div class="space-y-2">
                     <label asp-for="Correo" class="block text-sm font-medium text-gray-700">Correo</label>
-                    <input asp-for="Correo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                    <input asp-for="Correo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 text-sm" />
                     <span asp-validation-for="Correo" class="text-xs text-red-500"></span>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                             <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <div class="flex text-sm text-gray-600">
-                            <label for="imagen" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                            <label for="imagen" class="relative cursor-pointer bg-white rounded-md font-medium text-orange-500 hover:text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-400">
                                 <span>Subir una imagen</span>
                                 <input id="imagen" name="imagen" type="file" accept="image/*" class="sr-only">
                             </label>
@@ -98,7 +98,7 @@
                 <a asp-action="Lista" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
                     Volver a la Lista
                 </a>
-                <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
+                <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white font-semibold rounded-lg shadow-md hover:from-orange-500 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
                     Guardar Cambios
                 </button>
             </div>

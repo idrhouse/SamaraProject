@@ -4,16 +4,16 @@
     ViewData["Title"] = "Dashboard - Feria Sámara Market";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-8">
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
                 Dashboard
             </span>
         </h1>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg">
+            <div class="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-6 rounded-xl shadow-lg">
                 <h2 class="text-xl font-bold">Total Emprendedores</h2>
                 <p class="text-3xl mt-2 font-semibold">@Model.TotalEmprendedores</p>
             </div>
@@ -61,7 +61,7 @@
                         string horaFinFormateada = evento.HoraFin.ToString(@"hh\:mm");
 
                         <li class="flex items-center space-x-2">
-                            <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             <span class="text-gray-700">
@@ -102,8 +102,8 @@
             datasets: [{
                 label: 'Cantidad de Productos',
                 data: productosCounts,
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderColor: 'rgb(29, 78, 216)',
+                backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                borderColor: 'rgb(234, 88, 12)',
                 borderWidth: 1
             }]
         },
@@ -145,4 +145,3 @@
         }
     });
 </script>
-

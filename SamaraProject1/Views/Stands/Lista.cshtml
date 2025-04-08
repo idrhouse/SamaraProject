@@ -4,7 +4,7 @@
     ViewData["Title"] = "Lista de Stands";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         <!-- Imagen Encabezada -->
         <div class="mb-6 sm:mb-8 rounded-2xl overflow-hidden shadow-xl">
@@ -13,12 +13,12 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
                     Stands
                 </span>
             </h1>
             <div class="flex flex-col sm:flex-row gap-3">
-                <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center">
+                <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 w-full sm:w-auto justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
@@ -48,12 +48,12 @@
                 <div class="space-y-4">
                     <div>
                         <label for="fechaInicio" class="block text-sm font-medium text-gray-700">Fecha Inicio</label>
-                        <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50">
                     </div>
 
                     <div>
                         <label for="fechaFin" class="block text-sm font-medium text-gray-700">Fecha Fin</label>
-                        <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50">
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-4">
@@ -103,7 +103,7 @@
                             </div>
                             <div class="flex flex-row gap-2 justify-end">
                                 <a href="@Url.Action("QuitarEmprendedor", "Stands", new { id = item.IdStand })"
-                                   class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                   class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 17a6 6 0 00-12 0h12z" />
                                         <path fill-rule="evenodd" d="M12.414 5.586a1 1 0 011.414 1.414L12.414 8.414l1.414 1.414a1 1 0 01-1.414 1.414L11 9.828l-1.414 1.414a1 1 0 01-1.414-1.414l1.414-1.414-1.414-1.414a1 1 0 011.414-1.414L11 7.172l1.414-1.586z" clip-rule="evenodd" />
@@ -111,7 +111,7 @@
                                     Quitar
                                 </a>
                                 <a href="@Url.Action("Editar", "Stands", new { id = item.IdStand })"
-                                   class="inline-flex items-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                   class="inline-flex items-center px-3 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
@@ -219,4 +219,3 @@
         });
     </script>
 }
-

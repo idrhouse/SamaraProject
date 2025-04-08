@@ -4,15 +4,15 @@
     ViewData["Title"] = "Editar Producto - Feria Sámara Market";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto">
         <div class="mb-6 flex justify-between items-center">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
                     Editar Producto
                 </span>
             </h1>
-            <a href="@Url.Action("Lista", "Producto")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <a href="@Url.Action("Lista", "Producto")" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
@@ -29,13 +29,13 @@
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
                             <label asp-for="Nombre_Producto" class="block text-sm font-medium text-gray-700">Nombre del Producto</label>
-                            <input asp-for="Nombre_Producto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
+                            <input asp-for="Nombre_Producto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
                             <span asp-validation-for="Nombre_Producto" class="text-xs text-red-500"></span>
                         </div>
 
                         <div>
                             <label asp-for="IdTipoProducto" class="block text-sm font-medium text-gray-700">Tipo de Producto</label>
-                            <select asp-for="IdTipoProducto" asp-items="@(new SelectList(ViewBag.TipoProductos, "IdTipoProducto", "NombreTipo"))" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
+                            <select asp-for="IdTipoProducto" asp-items="@(new SelectList(ViewBag.TipoProductos, "IdTipoProducto", "NombreTipo"))" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
                                 <option value="">-- Seleccione un Tipo de Producto --</option>
                             </select>
                             <span asp-validation-for="IdTipoProducto" class="text-xs text-red-500"></span>
@@ -44,20 +44,20 @@
 
                     <div>
                         <label asp-for="Descripcion" class="block text-sm font-medium text-gray-700">Descripción del Producto</label>
-                        <textarea asp-for="Descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out" rows="3" required></textarea>
+                        <textarea asp-for="Descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50 transition duration-150 ease-in-out" rows="3" required></textarea>
                         <span asp-validation-for="Descripcion" class="text-xs text-red-500"></span>
                     </div>
 
                     <div>
                         <label for="SelectedEmprendedores" class="block text-sm font-medium text-gray-700">Emprendedores</label>
-                        <select id="SelectedEmprendedores" name="SelectedEmprendedores" multiple asp-items="@(new MultiSelectList(ViewBag.Emprendedores, "IdEmprendedor", "NombreEmprendedor", ViewBag.SelectedEmprendedores))" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
+                        <select id="SelectedEmprendedores" name="SelectedEmprendedores" multiple asp-items="@(new MultiSelectList(ViewBag.Emprendedores, "IdEmprendedor", "NombreEmprendedor", ViewBag.SelectedEmprendedores))" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50 transition duration-150 ease-in-out" required>
                         </select>
                         <p class="mt-2 text-sm text-gray-500">Mantenga presionado Ctrl (Cmd en Mac) para seleccionar múltiples emprendedores.</p>
                     </div>
 
                     <div>
                         <label for="imagen" class="block text-sm font-medium text-gray-700">Nueva Imagen del Producto (opcional)</label>
-                        <input type="file" name="imagen" id="imagen" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition duration-150 ease-in-out">
+                        <input type="file" name="imagen" id="imagen" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 transition duration-150 ease-in-out">
                     </div>
 
                     @if (Model.ImagenDatos != null)
@@ -69,7 +69,7 @@
                     }
 
                     <div class="flex justify-end space-x-3">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 transition duration-300 ease-in-out transform hover:-translate-y-0.5">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                             </svg>
@@ -87,4 +87,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-

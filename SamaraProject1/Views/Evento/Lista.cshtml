@@ -4,15 +4,15 @@
     ViewData["Title"] = "Lista de Eventos";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
                     Eventos
                 </span>
             </h1>
-            <a href="@Url.Action("Crear", "Evento")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center">
+            <a href="@Url.Action("Crear", "Evento")" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 w-full sm:w-auto justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>
@@ -44,7 +44,7 @@
                         </div>
                         <p class="text-xs sm:text-sm text-gray-600">@(item.Descripcion?.Length > 100 ? item.Descripcion.Substring(0, 100) + "..." : item.Descripcion)</p>
                         <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4">
-                            <a href="@Url.Action("Editar", "Evento", new { id = item.IdEvento })" class="inline-flex items-center justify-center px-3 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto">
+                            <a href="@Url.Action("Editar", "Evento", new { id = item.IdEvento })" class="inline-flex items-center justify-center px-3 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md text-xs sm:text-sm font-medium transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 w-full sm:w-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                 </svg>
@@ -63,4 +63,3 @@
         </div>
     </div>
 </div>
-

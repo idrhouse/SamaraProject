@@ -4,15 +4,15 @@
     ViewData["Title"] = "Lista de Tipos de Productos";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
                     Tipos de Productos
                 </span>
             </h1>
-            <a href="@Url.Action("Crear", "TipoProducto")" class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full sm:w-auto justify-center sm:justify-start">
+            <a href="@Url.Action("Crear", "TipoProducto")" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 w-full sm:w-auto justify-center sm:justify-start">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>
@@ -48,7 +48,7 @@
                                     <div class="text-sm text-gray-900">@item.NombreTipo</div>
                                 </td>
                                 <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="@Url.Action("Editar", "TipoProducto", new { id = item.IdTipoProducto })" class="text-indigo-600 hover:text-indigo-900 mr-2 sm:mr-4 transition-colors duration-200">Editar</a>
+                                    <a href="@Url.Action("Editar", "TipoProducto", new { id = item.IdTipoProducto })" class="text-orange-600 hover:text-orange-800 mr-2 sm:mr-4 transition-colors duration-200">Editar</a>
                                     <a href="@Url.Action("Eliminar", "TipoProducto", new { id = item.IdTipoProducto })" class="text-red-600 hover:text-red-900 transition-colors duration-200">Eliminar</a>
                                 </td>
                             </tr>
@@ -59,4 +59,3 @@
         </div>
     </div>
 </div>
-

@@ -76,11 +76,11 @@ const CalendarioEventos = () => {
             ),
             React.createElement('div', { className: 'flex gap-2' },
                 React.createElement('button', {
-                    className: 'p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200',
+                    className: 'p-2 rounded-lg bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors duration-200',
                     onClick: mesAnterior
                 }, '←'),
                 React.createElement('button', {
-                    className: 'p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200',
+                    className: 'p-2 rounded-lg bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors duration-200',
                     onClick: mesSiguiente
                 }, '→')
             )
@@ -101,7 +101,7 @@ const CalendarioEventos = () => {
                 return React.createElement('div', {
                     key: index,
                     className: `p-2 border rounded-lg ${dia.esDelMes ? 'bg-white' : 'bg-gray-50'} 
-                     ${eventosDelDia.length > 0 ? 'border-blue-200' : 'border-gray-200'}`
+                     ${eventosDelDia.length > 0 ? 'border-orange-200' : 'border-gray-200'}`
                 },
                     React.createElement('div', { className: 'text-right mb-1' },
                         dia.fecha.getDate()
@@ -109,7 +109,7 @@ const CalendarioEventos = () => {
                     eventosDelDia.map(evento =>
                         React.createElement('button', {
                             key: evento.idEvento,
-                            className: 'w-full text-left mb-1 p-1 text-xs bg-blue-100 rounded text-blue-700 hover:bg-blue-200',
+                            className: 'w-full text-left mb-1 p-1 text-xs bg-orange-100 rounded text-orange-700 hover:bg-orange-200 transition-colors duration-200',
                             onClick: () => setEventoSeleccionado(evento)
                         }, evento.nombre)
                     )
@@ -140,7 +140,7 @@ const CalendarioEventos = () => {
                     eventoSeleccionado.descripcion
                 ),
                 React.createElement('button', {
-                    className: 'w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700',
+                    className: 'w-full group flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-orange-200 to-orange-300 text-orange-800 text-sm sm:text-base font-medium tracking-wide shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-200',
                     onClick: () => setEventoSeleccionado(null)
                 }, 'Cerrar')
             )

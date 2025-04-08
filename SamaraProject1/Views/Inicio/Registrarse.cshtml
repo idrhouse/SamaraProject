@@ -11,12 +11,12 @@
     <title>Registrarse - Feria Sámara Market</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+<body class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white shadow-2xl rounded-3xl overflow-hidden">
-        <div class="px-4 sm:px-6 md:px-8 py-6 bg-gradient-to-r from-blue-500 to-indigo-600">
+        <div class="px-4 sm:px-6 md:px-8 py-6 bg-gradient-to-r from-orange-400 to-orange-500">
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Registrarse</h2>
-                <a href="javascript:history.back()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                <a href="javascript:history.back()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 transition duration-150 ease-in-out">
                     <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
@@ -29,22 +29,22 @@
             <form asp-controller="Inicio" asp-action="Registrarse" method="post" class="space-y-6">
                 <div>
                     <label for="NombreAdministrador" class="block text-sm font-medium text-gray-700">Nombre</label>
-                    <input asp-for="NombreAdministrador" type="text" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Tu nombre">
+                    <input asp-for="NombreAdministrador" type="text" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Tu nombre">
                 </div>
 
                 <div>
                     <label for="Apellido" class="block text-sm font-medium text-gray-700">Apellido</label>
-                    <input asp-for="Apellido" type="text" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Tu apellido">
+                    <input asp-for="Apellido" type="text" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Tu apellido">
                 </div>
 
                 <div>
                     <label for="Correo" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                    <input asp-for="Correo" type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="tu@email.com">
+                    <input asp-for="Correo" type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="tu@email.com">
                 </div>
 
                 <div>
                     <label for="Clave" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                    <input asp-for="Clave" type="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="••••••••">
+                    <input asp-for="Clave" type="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="••••••••">
                 </div>
 
                 @if (ViewData["Mensaje"] != null)
@@ -64,17 +64,16 @@
                 }
 
                 <div>
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-orange-800 bg-gradient-to-r from-orange-200 to-orange-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-200">
                         Registrarse
                     </button>
                 </div>
             </form>
 
             <div class="text-center text-sm">
-                ¿Ya tienes una cuenta? <a href="@Url.Action("IniciarSesion","Inicio")" class="font-medium text-blue-600 hover:text-blue-500">Iniciar Sesión</a>
+                ¿Ya tienes una cuenta? <a href="@Url.Action("IniciarSesion","Inicio")" class="font-medium text-orange-500 hover:text-orange-600">Iniciar Sesión</a>
             </div>
         </div>
     </div>
 </body>
 </html>
-
