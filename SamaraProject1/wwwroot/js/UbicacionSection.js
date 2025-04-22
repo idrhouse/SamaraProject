@@ -146,7 +146,7 @@
                         React.createElement("div", {
                             className: "mt-6"
                         }, React.createElement("a", {
-                            href: "https://maps.google.com/?q=Playa+Samara,+Guanacaste,+Costa+Rica",
+                            href: "https://www.google.com/search?q=samara+market&sca_esv=a24eb7beebb63ee4&rlz=1C1CHBF_esCR1111CR1111&sxsrf=AHTn8zptJCYxhFYA9104Q4JXdaowVMsTfg%3A1745335099823&ei=O7MHaLz3MaCUwbkPx6Pk-Qk&ved=0ahUKEwj8gI719-uMAxUgSjABHccROZ8Q4dUDCBI&uact=5&oq=samara+market&gs_lp=Egxnd3Mtd2l6LXNlcnAiDXNhbWFyYSBtYXJrZXQyBBAAGEcyBBAAGEcyBBAAGEdIqQJQQVhBcAF4ApABAJgBAKABAKoBALgBA8gBAPgBAZgCAqACFsICChAAGLADGNYEGEeYAwDiAwUSATEgQIgGAZAGA5IHATKgBwCyBwExuAcG&sclient=gws-wiz-serp",
                             target: "_blank",
                             rel: "noopener noreferrer",
                             className: "group flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-orange-200 to-orange-300 text-orange-800 text-sm sm:text-base font-medium tracking-wide shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-200"
