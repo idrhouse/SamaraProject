@@ -1,0 +1,31 @@
+﻿@model dynamic
+
+@{
+    string src = Model.Src;
+    string alt = Model.Alt ?? "";
+    string cssClass = Model.Class ?? "";
+    int? width = Model.Width;
+    int? height = Model.Height;
+    bool lazy = Model.Lazy ?? true;
+
+    // Generar srcset para imágenes responsivas
+    string srcset = "";
+    if (Model.Responsive ?? true)
+    {
+        srcset = $"/Image/Optimize?url={Uri.EscapeDataString(src)}&width=400&quality=80 400w, " +
+                 $"/Image/Optimize?url={Uri.EscapeDataString(src)}&width=800&quality=80 800w, " +
+                 $"/Image/Optimize?url={Uri.EscapeDataString(src)}&width=1200&quality=80 1200w";
+    }
+
+    // Generar sizes para imágenes responsivas
+    string sizes = Model.Sizes ?? "(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px";
+}
+
+<img src="@src"
+@(string.IsNullOrEmpty(srcset) ? "" : $"srcset=\"{srcset}\"")
+@(string.IsNullOrEmpty(sizes) ? "" : $"sizes=\"{sizes}\"")
+     alt="@alt"
+     class="@cssClass"
+@(width.HasValue ? $"width=\"{width}\"" : "")
+@(height.HasValue ? $"height=\"{height}\"" : "")
+@(lazy ? "loading=\"lazy\"" : "")>

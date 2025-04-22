@@ -9,8 +9,10 @@ namespace SamaraProject1.Servicios.Contrato
     {
         Task<List<CarouselImage>> GetAllCarouselImages();
         Task<CarouselImage> GetCarouselImageById(int id);
-        Task<CarouselImage> UploadCarouselImage(IFormFile file);
-        Task SaveCarouselImages(List<CarouselImage> images);
+        Task<CarouselImage> UploadCarouselImage(IFormFile image);
+        Task<CarouselImage> UploadCarouselImageData(byte[] imageData, string fileName);
         Task DeleteCarouselImage(int id);
+        Task SaveCarouselImages(List<CarouselImage> images);
+        Task<int> GetNextOrderNumber();
     }
 }

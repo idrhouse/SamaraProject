@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SamaraProject1.Models;
 using SamaraProject1.Servicios.Contrato;
+using SamaraProject1.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace SamaraProject1.Controllers
 {
@@ -13,10 +15,12 @@ namespace SamaraProject1.Controllers
     public class CarouselController : Controller
     {
         private readonly ICarouselService _carouselService;
+        private readonly IImageService _imageService;
 
-        public CarouselController(ICarouselService carouselService)
+        public CarouselController(ICarouselService carouselService, IImageService imageService)
         {
             _carouselService = carouselService;
+            _imageService = imageService;
         }
 
         // GET: /Carousel
@@ -77,7 +81,16 @@ namespace SamaraProject1.Controllers
 
             try
             {
-                var carouselImage = await _carouselService.UploadCarouselImage(image);
+                // Optimizar la imagen antes de guardarla
+                byte[] optimizedImageData;
+                using (var stream = image.OpenReadStream())
+                {
+                    // Optimizar para carrusel: ancho máximo 1200px, calidad 80%
+                    optimizedImageData = await _imageService.OptimizeImageAsync(stream, 1200, 80);
+                }
+
+                // Usar el método para subir la imagen optimizada
+                var carouselImage = await _carouselService.UploadCarouselImageData(optimizedImageData, image.FileName);
 
                 // Actualizar el texto alternativo
                 if (!string.IsNullOrEmpty(alt))
@@ -142,12 +155,19 @@ namespace SamaraProject1.Controllers
                 currentImage.Alt = model.Alt;
                 currentImage.UpdatedAt = DateTime.UtcNow;
 
-                // Si se proporciona una nueva imagen, subirla
+                // Si se proporciona una nueva imagen, optimizarla y subirla
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
-                    // Eliminar la imagen anterior y subir la nueva
+                    // Optimizar la imagen
+                    byte[] optimizedImageData;
+                    using (var stream = ImageFile.OpenReadStream())
+                    {
+                        optimizedImageData = await _imageService.OptimizeImageAsync(stream, 1200, 80);
+                    }
+
+                    // Eliminar la imagen anterior y subir la nueva optimizada
                     await _carouselService.DeleteCarouselImage(model.IdCarouselImage);
-                    var newImage = await _carouselService.UploadCarouselImage(ImageFile);
+                    var newImage = await _carouselService.UploadCarouselImageData(optimizedImageData, ImageFile.FileName);
 
                     // Mantener el mismo ID y orden
                     newImage.IdCarouselImage = model.IdCarouselImage;
@@ -226,6 +246,47 @@ namespace SamaraProject1.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST: /Carousel/OptimizeAllImages
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> OptimizeAllImages()
+        {
+            try
+            {
+                // Obtener todas las imágenes del carrusel
+                var images = await _carouselService.GetAllCarouselImages();
+                int optimizedCount = 0;
+
+                foreach (var image in images)
+                {
+                    // Obtener la ruta física de la imagen
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", image.Url.TrimStart('/'));
+
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        // Leer la imagen
+                        var imageData = await System.IO.File.ReadAllBytesAsync(imagePath);
+
+                        // Optimizar la imagen
+                        var optimizedData = await _imageService.OptimizeImageAsync(imageData, 1200, 80);
+
+                        // Guardar la imagen optimizada
+                        await System.IO.File.WriteAllBytesAsync(imagePath, optimizedData);
+
+                        optimizedCount++;
+                    }
+                }
+
+                TempData["Success"] = $"Se han optimizado {optimizedCount} imágenes del carrusel correctamente.";
+                return RedirectToAction(nameof(Administrar));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error al optimizar las imágenes: {ex.Message}";
+                return RedirectToAction(nameof(Administrar));
             }
         }
     }

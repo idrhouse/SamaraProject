@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SamaraProject1.Models;
 using SamaraProject1.Servicios.Contrato;
 using System;
@@ -10,26 +9,22 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SamaraProject1.Servicios.Implementacion
+namespace SamaraProject1.Servicios
 {
     public class CarouselService : ICarouselService
     {
         private readonly SamaraMarketContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly ILogger<CarouselService> _logger;
 
-        public CarouselService(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment, ILogger<CarouselService> logger)
+        public CarouselService(SamaraMarketContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
-            _logger = logger;
         }
 
         public async Task<List<CarouselImage>> GetAllCarouselImages()
         {
-            return await _context.CarouselImages
-                .OrderBy(i => i.Order)
-                .ToListAsync();
+            return await _context.CarouselImages.OrderBy(i => i.Order).ToListAsync();
         }
 
         public async Task<CarouselImage> GetCarouselImageById(int id)
@@ -37,101 +32,75 @@ namespace SamaraProject1.Servicios.Implementacion
             return await _context.CarouselImages.FindAsync(id);
         }
 
-        public async Task<CarouselImage> UploadCarouselImage(IFormFile file)
+        public async Task<CarouselImage> UploadCarouselImage(IFormFile image)
         {
-            if (file == null || file.Length == 0)
+            if (image == null || image.Length == 0)
             {
-                throw new ArgumentException("No se ha proporcionado ningún archivo");
+                throw new ArgumentException("No se ha proporcionado una imagen válida");
             }
 
-            // Verificar el tamaño máximo (5MB)
-            if (file.Length > 5 * 1024 * 1024)
+            // Generar un nombre único para la imagen
+            var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+            var fileName = $"{Guid.NewGuid()}{extension}";
+            var relativePath = Path.Combine("imagenes", "carousel", fileName);
+            var absolutePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+
+            // Asegurar que el directorio existe
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+
+            // Guardar la imagen
+            using (var stream = new FileStream(absolutePath, FileMode.Create))
             {
-                throw new ArgumentException("La imagen excede el tamaño máximo permitido de 5MB");
+                await image.CopyToAsync(stream);
             }
 
-            // Verificar el tipo de archivo
-            var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
-            if (!allowedTypes.Contains(file.ContentType.ToLower()))
+            // Crear y guardar el registro en la base de datos
+            var carouselImage = new CarouselImage
             {
-                throw new ArgumentException("Solo se permiten archivos de imagen (JPG, PNG, GIF)");
-            }
+                Url = $"/{relativePath.Replace("\\", "/")}",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Order = await GetNextOrderNumber()
+            };
 
-            try
-            {
-                // Crear directorio si no existe
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "carousel");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+            _context.CarouselImages.Add(carouselImage);
+            await _context.SaveChangesAsync();
 
-                // Generar nombre único para el archivo
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // Guardar el archivo
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
-                // Obtener el último orden
-                int lastOrder = await _context.CarouselImages
-                    .OrderByDescending(i => i.Order)
-                    .Select(i => i.Order)
-                    .FirstOrDefaultAsync();
-
-                // Crear la entidad CarouselImage
-                var carouselImage = new CarouselImage
-                {
-                    Url = "/images/carousel/" + uniqueFileName,
-                    Alt = "",
-                    Order = lastOrder + 1,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                // Guardar en la base de datos
-                _context.CarouselImages.Add(carouselImage);
-                await _context.SaveChangesAsync();
-
-                return carouselImage;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al subir imagen del carrusel");
-                throw;
-            }
+            return carouselImage;
         }
 
-        public async Task SaveCarouselImages(List<CarouselImage> images)
+        public async Task<CarouselImage> UploadCarouselImageData(byte[] imageData, string fileName)
         {
-            if (images == null || !images.Any())
+            if (imageData == null || imageData.Length == 0)
             {
-                return;
+                throw new ArgumentException("No se han proporcionado datos de imagen válidos");
             }
 
-            try
-            {
-                foreach (var image in images)
-                {
-                    var existingImage = await _context.CarouselImages.FindAsync(image.IdCarouselImage);
-                    if (existingImage != null)
-                    {
-                        existingImage.Alt = image.Alt;
-                        existingImage.Order = image.Order;
-                        existingImage.UpdatedAt = DateTime.UtcNow;
-                    }
-                }
+            // Generar un nombre único para la imagen
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            var newFileName = $"{Guid.NewGuid()}{extension}";
+            var relativePath = Path.Combine("imagenes", "carousel", newFileName);
+            var absolutePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
 
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
+            // Asegurar que el directorio existe
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+
+            // Guardar la imagen
+            await File.WriteAllBytesAsync(absolutePath, imageData);
+
+            // Crear y guardar el registro en la base de datos
+            var carouselImage = new CarouselImage
             {
-                _logger.LogError(ex, "Error al guardar imágenes del carrusel");
-                throw;
-            }
+                Url = $"/{relativePath.Replace("\\", "/")}",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Order = await GetNextOrderNumber()
+            };
+
+            _context.CarouselImages.Add(carouselImage);
+            await _context.SaveChangesAsync();
+
+            return carouselImage;
         }
 
         public async Task DeleteCarouselImage(int id)
@@ -139,43 +108,42 @@ namespace SamaraProject1.Servicios.Implementacion
             var image = await _context.CarouselImages.FindAsync(id);
             if (image == null)
             {
-                throw new KeyNotFoundException($"No se encontró la imagen con ID {id}");
+                throw new ArgumentException($"No se encontró la imagen con ID {id}");
             }
 
-            try
+            // Eliminar el archivo físico
+            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, image.Url.TrimStart('/'));
+            if (File.Exists(filePath))
             {
-                // Eliminar el archivo físico
-                if (!string.IsNullOrEmpty(image.Url))
-                {
-                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, image.Url.TrimStart('/'));
-                    if (File.Exists(filePath))
-                    {
-                        File.Delete(filePath);
-                    }
-                }
-
-                // Eliminar de la base de datos
-                _context.CarouselImages.Remove(image);
-                await _context.SaveChangesAsync();
-
-                // Reordenar las imágenes restantes
-                var remainingImages = await _context.CarouselImages
-                    .OrderBy(i => i.Order)
-                    .ToListAsync();
-
-                for (int i = 0; i < remainingImages.Count; i++)
-                {
-                    remainingImages[i].Order = i + 1;
-                    remainingImages[i].UpdatedAt = DateTime.UtcNow;
-                }
-
-                await _context.SaveChangesAsync();
+                File.Delete(filePath);
             }
-            catch (Exception ex)
+
+            // Eliminar el registro de la base de datos
+            _context.CarouselImages.Remove(image);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveCarouselImages(List<CarouselImage> images)
+        {
+            if (images == null || images.Count == 0)
             {
-                _logger.LogError(ex, $"Error al eliminar imagen del carrusel con ID {id}");
-                throw;
+                return;
             }
+
+            foreach (var image in images)
+            {
+                _context.Entry(image).State = image.IdCarouselImage == 0
+                    ? EntityState.Added
+                    : EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetNextOrderNumber()
+        {
+            var maxOrder = await _context.CarouselImages.MaxAsync(i => (int?)i.Order) ?? 0;
+            return maxOrder + 1;
         }
     }
 }
