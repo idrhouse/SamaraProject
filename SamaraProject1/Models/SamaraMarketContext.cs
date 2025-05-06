@@ -26,6 +26,7 @@ public partial class SamaraMarketContext : DbContext
     public virtual DbSet<Categoria> Categorias { get; set; }
     public virtual DbSet<CarouselImage> CarouselImages { get; set; }
     public virtual DbSet<Testimonio> Testimonios { get; set; }
+    public virtual DbSet<SiteSetting> SiteSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -242,6 +243,51 @@ public partial class SamaraMarketContext : DbContext
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
+
+        modelBuilder.Entity<SiteSetting>(entity =>
+        {
+            entity.HasKey(e => e.IdSiteSetting);
+            entity.ToTable("SiteSetting");
+
+            entity.Property(e => e.IdSiteSetting)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.SettingKey)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.Property(e => e.SettingValue)
+                .IsRequired()
+                .HasMaxLength(500)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+
+            entity.Property(e => e.LastUpdated)
+                .HasColumnType("timestamp with time zone")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedBy)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+        // Datos iniciales para SiteSettings
+        modelBuilder.Entity<SiteSetting>().HasData(
+            new SiteSetting
+            {
+                IdSiteSetting = 1,
+                SettingKey = "SinpeMovilNumber",
+                SettingValue = "88630334",
+                Description = "Número de SINPE Móvil para donaciones",
+                LastUpdated = DateTime.UtcNow,
+                UpdatedBy = "Sistema"
+            }
+        );
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

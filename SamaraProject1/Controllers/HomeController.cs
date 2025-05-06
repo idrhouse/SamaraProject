@@ -44,6 +44,12 @@ namespace SamaraProject1.Controllers
             return View();
         }
 
+        public IActionResult Donacion()
+        {
+            return View();
+        }
+
+
         // Other actions remain unchanged
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

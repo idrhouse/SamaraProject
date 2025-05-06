@@ -1,6 +1,39 @@
-﻿class DonationComponent {
+﻿/**
+ * Componente de Donación con número SINPE Móvil editable
+ * Obtiene el número desde la API de configuraciones
+ */
+class DonationComponent {
     constructor() {
-        this.sinpeNumber = "88630334" // Reemplaza esto con el número SINPE Móvil real
+        this.sinpeNumber = "Cargando..." // Valor por defecto mientras carga
+        this.loadSinpeNumber()
+    }
+
+    async loadSinpeNumber() {
+        try {
+            // Obtener el número SINPE Móvil desde la API
+            const response = await fetch("/api/settings/SinpeMovilNumber")
+            const data = await response.json()
+
+            if (data && data.value) {
+                this.sinpeNumber = data.value
+                // Actualizar el componente si ya está renderizado
+                this.updateSinpeNumber()
+            } else {
+                console.error("No se pudo obtener el número SINPE Móvil")
+                this.sinpeNumber = "88630334" // Valor por defecto en caso de error
+            }
+        } catch (error) {
+            console.error("Error al cargar el número SINPE Móvil:", error)
+            this.sinpeNumber = "88630334" // Valor por defecto en caso de error
+        }
+    }
+
+    updateSinpeNumber() {
+        // Actualizar el número en el DOM si el componente ya está renderizado
+        const numberElement = document.getElementById("sinpe-number")
+        if (numberElement) {
+            numberElement.textContent = this.sinpeNumber
+        }
     }
 
     render() {
@@ -34,7 +67,7 @@
                                 Puedes realizar tu donación fácilmente a través de SINPE Móvil:
                             </p>
                             <div class="bg-white rounded-lg p-4 text-center">
-                                <p class="text-2xl font-bold text-orange-500">${this.sinpeNumber}</p>
+                                <p id="sinpe-number" class="text-2xl font-bold text-orange-500">${this.sinpeNumber}</p>
                                 <p class="text-sm text-gray-500 mt-2">Asociación Samara Viva</p>
                             </div>
                         </div>
@@ -50,7 +83,7 @@
     }
 }
 
-// Usage
+// Inicialización
 window.addEventListener("load", () => {
     setTimeout(() => {
         const donationComponent = new DonationComponent()
@@ -58,5 +91,5 @@ window.addEventListener("load", () => {
         if (container) {
             container.appendChild(donationComponent.render())
         }
-    }, 100) // Small delay to ensure container is ready
+    }, 100) // Pequeño retraso para asegurar que el contenedor esté listo
 })

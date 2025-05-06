@@ -35,6 +35,8 @@ builder.Services.AddScoped<IStandService, StandService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<ICarouselService, CarouselService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ISiteSettingService, SiteSettingService>();
+
 
 // Agregar HttpClient para el controlador de video
 builder.Services.AddHttpClient();
