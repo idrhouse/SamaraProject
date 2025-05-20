@@ -165,26 +165,50 @@ namespace SamaraProject1.Controllers
         [HttpPost("Delete/{id}")]
         public IActionResult DeleteFeaturedProduct(int id)
         {
-            var products = LoadProducts();
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product == null)
+            try
             {
-                TempData["Error"] = "Producto no encontrado.";
-                return RedirectToAction("Edit");
-            }
+                var products = LoadProducts();
+                var product = products.FirstOrDefault(p => p.Id == id);
 
-            // Eliminar la imagen física del servidor
-            var absolutePath = Path.Combine(_environment.WebRootPath, product.ImageUrl.TrimStart('/'));
-            if (System.IO.File.Exists(absolutePath))
+                if (product == null)
+                {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, message = "Producto no encontrado." });
+                    }
+
+                    TempData["Error"] = "Producto no encontrado.";
+                    return RedirectToAction("List");
+                }
+
+                // Eliminar la imagen física del servidor
+                var absolutePath = Path.Combine(_environment.WebRootPath, product.ImageUrl.TrimStart('/'));
+                if (System.IO.File.Exists(absolutePath))
+                {
+                    System.IO.File.Delete(absolutePath);
+                }
+
+                products.Remove(product);
+                SaveProducts(products);
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, message = "Producto destacado eliminado correctamente." });
+                }
+
+                TempData["Success"] = "Producto destacado eliminado correctamente.";
+                return RedirectToAction("List");
+            }
+            catch (Exception ex)
             {
-                System.IO.File.Delete(absolutePath);
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = $"Error al eliminar el producto: {ex.Message}" });
+                }
+
+                TempData["Error"] = $"Error al eliminar el producto: {ex.Message}";
+                return RedirectToAction("List");
             }
-
-            products.Remove(product);
-            SaveProducts(products);
-
-            TempData["Success"] = "Imagen de carrousel eliminado correctamente.";
-            return RedirectToAction("List");
         }
     }
 }

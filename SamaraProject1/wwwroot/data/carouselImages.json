@@ -1,0 +1,26 @@
+[
+  {
+    "IdCarouselImage": 1,
+    "Url": "/imagenes/carousel/373cdcd8-b3df-4432-b119-3b968e17f5b2.jpeg",
+    "Alt": "primera",
+    "Order": 1,
+    "CreatedAt": "2025-05-20T05:09:52.434426Z",
+    "UpdatedAt": "2025-05-20T05:09:52.4344262Z"
+  },
+  {
+    "IdCarouselImage": 2,
+    "Url": "/imagenes/carousel/26fdad3a-b511-4a3a-bffc-f5a6ee5d1f4e.jpeg",
+    "Alt": "segundo",
+    "Order": 2,
+    "CreatedAt": "2025-05-20T05:10:10.4792053Z",
+    "UpdatedAt": "2025-05-20T05:10:10.4792055Z"
+  },
+  {
+    "IdCarouselImage": 3,
+    "Url": "/imagenes/carousel/d56d0d75-9194-42c3-a347-0119e6191806.jpeg",
+    "Alt": "tercera",
+    "Order": 3,
+    "CreatedAt": "2025-05-20T05:10:25.3230007Z",
+    "UpdatedAt": "2025-05-20T05:10:25.3230009Z"
+  }
+]

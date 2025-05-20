@@ -1,20 +1,25 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SamaraProject1.Models;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace SamaraProject1.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IWebHostEnvironment _environment;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment environment)
         {
             _logger = logger;
+            _environment = environment;
         }
 
         [AllowAnonymous]
@@ -33,6 +38,35 @@ namespace SamaraProject1.Controllers
         }
 
         [AllowAnonymous]
+        public IActionResult GetCarouselImages()
+        {
+            try
+            {
+                var dataFilePath = Path.Combine(_environment.WebRootPath, "data", "carouselImages.json");
+                if (!System.IO.File.Exists(dataFilePath))
+                {
+                    // Si el archivo no existe, crear el directorio y un archivo vacío
+                    var directory = Path.GetDirectoryName(dataFilePath);
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    System.IO.File.WriteAllText(dataFilePath, "[]");
+                    return Json(new List<CarouselImage>());
+                }
+
+                var json = System.IO.File.ReadAllText(dataFilePath);
+                var images = JsonSerializer.Deserialize<List<CarouselImage>>(json) ?? new List<CarouselImage>();
+                return Json(images.OrderBy(i => i.Order));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener las imágenes del carrusel");
+                return Json(new List<CarouselImage>());
+            }
+        }
+
+        [AllowAnonymous]
         public IActionResult ComoUnirte()
         {
             return View();
@@ -48,7 +82,6 @@ namespace SamaraProject1.Controllers
         {
             return View();
         }
-
 
         // Other actions remain unchanged
 

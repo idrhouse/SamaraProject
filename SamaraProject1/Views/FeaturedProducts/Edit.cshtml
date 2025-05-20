@@ -1,118 +1,93 @@
 ﻿@model SamaraProject1.Models.FeaturedProduct
 
 @{
-    ViewData["Title"] = "Editar Producto Destacado";
+    ViewData["Title"] = "Editar Producto Destacado - Feria Sámara Market";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
-        <div class="px-8 py-6 bg-gradient-to-r from-orange-400 to-orange-600">
-            <h1 class="text-3xl font-extrabold text-white">Editar Producto Destacado</h1>
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-xl mx-auto">
+        <!-- Botón de volver atrás -->
+        <div class="mb-6">
+            <a href="/FeaturedProducts/List" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300">
+                <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Volver
+            </a>
         </div>
 
-        <div class="p-8 space-y-6">
-            @if (TempData["Error"] != null)
-            {
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg" role="alert">
-                    <p class="font-bold">Error</p>
-                    <p>@TempData["Error"]</p>
-                </div>
-            }
-            @if (TempData["Success"] != null)
-            {
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg" role="alert">
-                    <p class="font-bold">Éxito</p>
-                    <p>@TempData["Success"]</p>
-                </div>
-            }
+        <div class="bg-white shadow-2xl rounded-3xl overflow-hidden">
+            <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 bg-gradient-to-r from-orange-400 to-orange-600">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white text-center sm:text-left">Editar Producto Destacado</h1>
+            </div>
 
-            <form method="post" enctype="multipart/form-data" action="/FeaturedProducts/Edit/@Model.Id" class="space-y-6">
-                <div class="space-y-2">
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Producto</label>
-                    <input type="text" id="name" name="name" value="@Model.Name" required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                </div>
+            <div class="px-4 sm:px-6 md:px-8 py-6 space-y-4 sm:space-y-6">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 sm:p-4 rounded-r-lg text-sm sm:text-base" role="alert">
+                        <p class="font-bold">Error</p>
+                        <p>@TempData["Error"]</p>
+                    </div>
+                }
 
-                <div class="space-y-2">
-                    <label for="image" class="block text-sm font-medium text-gray-700">Nueva Imagen (opcional)</label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                        <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <div class="flex text-sm text-gray-600">
-                                <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500">
-                                    <span>Subir una nueva imagen</span>
-                                    <input id="image" name="image" type="file" class="sr-only" accept="image/*">
-                                </label>
-                                <p class="pl-1">o arrastrar y soltar</p>
+                <form action="/FeaturedProducts/Edit/@Model.Id" method="post" enctype="multipart/form-data" class="space-y-6">
+                    @Html.AntiForgeryToken()
+
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Producto</label>
+                        <input type="text" name="name" id="name" value="@Model.Name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="image" class="block text-sm font-medium text-gray-700">Imagen</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500">
+                                        <span>Cambiar imagen</span>
+                                        <input id="image" name="image" type="file" accept="image/*" class="sr-only">
+                                    </label>
+                                    <p class="pl-1">o arrastrar y soltar</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 5MB</p>
                             </div>
-                            <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+                        </div>
+                        <div class="mt-3">
+                            <p class="text-sm font-medium text-gray-700 mb-1">Imagen actual:</p>
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="h-32 w-auto object-cover rounded-md">
                         </div>
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Deja este campo vacío para mantener la imagen actual.</p>
-                </div>
 
-                <div class="pt-4">
-                    <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white font-semibold rounded-lg shadow-md hover:from-orange-500 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                        Guardar Cambios
-                    </button>
-                </div>
-            </form>
-
-            <div class="flex justify-between items-center pt-6">
-                <a href="/FeaturedProducts/List" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-orange-600 bg-orange-100 hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                    <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                    </svg>
-                    Regresar al Listado
-                </a>
-                <button id="deleteButton" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
-                    Eliminar
-                </button>
+                    <div class="flex justify-end">
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal para confirmación de eliminación -->
-<div id="confirmModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">¿Estás seguro?</h2>
-        <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer. ¿Deseas continuar?</p>
-        <div class="flex justify-end space-x-3">
-            <button id="cancelButton" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 ease-in-out">
-                Cancelar
-            </button>
-            <form id="deleteForm" method="post" action="/FeaturedProducts/Delete/@Model.Id">
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300 ease-in-out">
-                    Eliminar
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Seleccionar botones y modal
-    const deleteButton = document.getElementById('deleteButton');
-    const cancelButton = document.getElementById('cancelButton');
-    const confirmModal = document.getElementById('confirmModal');
-    const deleteForm = document.getElementById('deleteForm');
-
-    // Mostrar el modal
-    deleteButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal sin eliminar
-    cancelButton.addEventListener('click', () => {
-        confirmModal.classList.add('hidden');
-    });
-
-    // Enviar el formulario de eliminación y cerrar el modal
-    deleteForm.addEventListener('submit', (event) => {
-        // Aquí puedes agregar algún código adicional si es necesario
-        confirmModal.classList.add('hidden'); // Ocultar el modal cuando se confirme la eliminación
-    });
-</script>
+@section Scripts {
+    <script>
+        // Vista previa de la imagen
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Actualizar la imagen actual
+                    const currentImage = document.querySelector('.mt-3 img');
+                    if (currentImage) {
+                        currentImage.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

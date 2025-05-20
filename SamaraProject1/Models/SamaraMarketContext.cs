@@ -164,11 +164,10 @@ public partial class SamaraMarketContext : DbContext
             entity.Property(c => c.NombreCategoria).IsRequired().HasMaxLength(100);
         });
 
-        // Configuración para CarouselImage
         modelBuilder.Entity<CarouselImage>(entity =>
         {
             entity.HasKey(e => e.IdCarouselImage);
-            entity.ToTable("CarouselImage");
+            entity.ToTable("CarouselImages"); // Cambiado a plural
 
             entity.Property(e => e.IdCarouselImage)
                 .ValueGeneratedOnAdd();
@@ -182,9 +181,11 @@ public partial class SamaraMarketContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
 
+            entity.Property(e => e.Order)
+                .HasColumnName("OrderNumber"); // Evitar palabra reservada
+
             entity.Property(e => e.CreatedAt)
-                .HasColumnType("timestamp with time zone")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .HasColumnType("timestamp with time zone");
 
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("timestamp with time zone")

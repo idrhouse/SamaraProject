@@ -7,7 +7,7 @@
         <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-6 bg-gradient-to-r from-orange-400 to-orange-600">
             <div class="flex justify-between items-center">
                 <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white">Agregar Imagen al Carrusel</h1>
-                <a href="/Carousel/Administrar" class="inline-flex items-center px-3 py-2 border border-white text-white bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-white hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                <a href="/CarouselJson/Administrar" class="inline-flex items-center px-3 py-2 border border-white text-white bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-white hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
                     <svg class="mr-2 -ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
@@ -32,7 +32,7 @@
                 </div>
             }
 
-            <form asp-controller="Carousel" asp-action="Add" method="post" enctype="multipart/form-data" class="space-y-4 sm:space-y-6">
+            <form asp-controller="CarouselJson" asp-action="Add" method="post" enctype="multipart/form-data" class="space-y-4 sm:space-y-6">
                 @Html.AntiForgeryToken()
 
                 <div class="space-y-2">
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-4 sm:pt-6">
-                    <a href="/Carousel/Administrar" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
+                    <a href="/CarouselJson/Administrar" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-center hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">
                         Cancelar
                     </a>
                     <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white font-semibold rounded-lg shadow-md hover:from-orange-500 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300 ease-in-out text-sm">

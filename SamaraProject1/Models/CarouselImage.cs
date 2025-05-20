@@ -23,7 +23,6 @@ namespace SamaraProject1.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        [NotMapped]
-        public IFormFile ImageFile { get; set; }
+     
     }
 }

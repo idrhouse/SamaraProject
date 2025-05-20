@@ -523,7 +523,7 @@
             // Cargar imágenes desde el backend
             async function loadCarouselImages() {
                 try {
-                    const response = await fetch('/Carousel/GetCarouselImages');
+                      const response = await fetch('/Home/GetCarouselImages');
                     slides = await response.json();
 
                     // Si no hay imágenes, usar las predeterminadas
