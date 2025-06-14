@@ -4,131 +4,157 @@
     ViewData["Title"] = "Lista de Stands";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-        <!-- Imagen Encabezada -->
-        <div class="mb-6 sm:mb-8 rounded-2xl overflow-hidden shadow-xl">
-            <img src="/imagenes/mapa.jpeg" alt="Mapa de stands" class="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover" />
+<div class="min-h-screen bg-gray-50 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Mapa de Stands - Responsive -->
+        <div class="mb-8 sm:mb-12 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black ring-opacity-5 bg-white">
+            <div class="aspect-w-16 aspect-h-7">
+                <img src="/imagenes/mapa.jpeg" alt="Mapa de stands de Sámara Market" class="w-full h-full object-cover" />
+            </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center sm:text-left">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-orange-600">
-                    Stands
+        <!-- Encabezado y Acciones -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 sm:mb-10 gap-6">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 text-center md:text-left">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-500">
+                    Gestión de Stands
                 </span>
             </h1>
-            <div class="flex flex-col sm:flex-row gap-3">
-                <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center px-4 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 w-full sm:w-auto justify-center">
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <a href="@Url.Action("Crear", "Stands")" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-orange-500 hover:bg-orange-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
                     Nuevo Stand
                 </a>
-                <button id="btnReportes" class="inline-flex items-center px-4 py-2 border border-green-500 text-green-500 bg-transparent rounded-md font-medium text-sm transition-all duration-300 ease-in-out hover:bg-green-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full sm:w-auto justify-center">
+                <button id="btnReportes" class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 text-base font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-100 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
+                        <path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 1v10h8V5H6z" />
+                        <path d="M8 8a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                     </svg>
                     Generar Reportes
                 </button>
             </div>
         </div>
 
-        <!-- Modal para generar reportes -->
-        <div id="reporteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-md w-full mx-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Generar Reporte de Stands</h2>
-                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label for="fechaInicio" class="block text-sm font-medium text-gray-700">Fecha Inicio</label>
-                        <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50">
-                    </div>
-
-                    <div>
-                        <label for="fechaFin" class="block text-sm font-medium text-gray-700">Fecha Fin</label>
-                        <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-300 focus:ring-opacity-50">
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                        <button id="btnExcel" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v1H3V4zm1 2h12v10a1 1 0 01-1 1H5a1 1 0 01-1-1V6zm6 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                            </svg>
-                            Excel
-                        </button>
-                        <button id="btnPDF" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
-                            </svg>
-                            PDF
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <!-- Notificación de éxito -->
         @if (TempData["Message"] != null)
         {
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 sm:p-4 mb-6 sm:mb-8 rounded-md shadow" role="alert">
-                <p class="font-medium text-sm sm:text-base">@TempData["Message"]</p>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-4 mb-8 rounded-r-lg shadow-md" role="alert">
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 text-green-500 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <p class="font-semibold">@TempData["Message"]</p>
+                </div>
             </div>
         }
 
-        <!-- Lista de Stands -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <ul class="divide-y divide-gray-200">
-                @foreach (var item in Model)
-                {
-                    <li class="p-4 sm:p-6 hover:bg-gray-50 transition duration-200 ease-in-out">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div class="flex-grow space-y-2">
-                                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Stand @item.Numero_Stand</h2>
-                                <p class="text-sm sm:text-base text-gray-600">@item.Descripcion_Stand</p>
-                                <p class="text-xs sm:text-sm text-gray-500">
-                                    Emprendedor:
-                                    <span class="font-medium">
-                                        @(string.IsNullOrEmpty(item.Emprendedor?.NombreEmprendedor) ? "No asignado" : item.Emprendedor.NombreEmprendedor)
-                                    </span>
-                                </p>
-                                <p class="text-xs sm:text-sm font-semibold @(item.Disponible ? "text-green-600" : "text-red-600")">
-                                    Estado: @(item.Disponible ? "Disponible" : "No disponible")
-                                </p>
-                            </div>
-                            <div class="flex flex-row gap-2 justify-end">
-                                <a href="@Url.Action("QuitarEmprendedor", "Stands", new { id = item.IdStand })"
-                                   class="inline-flex items-center px-3 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 17a6 6 0 00-12 0h12z" />
-                                        <path fill-rule="evenodd" d="M12.414 5.586a1 1 0 011.414 1.414L12.414 8.414l1.414 1.414a1 1 0 01-1.414 1.414L11 9.828l-1.414 1.414a1 1 0 01-1.414-1.414l1.414-1.414-1.414-1.414a1 1 0 011.414-1.414L11 7.172l1.414-1.586z" clip-rule="evenodd" />
+        <!-- Grid de Stands -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+            @foreach (var item in Model)
+            {
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1.5">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-2xl font-bold text-gray-800">Stand @item.Numero_Stand</h3>
+                            @if (item.Disponible)
+                            {
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 ring-1 ring-inset ring-green-600/20">
+                                    Disponible
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                                    Ocupado
+                                </span>
+                            }
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-5 h-10">@item.Descripcion_Stand</p>
+
+                        <div class="border-t border-gray-200 pt-4">
+                            <p class="text-sm text-gray-500 mb-1">Emprendedor:</p>
+                            <div class="flex items-center gap-2">
+                                <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                     </svg>
-                                    Quitar
-                                </a>
-                                <a href="@Url.Action("Editar", "Stands", new { id = item.IdStand })"
-                                   class="inline-flex items-center px-3 py-2 border border-orange-400 text-orange-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                    </svg>
-                                    Editar
-                                </a>
-                                <a href="@Url.Action("Eliminar", "Stands", new { id = item.IdStand })"
-                                   class="inline-flex items-center px-3 py-2 border border-red-500 text-red-500 bg-transparent rounded-md text-xs font-medium transition-all duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Eliminar
-                                </a>
+                                </div>
+                                <span class="font-semibold text-gray-800">
+                                    @(string.IsNullOrEmpty(item.Emprendedor?.NombreEmprendedor) ? "No asignado" : item.Emprendedor.NombreEmprendedor)
+                                </span>
                             </div>
                         </div>
-                    </li>
-                }
-            </ul>
+                    </div>
+
+                    <!-- Acciones de la Card -->
+                    <div class="bg-gray-50 px-6 py-3 flex justify-end items-center gap-2">
+                        <a href="@Url.Action("QuitarEmprendedor", "Stands", new { id = item.IdStand })" title="Quitar Emprendedor" class="p-2 text-gray-500 rounded-full hover:bg-red-100 hover:text-red-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="@Url.Action("Editar", "Stands", new { id = item.IdStand })" title="Editar Stand" class="p-2 text-gray-500 rounded-full hover:bg-blue-100 hover:text-blue-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </a>
+                        <a href="@Url.Action("Eliminar", "Stands", new { id = item.IdStand })" title="Eliminar Stand" class="p-2 text-gray-500 rounded-full hover:bg-red-100 hover:text-red-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal para generar reportes (con estilo mejorado) -->
+<div id="reporteModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden transition-opacity duration-300" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-lg w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-panel">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="modal-title" class="text-2xl font-bold text-gray-900">Generar Reporte</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <span class="sr-only">Cerrar</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="fechaInicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
+                    <input type="date" id="fechaInicio" name="fechaInicio" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-50 py-2 px-3">
+                </div>
+                <div>
+                    <label for="fechaFin" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Fin</label>
+                    <input type="date" id="fechaFin" name="fechaFin" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-50 py-2 px-3">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6 flex flex-col sm:flex-row gap-3">
+                <button id="btnExcel" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-transform transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2H2V6z" />
+                        <path d="M2 12a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2z" />
+                        <path d="M6 8a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z" />
+                    </svg>
+                    Exportar a Excel
+                </button>
+                <button id="btnPDF" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-transform transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                    </svg>
+                    Exportar a PDF
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -148,74 +174,82 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('reporteModal');
+            const modalPanel = document.getElementById('modal-panel');
             const btnReportes = document.getElementById('btnReportes');
             const closeModal = document.getElementById('closeModal');
             const btnExcel = document.getElementById('btnExcel');
             const btnPDF = document.getElementById('btnPDF');
+            const fechaFinInput = document.getElementById('fechaFin');
+            const fechaInicioInput = document.getElementById('fechaInicio');
 
-            // Establecer fechas predeterminadas (último mes)
-            const fechaFin = document.getElementById('fechaFin');
-            const fechaInicio = document.getElementById('fechaInicio');
-
-            const hoy = new Date();
-            fechaFin.valueAsDate = hoy;
-
-            const unMesAtras = new Date();
-            unMesAtras.setMonth(unMesAtras.getMonth() - 1);
-            fechaInicio.valueAsDate = unMesAtras;
-
-            // Mostrar modal
-            btnReportes.addEventListener('click', function () {
+            // --- Modal Logic ---
+            function openModal() {
                 modal.classList.remove('hidden');
-            });
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modalPanel.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            }
 
-            // Cerrar modal
-            closeModal.addEventListener('click', function () {
-                modal.classList.add('hidden');
-            });
+            function hideModal() {
+                modalPanel.classList.add('scale-95', 'opacity-0');
+                modal.classList.add('opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
 
-            // Cerrar modal al hacer clic fuera
+            btnReportes.addEventListener('click', openModal);
+            closeModal.addEventListener('click', hideModal);
             window.addEventListener('click', function (event) {
                 if (event.target === modal) {
-                    modal.classList.add('hidden');
+                    hideModal();
+                }
+            });
+            window.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    hideModal();
                 }
             });
 
-            // Generar reporte Excel
-            btnExcel.addEventListener('click', function () {
-                if (validarFechas()) {
-                    document.getElementById('excelFechaInicio').value = fechaInicio.value;
-                    document.getElementById('excelFechaFin').value = fechaFin.value;
-                    document.getElementById('excelForm').submit();
-                }
-            });
+            // --- Date Logic ---
+            const hoy = new Date();
+            fechaFinInput.value = hoy.toISOString().split('T')[0];
+            const unMesAtras = new Date();
+            unMesAtras.setMonth(unMesAtras.getMonth() - 1);
+            fechaInicioInput.value = unMesAtras.toISOString().split('T')[0];
 
-            // Generar reporte PDF
-            btnPDF.addEventListener('click', function () {
-                if (validarFechas()) {
-                    document.getElementById('pdfFechaInicio').value = fechaInicio.value;
-                    document.getElementById('pdfFechaFin').value = fechaFin.value;
-                    document.getElementById('pdfForm').submit();
-                }
-            });
-
-            // Validar fechas
+            // --- Form Submission Logic ---
             function validarFechas() {
-                const inicio = new Date(fechaInicio.value);
-                const fin = new Date(fechaFin.value);
+                const inicio = new Date(fechaInicioInput.value);
+                const fin = new Date(fechaFinInput.value);
 
                 if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
                     alert('Por favor, seleccione fechas válidas.');
                     return false;
                 }
-
                 if (inicio > fin) {
                     alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
                     return false;
                 }
-
                 return true;
             }
+
+            btnExcel.addEventListener('click', function () {
+                if (validarFechas()) {
+                    document.getElementById('excelFechaInicio').value = fechaInicioInput.value;
+                    document.getElementById('excelFechaFin').value = fechaFinInput.value;
+                    document.getElementById('excelForm').submit();
+                }
+            });
+
+            btnPDF.addEventListener('click', function () {
+                if (validarFechas()) {
+                    document.getElementById('pdfFechaInicio').value = fechaInicioInput.value;
+                    document.getElementById('pdfFechaFin').value = fechaFinInput.value;
+                    document.getElementById('pdfForm').submit();
+                }
+            });
         });
     </script>
 }
