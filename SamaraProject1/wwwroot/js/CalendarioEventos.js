@@ -94,28 +94,35 @@ const CalendarioEventos = () => {
                 }, dia)
             )
         ),
-        // Días del mes
+        // Días del mes 
         React.createElement('div', { className: 'grid grid-cols-7 gap-2' },
             dias.map((dia, index) => {
                 const eventosDelDia = obtenerEventosPorDia(dia.fecha);
                 return React.createElement('div', {
                     key: index,
                     className: `p-2 border rounded-lg ${dia.esDelMes ? 'bg-white' : 'bg-gray-50'} 
-                     ${eventosDelDia.length > 0 ? 'border-orange-200' : 'border-gray-200'}`
+                        ${eventosDelDia.length > 0 ? 'border-orange-200 cursor-pointer' : 'border-gray-200'}`,
+                    onClick: () => eventosDelDia.length > 0 && setEventoSeleccionado(eventosDelDia[0])
                 },
-                    React.createElement('div', { className: 'text-right mb-1' },
-                        dia.fecha.getDate()
-                    ),
-                    eventosDelDia.map(evento =>
-                        React.createElement('button', {
-                            key: evento.idEvento,
-                            className: 'w-full text-left mb-1 p-1 text-xs bg-orange-100 rounded text-orange-700 hover:bg-orange-200 transition-colors duration-200',
-                            onClick: () => setEventoSeleccionado(evento)
-                        }, evento.nombre)
+                    // Contenedor flexible para número e indicador
+                    React.createElement('div', { className: 'flex justify-between items-start' },
+                        // Espacio vacío para alinear el número a la derecha
+                        React.createElement('div', {}),
+                        // Contenedor del número con posición relativa
+                        eventosDelDia.length > 0 &&
+                        React.createElement('span', {
+                            className: 'absolute right-20 top-3 w-3 h-3 bg-orange-500 rounded-full'
+                        }),
+                        React.createElement('div', { className: 'relative' },
+                            dia.fecha.getDate(),
+                            // Indicador de eventos - SOLUCIÓN CONFIABLE
+                            
+                        )
                     )
                 );
             })
         ),
+
         // Modal de evento seleccionado
         eventoSeleccionado && React.createElement('div', {
             className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4',
