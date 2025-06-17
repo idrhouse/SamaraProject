@@ -114,7 +114,7 @@
                                 })),
                                 React.createElement("p", {
                                     className: "ml-3 text-gray-700"
-                                }, "Abierto: Lun - Dom, 9:00 AM - 6:00 PM")
+                                }, "Abierto: Sábados, 7:00 AM - 2:00 PM")
                             ]),
                             React.createElement("div", {
                                 key: "phone",
