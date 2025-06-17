@@ -139,7 +139,7 @@
                                         key: "phone-link",
                                         href: "tel:+50626560000",
                                         className: "text-orange-500 hover:text-orange-700"
-                                    }, "+506 2656 0000")
+                                    }, "+506 6384 7908")
                                 ])
                             ])
                         ]),
